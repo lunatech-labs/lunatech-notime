@@ -4,3 +4,6 @@ project/target
 target
 tmp
 .history
+.project
+.classpath
+.settings/

@@ -1,0 +1,33 @@
+@(id: Long, userForm: Form[User])
+
+@import helper._
+
+@main("User") {
+	
+	<h1>User</h1>
+	
+	@if(flash.containsKey("error")) {
+    	<div class="alert-message error">
+            <strong>Oops!</strong> @flash.get("error")
+        </div>
+    } 
+
+	@form(routes.Users.update(id)) {
+
+		@inputText(userForm("username"), '_label -> "Username")
+
+		@inputPassword(userForm("password"), '_label -> "Password")
+
+		@inputText(userForm("fullname"), '_label -> "Full name")
+
+		@inputText(userForm("email"), '_label -> "Email")
+		
+		@checkbox(userForm("employee"), '_label -> "Is employee?")
+		
+		@checkbox(userForm("admin"), '_label -> "Is admin?")
+
+		<input type="submit" value="Submit">
+		<a href="@routes.Users.all()">Cancel</a>
+
+	}
+}
