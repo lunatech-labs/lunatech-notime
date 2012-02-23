@@ -30,6 +30,7 @@ public class User extends Model {
     
     @Required
     @Email
+    @Column(unique = true)
     public String email;
     
     public boolean employee;
@@ -52,21 +53,21 @@ public class User extends Model {
     	user.password = BCrypt.hashpw(user.password, BCrypt.gensalt());
         user.save();
     }
-    
-    public static void update(Long id, User updatedUser) {
-    	User user = find.byId(id);
-    	user.username = updatedUser.username;
-    	if (!updatedUser.password.equals(user.password))
-    		user.password = BCrypt.hashpw(updatedUser.password, BCrypt.gensalt());
-    	user.fullname = updatedUser.fullname;
-    	user.email = updatedUser.email;
-    	user.admin = updatedUser.admin;
-    	user.employee = updatedUser.employee;
-        user.update();        
-    }
 
     public static User read(Long id) {
         return find.byId(id);
+    }
+    
+    public static void update(Long id, User userToBeUpdated) {
+    	User user = find.byId(id);
+    	user.username = userToBeUpdated.username;
+    	if (!userToBeUpdated.password.equals(user.password))
+    		user.password = BCrypt.hashpw(userToBeUpdated.password, BCrypt.gensalt());
+    	user.fullname = userToBeUpdated.fullname;
+    	user.email = userToBeUpdated.email;
+    	user.admin = userToBeUpdated.admin;
+    	user.employee = userToBeUpdated.employee;
+        user.update();        
     }
 
     public static void delete(Long id) {
