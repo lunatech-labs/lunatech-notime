@@ -59,7 +59,7 @@ public class User extends Model {
     }
     
     public static void update(Long id, User userToBeUpdated) {
-    	User user = find.byId(id);
+    	User user = read(id);
     	user.username = userToBeUpdated.username;
     	if (!userToBeUpdated.password.equals(user.password))
     		user.password = BCrypt.hashpw(userToBeUpdated.password, BCrypt.gensalt());
@@ -71,7 +71,7 @@ public class User extends Model {
     }
 
     public static void delete(Long id) {
-        find.byId(id).delete();
+        read(id).delete();
     }
     
     public static boolean hasDuplicity(User userToBeCreated) {
