@@ -1,0 +1,74 @@
+
+# Users
+
+users:
+
+    - !!models.User
+        id: 1
+        username: leo
+        password: secret
+        fullname: Leonard Punt
+        email: leonard@test.nl
+
+    - !!models.User
+        id: 2
+        username: foo
+        password: secret
+        fullname: Foo Bar
+        email: foo@test.nl
+
+    - !!models.User
+        id: 3
+        username: bar
+        password: secret
+        fullname: Bar Foo
+        email: bar@test.nl
+
+# Customers
+
+customers:
+
+    - !!models.Customer
+        id: 4
+        name: Lunatech
+        code: LUNA
+        description: Small Company
+        customerManagers:
+            - !!models.User
+                id: 1
+
+    - !!models.Customer
+        id: 5
+        name: Belastingdienst
+        code: BELA
+        description: Leuker kunnen we het niet maken, makkelijk wel!
+        customerManagers:
+            - !!models.User
+                id: 2
+            - !!models.User
+                id: 3
+                
+# Projects
+
+projects:
+
+    - !!models.Project
+        name: NoTime
+        code: TIME
+        description: Timesheet application
+        type: HOURLY_BASED
+        customer: !!models.Customer
+                id: 4                
+        customerContact: Leonard Punt
+        projectManager: !!models.User
+                id: 1
+
+    - !!models.Project
+        name: Vacation
+        code: VAC
+        description: Vacation
+        type: HOURLY_BASED
+        customer: !!models.Customer
+                id: 5
+        projectManager: !!models.User
+                id: 2
