@@ -1,6 +1,8 @@
 package models;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -74,15 +76,24 @@ public class User extends Model {
         read(id).delete();
     }
     
+    public static Map<String,String> options() {
+        List<User> users = all();
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        for(User u: users) {
+            options.put(u.id.toString(), u.fullname);
+        }
+        return options;
+    }
+    
     public static boolean hasDuplicity(User userToBeCreated) {
         return !validateDuplicity(userToBeCreated).isEmpty();
     }
 
     public static String validateDuplicity(User userToBeCreated) {
         for(User existingUser : all()) {
-            if(existingUser.username.equals(userToBeCreated.username))
+            if(existingUser.username.equalsIgnoreCase(userToBeCreated.username))
                 return "Duplicate username!";
-            if(existingUser.email.equals(userToBeCreated.email))
+            if(existingUser.email.equalsIgnoreCase(userToBeCreated.email))
                 return "Duplicate email!";
         }
         return new String();
@@ -94,9 +105,9 @@ public class User extends Model {
     
     public static String validateDuplicity(Long id, User userToBeUpdated) {
         for(User existingUser : allExcept(id)) {
-    		if(existingUser.username.equals(userToBeUpdated.username))
+    		if(existingUser.username.equalsIgnoreCase(userToBeUpdated.username))
     			return "Duplicate username!";
-    		if(existingUser.email.equals(userToBeUpdated.email))
+    		if(existingUser.email.equalsIgnoreCase(userToBeUpdated.email))
     			return "Duplicate email!";
     	}
     	return new String();

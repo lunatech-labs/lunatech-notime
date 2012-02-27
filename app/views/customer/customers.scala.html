@@ -1,0 +1,23 @@
+@(customers: List[Customer])
+
+@import helper._
+
+@main("Customers") {
+	
+	<h1>Customers</h1>
+	
+	<ul>
+		@for(customer <- customers) {
+			<li>
+				<a href="@routes.Customers.edit(customer.id)">@customer.name</a>
+			
+				@form(routes.Customers.delete(customer.id)) {
+					<input type="submit" value="Delete">
+				}	
+			</li>
+		}
+	</ul>
+	
+	<a href="@routes.Customers.add()">Add Customer</a>
+
+}

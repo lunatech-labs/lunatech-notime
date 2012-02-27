@@ -18,16 +18,17 @@ public class Users extends Controller {
 	
 	public static Result create() {
 		Form<User> filledForm = form(User.class).bindFromRequest();
+		User userToBeCreated = filledForm.get();
 		
 		if(filledForm.hasErrors()) 
 			return badRequest(views.html.user.createUser.render(filledForm));
 
-		if(User.hasDuplicity(filledForm.get())) {
-			flash("error", User.validateDuplicity(filledForm.get()));
+		if(User.hasDuplicity(userToBeCreated)) {
+			flash("error", User.validateDuplicity(userToBeCreated));
 			return badRequest(views.html.user.createUser.render(filledForm));
 		}
 
-		User.create(filledForm.get());
+		User.create(userToBeCreated);
 		return redirect(routes.Users.all());
 	}
 	
@@ -38,16 +39,17 @@ public class Users extends Controller {
 	
 	public static Result update(Long id) {
 		Form<User> filledForm = form(User.class).bindFromRequest();
+		User userToBeUpdated = filledForm.get();
 		
 		if(filledForm.hasErrors())
 			return badRequest(views.html.user.editUser.render(id, filledForm));
 
-		if(User.hasDuplicity(id, filledForm.get())) {
-			flash("error", User.validateDuplicity(id, filledForm.get()));
+		if(User.hasDuplicity(id, userToBeUpdated)) {
+			flash("error", User.validateDuplicity(id, userToBeUpdated));
 			return badRequest(views.html.user.editUser.render(id, filledForm));
 		}
 
-		User.update(id, filledForm.get());
+		User.update(id, userToBeUpdated);
 		return redirect(routes.Users.all());
 	}
 	
