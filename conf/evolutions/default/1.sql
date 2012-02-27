@@ -13,6 +13,21 @@ create table customer (
   constraint pk_customer primary key (id))
 ;
 
+create table project (
+  id                        bigint not null,
+  name                      varchar(255),
+  code                      varchar(255),
+  description               varchar(255),
+  type                      integer,
+  customer_id               bigint,
+  customer_contact          varchar(255),
+  project_manager_id        bigint,
+  constraint ck_project_type check (type in (0,1)),
+  constraint uq_project_name unique (name),
+  constraint uq_project_code unique (code),
+  constraint pk_project primary key (id))
+;
+
 create table user (
   id                        bigint not null,
   username                  varchar(255),
@@ -34,8 +49,14 @@ create table customer_user (
 ;
 create sequence customer_seq;
 
+create sequence project_seq;
+
 create sequence user_seq;
 
+alter table project add constraint fk_project_customer_1 foreign key (customer_id) references customer (id) on delete restrict on update restrict;
+create index ix_project_customer_1 on project (customer_id);
+alter table project add constraint fk_project_projectManager_2 foreign key (project_manager_id) references user (id) on delete restrict on update restrict;
+create index ix_project_projectManager_2 on project (project_manager_id);
 
 
 
@@ -51,11 +72,15 @@ drop table if exists customer;
 
 drop table if exists customer_user;
 
+drop table if exists project;
+
 drop table if exists user;
 
 SET REFERENTIAL_INTEGRITY TRUE;
 
 drop sequence if exists customer_seq;
+
+drop sequence if exists project_seq;
 
 drop sequence if exists user_seq;
 

@@ -1,7 +1,10 @@
 package models;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -26,7 +29,7 @@ public class Customer extends Model {
 	
 	public String description;
 	
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.REMOVE) //REMOVE only removes the lines from the intersection table -> http://www.avaje.org/bugdetail-221.html
 	public List<User> customerManagers;
 	
 	public static Finder<Long, Customer> find = new Finder<Long, Customer>(Long.class, Customer.class);
@@ -67,6 +70,15 @@ public class Customer extends Model {
 	public static void delete(Long id) {
 		read(id).delete();
 	}
+	
+    public static Map<String,String> options() {
+        List<Customer> customers = all();
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        for(Customer c : customers) {
+            options.put(c.id.toString(), c.name);
+        }
+        return options;
+    }
 	
 	public static boolean hasDuplicity(Customer customerToBeCreated) {
         return !validateDuplicity(customerToBeCreated).isEmpty();

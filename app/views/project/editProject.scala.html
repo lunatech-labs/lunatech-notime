@@ -1,0 +1,35 @@
+@(id: Long, projectForm: Form[Project])
+
+@import helper._
+
+@main("Project") {
+	
+	<h1>Project</h1>
+	
+	@if(flash.containsKey("error")) {
+    	<div class="alert-message error">
+            <strong>Oops!</strong> @flash.get("error")
+        </div>
+    }
+    
+    @form(routes.Projects.update(id)) {
+    	
+    	@inputText(projectForm("name"), '_label -> "Name")
+    	
+    	@inputText(projectForm("code"), '_label -> "Code")
+    	
+    	@inputText(projectForm("description"), '_label -> "Description")
+    	
+    	@select(projectForm("type"), options(Project.types), '_label -> "Type")
+
+    	@select(projectForm("customer.id"), options(Customer.options), '_label -> "Customer")
+    	
+    	@inputText(projectForm("customerContact"), '_label -> "Customer contact")
+    	
+    	@select(projectForm("projectManager.id"), options(User.options), '_label -> "Project Manager")
+    	
+    	<input type="submit" value="Submit">
+    	<a href="@routes.Projects.all()">Cancel</a>
+    	
+    }
+}

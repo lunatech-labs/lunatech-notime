@@ -21,5 +21,13 @@ GET		/customer/:id				controllers.Customers.edit(id: Long)
 POST	/customer/:id				controllers.Customers.update(id: Long)
 POST	/customer/:id/delete		controllers.Customers.delete(id: Long)
 
+#Projects
+GET		/projects					controllers.Projects.all()
+GET		/project					controllers.Projects.add()
+POST	/project					controllers.Projects.create()
+GET		/project/:id				controllers.Projects.edit(id: Long)
+POST	/project/:id				controllers.Projects.update(id: Long)
+POST	/project/:id/delete		controllers.Projects.delete(id: Long)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
