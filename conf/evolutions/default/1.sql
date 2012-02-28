@@ -28,6 +28,16 @@ create table project (
   constraint pk_project primary key (id))
 ;
 
+create table project_assignment (
+  id                        bigint not null,
+  project_id                bigint,
+  user_id                   bigint,
+  start_date                timestamp,
+  end_date                  timestamp,
+  hourly_rate               decimal(38,2),
+  constraint pk_project_assignment primary key (id))
+;
+
 create table user (
   id                        bigint not null,
   username                  varchar(255),
@@ -51,12 +61,18 @@ create sequence customer_seq;
 
 create sequence project_seq;
 
+create sequence project_assignment_seq;
+
 create sequence user_seq;
 
 alter table project add constraint fk_project_customer_1 foreign key (customer_id) references customer (id) on delete restrict on update restrict;
 create index ix_project_customer_1 on project (customer_id);
 alter table project add constraint fk_project_projectManager_2 foreign key (project_manager_id) references user (id) on delete restrict on update restrict;
 create index ix_project_projectManager_2 on project (project_manager_id);
+alter table project_assignment add constraint fk_project_assignment_project_3 foreign key (project_id) references project (id) on delete restrict on update restrict;
+create index ix_project_assignment_project_3 on project_assignment (project_id);
+alter table project_assignment add constraint fk_project_assignment_user_4 foreign key (user_id) references user (id) on delete restrict on update restrict;
+create index ix_project_assignment_user_4 on project_assignment (user_id);
 
 
 
@@ -74,6 +90,8 @@ drop table if exists customer_user;
 
 drop table if exists project;
 
+drop table if exists project_assignment;
+
 drop table if exists user;
 
 SET REFERENTIAL_INTEGRITY TRUE;
@@ -81,6 +99,8 @@ SET REFERENTIAL_INTEGRITY TRUE;
 drop sequence if exists customer_seq;
 
 drop sequence if exists project_seq;
+
+drop sequence if exists project_assignment_seq;
 
 drop sequence if exists user_seq;
 

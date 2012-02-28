@@ -1,0 +1,29 @@
+@(projectId: Long, assignmentForm: Form[ProjectAssignment])
+
+@import helper._
+
+@main("Assign project member") {
+
+	<h1>Assign project member</h1>
+	
+	@if(flash.containsKey("error")) {
+    	<div class="alert-message error">
+            <strong>Oops!</strong> @flash.get("error")
+        </div>
+    }
+	
+	@form(routes.ProjectAssignments.create(projectId)) {
+    	
+    	@select(assignmentForm("user.id"), options(User.options), '_label -> "Project member")
+    	
+    	@inputDate(assignmentForm("startDate"))
+    	
+    	@inputDate(assignmentForm("endDate"))
+    	
+    	@inputText(assignmentForm("hourlyRate"))
+	
+		<input type="submit" value="Submit">
+		<a href="@routes.Projects.all()">Cancel</a>
+	  	
+	}
+}

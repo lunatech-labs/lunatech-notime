@@ -29,7 +29,7 @@ users:
 customers:
 
     - !!models.Customer
-        id: 4
+        id: 10
         name: Lunatech
         code: LUNA
         description: Small Company
@@ -38,7 +38,7 @@ customers:
                 id: 1
 
     - !!models.Customer
-        id: 5
+        id: 11
         name: Belastingdienst
         code: BELA
         description: Leuker kunnen we het niet maken, makkelijk wel!
@@ -58,7 +58,7 @@ projects:
         description: Timesheet application
         type: HOURLY_BASED
         customer: !!models.Customer
-                id: 4                
+                id: 10                
         customerContact: Leonard Punt
         projectManager: !!models.User
                 id: 1
@@ -69,6 +69,6 @@ projects:
         description: Vacation
         type: HOURLY_BASED
         customer: !!models.Customer
-                id: 5
+                id: 11
         projectManager: !!models.User
                 id: 2

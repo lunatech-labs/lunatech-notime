@@ -1,6 +1,5 @@
 package controllers;
 
-import models.Customer;
 import models.Project;
 import play.data.Form;
 import play.mvc.Controller;

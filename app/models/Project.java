@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
@@ -41,6 +42,9 @@ public class Project extends Model {
 	@Required
 	public User projectManager;
 	
+	@OneToMany
+	public List<ProjectAssignment> assignments;
+	
 	public enum Type {
 		FIXED_PRICE, HOURLY_BASED
 	}
@@ -48,7 +52,7 @@ public class Project extends Model {
 	public static Finder<Long, Project> find = new Finder<Long, Project>(Long.class, Project.class);
 	
 	public static List<Project> all() {
-		return find.all();
+		return find.findList();
 	}
 	
 	public static List<Project> allExcept(Long id) {
