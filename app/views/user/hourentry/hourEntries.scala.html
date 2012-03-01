@@ -1,0 +1,20 @@
+@(userId: Long, hourEntries: List[HourEntry])
+
+@import helper._
+
+@main("overview") {
+
+	<h1>Overview</h1>
+	
+	<ul>
+		@for(hourEntry <- hourEntries) {
+			<li>@hourEntry.date - @hourEntry.assignment.project.name - @hourEntry.hours:@hourEntry.minutes - 
+				<a href="@routes.HourEntries.edit(userId, hourEntry.id)">Edit</a> - 
+				@form(routes.HourEntries.delete(userId, hourEntry.id)) {
+					<input type="submit" value="Delete">
+				}
+			</li>
+		}
+	</ul>
+
+}

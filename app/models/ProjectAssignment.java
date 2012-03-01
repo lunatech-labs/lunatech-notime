@@ -5,18 +5,23 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 
 import play.data.format.Formats;
-import play.data.validation.Constraints.Pattern;
 import play.data.validation.Constraints.Required;
-import play.db.ebean.Model;
+import play.db.jpa.JPA;
+import util.DateUtil;
 
 @Entity
-public class ProjectAssignment extends Model{
+@SequenceGenerator(name = "projectassignment_seq", sequenceName = "projectassignment_seq")
+public class ProjectAssignment {
 
 	@Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "projectassignment_seq")
 	public Long id;
 	
 	@ManyToOne
@@ -37,15 +42,14 @@ public class ProjectAssignment extends Model{
 	@Column(scale=2)
 	public BigDecimal hourlyRate;
 	
-	public static Finder<Long, ProjectAssignment> find = new Finder<Long, ProjectAssignment>(Long.class, ProjectAssignment.class);
-
 	public static void create(ProjectAssignment assignment, Long projectId) {
 		assignment.project = Project.read(projectId);
-		assignment.save();
+		assignment.endDate = DateUtil.maximizeTimeOfDate(assignment.endDate);
+		JPA.em().persist(assignment);
 	}
 	
 	public static ProjectAssignment read(Long id) {
-		return find.byId(id);		
+		return JPA.em().find(ProjectAssignment.class, id);	
 	}
 	
 	public static void update(Long assignmentId, Long projectId, ProjectAssignment assignmentToBeUpdated) {
@@ -53,17 +57,16 @@ public class ProjectAssignment extends Model{
 		assignment.project = Project.read(projectId);
 		assignment.user = assignmentToBeUpdated.user;
 		assignment.startDate = assignmentToBeUpdated.startDate;
-		assignment.endDate = assignmentToBeUpdated.endDate;
+		assignment.endDate = DateUtil.maximizeTimeOfDate(assignmentToBeUpdated.endDate);
 		assignment.hourlyRate = assignmentToBeUpdated.hourlyRate;
-		System.out.println(assignment.hourlyRate);
-		assignment.update();
+		JPA.em().merge(assignment);
 	}
 	
 	public static void delete(Long id) {
-		read(id).delete();
+		JPA.em().remove(ProjectAssignment.read(id));
 	}
 	
-	public static boolean validDates(ProjectAssignment assignment) {
+	public static boolean hasValidDates(ProjectAssignment assignment) {
 		return validateDates(assignment).isEmpty();
 	}
 	
@@ -72,5 +75,10 @@ public class ProjectAssignment extends Model{
 			return "Start date is after the End date";
 		else
 			return new String();		
+	}
+	
+	public static boolean isDateInAssignmentRange(Date date, Long assignmentId) {
+		ProjectAssignment assignment = ProjectAssignment.read(assignmentId);
+		return DateUtil.between(date, assignment.startDate, assignment.endDate);
 	}
 }

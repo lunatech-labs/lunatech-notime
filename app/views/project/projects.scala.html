@@ -14,7 +14,7 @@
 	  				<ul>
 	  					@for(assignment <- project.assignments) {
 	  						<li>
-	  							<a href="@routes.ProjectAssignments.edit(project.id, assignment.id)">@assignment.user</a> 
+	  							<a href="@routes.ProjectAssignments.edit(project.id, assignment.id)">@assignment.user.fullname</a> 
 	  							
 	  							@form(routes.ProjectAssignments.delete(assignment.id)) {
 	  								<input type="submit" value="Delete">
@@ -23,7 +23,7 @@
 	  					}
 	  				</ul>
 	  			}
-	  			
+	  				  			
 	  			<a href="@routes.ProjectAssignments.create(project.id)">Add project member</a>
 	  			@form(routes.Projects.delete(project.id)) {
 	  				<input type="submit" value="Delete project">

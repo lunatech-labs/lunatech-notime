@@ -1,0 +1,32 @@
+@(userId: Long, entryForm: Form[HourEntry])
+
+@import helper._
+
+@main("Hour entry") {
+
+	<h1>Hour entry</h1>
+	
+	@if(flash.containsKey("error")) {
+    	<div class="alert-message error">
+            <strong>Oops!</strong> @flash.get("error")
+        </div>
+    }
+    
+    @form(routes.HourEntries.create(userId)) {
+    
+    	@select(entryForm("assignment.id"), options(User.assignments(userId)), '_label -> "Project")
+
+		@inputDate(entryForm("date"), '_label -> "Date")
+		
+		@inputText(entryForm("hours"), '_label -> "Hours")
+		
+		@inputText(entryForm("minutes"), '_label -> "Minutes")
+		
+		<input type="text" name="tagsString">
+
+		<input type="submit" value="Submit">
+		<a href="@routes.Users.all()">Cancel</a>
+
+	}
+
+}

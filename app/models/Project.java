@@ -6,17 +6,25 @@ import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
+import play.db.jpa.JPA;
+import views.html.customer.customers;
 
 @Entity
-public class Project extends Model {
+@SequenceGenerator(name = "project_seq", sequenceName = "project_seq")
+public class Project {
 
 	@Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "project_seq")
 	public Long id;
 	
 	@Required
@@ -31,7 +39,7 @@ public class Project extends Model {
 	
 	@Required
 	public Type type;
-	
+		
 	@ManyToOne
 	@Required
 	public Customer customer;
@@ -42,17 +50,15 @@ public class Project extends Model {
 	@Required
 	public User projectManager;
 	
-	@OneToMany
+	@OneToMany(mappedBy="project")
 	public List<ProjectAssignment> assignments;
 	
 	public enum Type {
 		FIXED_PRICE, HOURLY_BASED
 	}
-	
-	public static Finder<Long, Project> find = new Finder<Long, Project>(Long.class, Project.class);
-	
+		
 	public static List<Project> all() {
-		return find.findList();
+		return JPA.em().createQuery("from Project").getResultList();
 	}
 	
 	public static List<Project> allExcept(Long id) {
@@ -62,11 +68,11 @@ public class Project extends Model {
 	}
 	
 	public static void create(Project project) {
-		project.save();
+		JPA.em().persist(project);
 	}
 	
 	public static Project read(Long id) {
-		return find.byId(id);		
+		return JPA.em().find(Project.class, id);
 	}
 	
 	public static void update(Long id, Project projectToBeUpdated) {
@@ -78,11 +84,11 @@ public class Project extends Model {
 		project.customer = projectToBeUpdated.customer;
 		project.customerContact = projectToBeUpdated.customerContact;
 		project.projectManager = projectToBeUpdated.projectManager;
-		project.update();
+		JPA.em().merge(project);
 	}
 	
 	public static void delete(Long id) {
-		read(id).delete();
+		JPA.em().remove(Project.read(id));
 	}
 	
     public static Map<String,String> types() {

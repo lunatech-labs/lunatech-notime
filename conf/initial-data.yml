@@ -29,7 +29,7 @@ users:
 customers:
 
     - !!models.Customer
-        id: 10
+        id: 100
         name: Lunatech
         code: LUNA
         description: Small Company
@@ -38,7 +38,7 @@ customers:
                 id: 1
 
     - !!models.Customer
-        id: 11
+        id: 101
         name: Belastingdienst
         code: BELA
         description: Leuker kunnen we het niet maken, makkelijk wel!
@@ -53,22 +53,49 @@ customers:
 projects:
 
     - !!models.Project
+        id: 6
         name: NoTime
         code: TIME
         description: Timesheet application
         type: HOURLY_BASED
         customer: !!models.Customer
-                id: 10                
+            id: 100                
         customerContact: Leonard Punt
         projectManager: !!models.User
-                id: 1
+            id: 1
 
     - !!models.Project
+        id: 7
         name: Vacation
         code: VAC
         description: Vacation
         type: HOURLY_BASED
         customer: !!models.Customer
-                id: 11
+            id: 101
         projectManager: !!models.User
-                id: 2
+            id: 2
+
+                
+# Assignments
+#
+#projectAssignments:
+#    
+#    - !!models.ProjectAssignment
+#        id: 31
+#        project: !!models.Project
+#            id: 21
+#        user: !!models.User
+#            id: 1
+#        startDate: 2012-02-01
+#        endDate: 2012-09-01
+#        hourlyRate: 10.75
+#        
+#    - !!models.ProjectAssignment
+#        id: 32
+#        project: !!models.Project
+#            id: 22
+#        user: !!models.User
+#            id: 1
+#        startDate: 2012-02-01
+#        endDate: 2012-09-01
+#        hourlyRate: 0

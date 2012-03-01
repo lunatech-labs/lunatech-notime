@@ -7,16 +7,23 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.SequenceGenerator;
 
 import play.data.validation.Constraints.Required;
-import play.db.ebean.Model;
+import play.db.jpa.JPA;
 
 @Entity
-public class Customer extends Model {
+@SequenceGenerator(name = "customer_seq", sequenceName = "customer_seq")
+public class Customer {
 
 	@Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_seq")
 	public Long id;
 	
 	@Required
@@ -29,13 +36,16 @@ public class Customer extends Model {
 	
 	public String description;
 	
-	@ManyToMany(cascade = CascadeType.REMOVE) //REMOVE only removes the lines from the intersection table -> http://www.avaje.org/bugdetail-221.html
+	@ManyToMany
+	@JoinTable(
+		name="customermanager", 
+		joinColumns=@JoinColumn(name="customer_id"), 
+		inverseJoinColumns=@JoinColumn(name="user_id")
+	)
 	public List<User> customerManagers;
-	
-	public static Finder<Long, Customer> find = new Finder<Long, Customer>(Long.class, Customer.class);
-	
+		
 	public static List<Customer> all() {
-		return find.all();
+		return JPA.em().createQuery("from Customer").getResultList();
 	}
 	
 	public static List<Customer> allExcept(Long id) {
@@ -45,30 +55,24 @@ public class Customer extends Model {
 	}
 	
 	public static void create(Customer customer) {
-		customer.save();
-		customer.saveManyToManyAssociations("customerManagers");
+		JPA.em().persist(customer);
 	}
 	
 	public static Customer read(Long id) {
-		return find.byId(id);		
+		return JPA.em().find(Customer.class, id);
 	}
 	
 	public static void update(Long id, Customer customerToBeUpdated) {
 		Customer customer = read(id);
 		customer.name = customerToBeUpdated.name;
 		customer.code = customerToBeUpdated.code;
-		customer.description = customerToBeUpdated.description;
-		
-		customer.customerManagers.size(); //Workaround: http://groups.google.com/group/ebean/msg/51cd9fabb338fa52
-		customer.customerManagers.clear();
-		customer.customerManagers.addAll(customerToBeUpdated.customerManagers);
-		
-		customer.update();
-		customer.saveManyToManyAssociations("customerManagers");
+		customer.description = customerToBeUpdated.description;		
+		customer.customerManagers = customerToBeUpdated.customerManagers;		
+		JPA.em().merge(customer);
 	}
 	
 	public static void delete(Long id) {
-		read(id).delete();
+		JPA.em().remove(Customer.read(id));
 	}
 	
     public static Map<String,String> options() {

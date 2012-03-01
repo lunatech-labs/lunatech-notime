@@ -1,23 +1,31 @@
 package models;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 
 import org.mindrot.jbcrypt.BCrypt;
 
 import play.data.validation.Constraints.Email;
 import play.data.validation.Constraints.Required;
-import play.db.ebean.Model;
+import play.db.jpa.JPA;
+import util.DateUtil;
 
 @Entity
-public class User extends Model {
+@SequenceGenerator(name = "user_seq", sequenceName = "user_seq")
+public class User {
 	
 	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
 	public Long id;
 	
     @Required
@@ -39,10 +47,11 @@ public class User extends Model {
 
     public boolean admin;
     
-    public static Finder<Long, User> find = new Finder<Long, User>(Long.class, User.class);
+    @OneToMany(mappedBy="user")
+	public List<ProjectAssignment> assignments;
     
     public static List<User> all() {
-    	return find.all();
+    	return JPA.em().createQuery("from User").getResultList();
     }
 
     public static List<User> allExcept(Long id) {
@@ -53,11 +62,11 @@ public class User extends Model {
 
     public static void create(User user) {
     	user.password = BCrypt.hashpw(user.password, BCrypt.gensalt());
-        user.save();
+        JPA.em().persist(user);
     }
 
     public static User read(Long id) {
-        return find.byId(id);
+        return JPA.em().find(User.class, id);
     }
     
     public static void update(Long id, User userToBeUpdated) {
@@ -69,11 +78,11 @@ public class User extends Model {
     	user.email = userToBeUpdated.email;
     	user.admin = userToBeUpdated.admin;
     	user.employee = userToBeUpdated.employee;
-        user.update();        
+        JPA.em().merge(user);  
     }
 
     public static void delete(Long id) {
-        read(id).delete();
+        JPA.em().remove(User.read(id));
     }
     
     public static Map<String,String> options() {
@@ -81,6 +90,17 @@ public class User extends Model {
         LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
         for(User u: users) {
             options.put(u.id.toString(), u.fullname);
+        }
+        return options;
+    }
+    
+    public static Map<String,String> assignments(Long userId) {
+        List<ProjectAssignment> assignments = read(userId).assignments;
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        
+        for(ProjectAssignment assignment: assignments) {
+        	if(ProjectAssignment.isDateInAssignmentRange(new Date(), assignment.id))
+        		options.put(assignment.id.toString(), assignment.project.name.toString());
         }
         return options;
     }
