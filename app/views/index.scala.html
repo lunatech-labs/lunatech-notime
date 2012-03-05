@@ -1,5 +1,8 @@
-@(message: String)
+@main("Welcome") { } {
 
-@main("NoTime") {
-    <h1>Welcome!</h1>
+	<ul>
+		<li><a href="@routes.Application.admin()">Admin</a></li>
+		<li><a href="@routes.Users.read(1)">Test user</a></li>
+	</ul>
+
 }

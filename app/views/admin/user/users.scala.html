@@ -1,0 +1,29 @@
+@(users: List[User])
+
+@import helper._
+@import tags._
+
+@main("Users") {
+	
+	@if(users.isEmpty) {
+    	<div class="alert-message warning">
+            No users!
+        </div>
+	} else {
+		<ul>
+			@for(user <- users) {
+				<li>
+					<a href="@routes.Users.edit(user.id)">@user.fullname</a>
+					
+					@form(routes.Users.delete(user.id)) {
+						<input type="submit" value="Delete">
+					}	
+				</li>
+			}	
+		</ul>
+	}
+	<a href="@routes.Users.add()" class="button add">Add User</a>
+	
+} {
+	@sidebar.adminMenu()
+}

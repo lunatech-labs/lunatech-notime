@@ -1,6 +1,7 @@
-@(customerForm: Form[Customer])
+@(id: Long, customerForm: Form[Customer])
 
 @import helper._
+@import helper.twitterBootstrap._
 
 @customerManagerField(field: Field, className: String = "manager") = {
 	@input(field, '_label -> "Customer manager", '_class -> className) { (id, name, value, _) =>
@@ -13,30 +14,33 @@
 	}
 }
 
-@main("Customer") {
-
-	<h1>Customer</h1>
+@main("Edit customer") {
 	
 	@if(flash.containsKey("error")) {
     	<div class="alert-message error">
             <strong>Oops!</strong> @flash.get("error")
         </div>
-    }
+    } 
 	
-	@form(routes.Customers.create(), 'id -> "form") {
+	@form(routes.Customers.update(id), 'id -> "form") {
 		
 		@inputText(customerForm("name"), '_label -> "Name")
 		
 		@inputText(customerForm("code"), '_label -> "Code")
 		
-		@textarea(customerForm("description"), args = '_text -> "Description", 'rows -> 3, 'cols -> 50)
+		@textarea(customerForm("description"), args = '_label -> "Description", 'rows -> 3, 'cols -> 50)
 		
 		<div class="managers">
+		
+			@repeat(customerForm("customerManagers"), min = 0) { customerManager => 
+				@customerManagerField(customerManager("id"))
+            }
 			
 			@**
              * Keep an hidden block that will be used as template for Javascript copy code
              **@
 			@customerManagerField(customerForm("customerManagers[x].id"), className = "manager_template")
+             
 	
 			<div class="clearfix">
 				<div class="input">
@@ -76,4 +80,6 @@
         }
         
     </script>
+} {
+	@sidebar.adminMenu()
 }

@@ -5,6 +5,9 @@
 # Home page
 GET     /                           controllers.Application.index()
 
+#Admin
+GET		/admin						controllers.Application.admin()
+
 # Users
 GET		/users						controllers.Users.all()
 GET		/user						controllers.Users.add()

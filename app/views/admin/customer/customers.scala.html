@@ -1,0 +1,29 @@
+@(customers: List[Customer])
+
+@import helper._
+
+@main("Customers") {
+	
+	@if(customers.isEmpty) {
+	    <div class="alert-message warning">
+            No customers!
+        </div>
+	} else {
+		<ul>
+			@for(customer <- customers) {
+				<li>
+					<a href="@routes.Customers.edit(customer.id)">@customer.name</a>
+				
+					@form(routes.Customers.delete(customer.id)) {
+						<input type="submit" value="Delete">
+					}	
+				</li>
+			}
+		</ul>
+	}
+	
+	<a href="@routes.Customers.add()" class="button add">Add Customer</a>
+
+} {
+	@sidebar.adminMenu()
+}

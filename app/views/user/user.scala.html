@@ -1,9 +1,7 @@
 @(user: User)
 
 @main(user.fullname) {
-
-	<h1>@user.fullname</h1>
-	
-	<a href="@routes.HourEntries.add(user.id)">Enter hours</a>
-	<a href="@routes.HourEntries.allFor(user.id)">Overview</a>
+	<p>Hello @user.fullname!</p>
+} {
+	@sidebar.userMenu(user.id)
 }

@@ -1,10 +1,9 @@
-@(id: Long, projectForm: Form[Project])
+@(projectForm: Form[Project])
 
 @import helper._
+@import helper.twitterBootstrap._
 
 @main("Project") {
-	
-	<h1>Project</h1>
 	
 	@if(flash.containsKey("error")) {
     	<div class="alert-message error">
@@ -12,7 +11,7 @@
         </div>
     }
     
-    @form(routes.Projects.update(id)) {
+    @form(routes.Projects.create()) {
     	
     	@inputText(projectForm("name"), '_label -> "Name")
     	
@@ -32,4 +31,6 @@
     	<a href="@routes.Projects.all()">Cancel</a>
     	
     }
+} {
+	@sidebar.adminMenu()
 }

@@ -11,11 +11,106 @@
     
     // YOUR MAIN PROJECT STYLES
     
+    body {
+    	background-color:  @grey0;
+    	color: @text-color;
+    }
+      
+    .site {
+    	margin: 2em auto;
+    	max-width: @max-width;    	
+    }
+	
+	.site > header, .site > footer {
+    	clear:both;
+    }
+    
+	.site > section {
+		margin-bottom: 1em;
+		padding: 1em 0 1em 1em;
+   		float: left;
+    	width: 66.66%;
+    	overflow: hidden;
+    	background-color: @light-color;
+    	border: 1px solid @grey1;
+    	.box-shadow(2px, 2px, 2px);
+		.rounded-corners-top();    	
+    }
+    
+	.site > aside {
+		margin-bottom: 1em;
+		padding: 1em 0 1em 1em;
+    	float: right;
+    	width: 30%;
+    	overflow: hidden;
+    	.gradient(@grey1,@grey2);
+       	border: 1px solid @grey1;
+    	.rounded-corners-top();    	  	
+    }
+    
+    .site > footer {
+       	text-align: right;
+       	color: @grey5;
+    }
+    
+    // HEADER
+    h1 a, h1 a:visited {
+    	color: @text-color;
+    }   
+    
+    h5 {
+    	color: @grey5;
+    }    
+    
+    // SECTION
+    
+    ul li {
+    	list-style-type: none;
+
+    }
+    
+    ul li a {
+    	padding-top: 6px;
+  		font-size: 13px;
+  		line-height: 18px;
+  		float: left;
+  		width: 200px;
+    }
+    
+    ul li form {
+    	margin-bottom: 0;
+    }
+    
     .manager_template {
     	display: none;
     }
     
-    dd {
-    	display: block;
+    .alert-message {
+    	width: 400px;
+    	margin: 1em;
+    	padding: 3px 0 3px 1em;
+    	.rounded-corners();
     }
+    
+    .alert-message.warning {    	
+    	background-color: @yellow1;
+    }
+    
+    .alert-message.error {    	
+    	background-color: @red2;
+    	color: @light-color;
+    }
+    
+    .button.add, button.add:visited {
+       	background-color: @blue2;
+    	color: @light-color;
+    	padding: 3px 1em 3px 1em;
+    	.rounded-corners();
+    }
+    
+    // SIDEBAR
+    .sidebar ul li {
+    	list-style-type: none;
+    }
+    
         

@@ -1,6 +1,7 @@
 @(userId: Long, entryId: Long, entryForm: Form[HourEntry])
 
 @import helper._
+@import helper.twitterBootstrap._
 
 @main("Hour entry") {
 
@@ -22,13 +23,19 @@
 		
 		@inputText(entryForm("minutes"), '_label -> "Minutes")
 		
-		
-		<input type="text" name="tagsString" value="@HourEntry.read(entryId).tagsString">
+		<div class="clearfix" id="tags_string_field">
+			<label for="tags_string">Tags</label>
+			<div class="input">
+				<input type="text" name="tagsString" value="@HourEntry.read(entryId).tagsString">
+			</div>
+		</div>
 
 
 		<input type="submit" value="Submit">
-		<a href="@routes.Users.all()">Cancel</a>
+		<a href="@routes.Users.read(userId)">Cancel</a>
 
 	}
+
+} {
 
 }

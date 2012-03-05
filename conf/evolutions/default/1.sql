@@ -1,147 +1,31 @@
-# --- Created by Ebean DDL
-# To stop Ebean DDL generation, remove this comment and start using Evolutions
+# --- Sample dataset
 
 # --- !Ups
 
-create table customer (
-  id                        bigint not null,
-  name                      varchar(255),
-  code                      varchar(255),
-  description               varchar(255),
-  constraint uq_customer_name unique (name),
-  constraint uq_customer_code unique (code),
-  constraint pk_customer primary key (id))
-;
+insert into user (id, username, password, fullname, email, employee, admin) values (1, 'leonard', 'secret', 'Leonard Punt', 'leonard@test.nl', 0, 0);
+insert into user (id, username, password, fullname, email, employee, admin) values (2, 'gerrit', 'secret', 'Gerrit Foo', 'foo@test.nl', 0, 0);
+insert into user (id, username, password, fullname, email, employee, admin) values (3, 'kees', 'secret', 'Kees Bar', 'bar@test.nl', 0, 0);
+insert into user (id, username, password, fullname, email, employee, admin) values (4, 'klaas', 'secret', 'Klaas Bar', 'klaas@test.nl', 0, 0);
+insert into user (id, username, password, fullname, email, employee, admin) values (5, 'piet', 'secret', 'Piet Foo', 'piet@test.nl', 0, 0);
 
-create table hourentry (
-  id                        bigint not null,
-  assignment_id             bigint,
-  date                      timestamp,
-  hours                     integer,
-  minutes                   integer,
-  constraint pk_hourentry primary key (id))
-;
+insert into customer (id, name, code, description) values (1, 'Lunatech', 'LUNA', '');
+insert into customer (id, name, code, description) values (2, 'Belastingdienst', 'BEL', 'Leuker kunnen we het niet maken, wel makkelijker..');
+insert into customer (id, name, code, description) values (3, 'Albert Heijn', 'AH', '');
+insert into customer (id, name, code, description) values (4, 'Rabobank', 'RABO', '');
 
-create table project (
-  id                        bigint not null,
-  name                      varchar(255),
-  code                      varchar(255),
-  description               varchar(255),
-  type                      integer,
-  customer_id               bigint,
-  customer_contact          varchar(255),
-  project_manager_id        bigint,
-  constraint ck_project_type check (type in (0,1)),
-  constraint uq_project_name unique (name),
-  constraint uq_project_code unique (code),
-  constraint pk_project primary key (id))
-;
+insert into project (id, name, code, description, type, customer_id, customercontact, projectmanager_id) values (1, 'NoTime', 'TIME', 'Timesheet application for Lunatech', 0, 1, 'Leonard Punt', 1);
+insert into project (id, name, code, description, type, customer_id, customercontact, projectmanager_id) values (2, 'My2Cents', 'MY2C', '', 1, 2, '', 5);
+insert into project (id, name, code, description, type, customer_id, customercontact, projectmanager_id) values (3, 'Appie', 'APP', '', 0, 3, '', 4);
+insert into project (id, name, code, description, type, customer_id, customercontact, projectmanager_id) values (4, 'LOSS Timesheet', 'LOSS', '', 0, 1, '', 2);
 
-create table projectassignment (
-  id                        bigint not null,
-  project_id                bigint,
-  user_id                   bigint,
-  start_date                timestamp,
-  end_date                  timestamp,
-  hourly_rate               decimal(38,2),
-  constraint pk_projectassignment primary key (id))
-;
-
-create table tag (
-  id                        bigint not null,
-  tag                       varchar(255),
-  constraint pk_tag primary key (id))
-;
-
-create table user (
-  id                        bigint not null,
-  username                  varchar(255),
-  password                  varchar(255),
-  fullname                  varchar(255),
-  email                     varchar(255),
-  employee                  boolean,
-  admin                     boolean,
-  constraint uq_user_username unique (username),
-  constraint uq_user_email unique (email),
-  constraint pk_user primary key (id))
-;
-
-
-create table customer_user (
-  customer_id                    bigint not null,
-  user_id                        bigint not null,
-  constraint pk_customer_user primary key (customer_id, user_id))
-;
-
-create table hour_entry_tag (
-  hourentry_id                  bigint not null,
-  tag_id                         bigint not null,
-  constraint pk_hourentry_tag primary key (hourentry_id, tag_id))
-;
-create sequence customer_seq;
-
-create sequence hourentry_seq;
-
-create sequence project_seq;
-
-create sequence projectassignment_seq;
-
-create sequence tag_seq;
-
-create sequence user_seq;
-
-alter table hourentry add constraint fk_hourentry_assignment_1 foreign key (assignment_id) references projectassignment (id) on delete restrict on update restrict;
-create index ix_hourentry_assignment_1 on hourentry (assignment_id);
-alter table project add constraint fk_project_customer_2 foreign key (customer_id) references customer (id) on delete restrict on update restrict;
-create index ix_project_customer_2 on project (customer_id);
-alter table project add constraint fk_project_projectManager_3 foreign key (project_manager_id) references user (id) on delete restrict on update restrict;
-create index ix_project_projectManager_3 on project (project_manager_id);
-alter table projectassignment add constraint fk_projectassignment_project_4 foreign key (project_id) references project (id) on delete restrict on update restrict;
-create index ix_projectassignment_project_4 on projectassignment (project_id);
-alter table projectassignment add constraint fk_projectassignment_user_5 foreign key (user_id) references user (id) on delete restrict on update restrict;
-create index ix_projectassignment_user_5 on projectassignment (user_id);
-
-
-
-alter table customer_user add constraint fk_customer_user_customer_01 foreign key (customer_id) references customer (id) on delete restrict on update restrict;
-
-alter table customer_user add constraint fk_customer_user_user_02 foreign key (user_id) references user (id) on delete restrict on update restrict;
-
-alter table hour_entry_tag add constraint fk_hour_entry_tag_hour_entry_01 foreign key (hourentry_id) references hourentry (id) on delete restrict on update restrict;
-
-alter table hour_entry_tag add constraint fk_hour_entry_tag_tag_02 foreign key (tag_id) references tag (id) on delete restrict on update restrict;
+insert into projectassignment (id, project_id, user_id, startdate, enddate, hourlyrate) values (1, 1, 1, '2012-02-01 00:00:00.0', '2012-03-30 23:59:59.999', '35.50');
+insert into projectassignment (id, project_id, user_id, startdate, enddate, hourlyrate) values (2, 1, 3, '2012-02-01 00:00:00.0', '2012-03-30 23:59:59.999', '47.50');
+insert into projectassignment (id, project_id, user_id, startdate, enddate, hourlyrate) values (3, 1, 4, '2012-02-01 00:00:00.0', '2012-03-30 23:59:59.999', '56.45');
+insert into projectassignment (id, project_id, user_id, startdate, enddate, hourlyrate) values (4, 3, 1, '2012-02-01 00:00:00.0', '2012-03-30 23:59:59.999', '54.50');
 
 # --- !Downs
 
-SET REFERENTIAL_INTEGRITY FALSE;
-
-drop table if exists customer;
-
-drop table if exists customer_user;
-
-drop table if exists hourentry;
-
-drop table if exists hour_entry_tag;
-
-drop table if exists project;
-
-drop table if exists projectassignment;
-
-drop table if exists tag;
-
-drop table if exists user;
-
-SET REFERENTIAL_INTEGRITY TRUE;
-
-drop sequence if exists customer_seq;
-
-drop sequence if exists hourentry_seq;
-
-drop sequence if exists project_seq;
-
-drop sequence if exists projectassignment_seq;
-
-drop sequence if exists tag_seq;
-
-drop sequence if exists user_seq;
-
+delete from projectassignment;
+delete from project;
+delete from customer;
+delete from user;

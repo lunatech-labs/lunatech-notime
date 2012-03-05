@@ -1,10 +1,9 @@
 @(userForm: Form[User])
 
 @import helper._
+@import helper.twitterBootstrap._
 
-@main("User") {
-	
-	<h1>User</h1>
+@main("Create user") {
 	
 	@if(flash.containsKey("error")) {
     	<div class="alert-message error">
@@ -30,4 +29,6 @@
 		<a href="@routes.Users.all()">Cancel</a>
 
 	}
+} {
+	@sidebar.adminMenu()
 }

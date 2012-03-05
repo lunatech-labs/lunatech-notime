@@ -5,18 +5,21 @@ import play.data.Form;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
+import views.html.admin.customer.createCustomer;
+import views.html.admin.customer.customers;
+import views.html.admin.customer.editCustomer;
 
 public class Customers extends Controller {
 	
 	@Transactional(readOnly=true)
 	public static Result all() {
-		return ok(views.html.customer.customers.render(Customer.all()));
+		return ok(customers.render(Customer.all()));
 	}
 	
 	@Transactional(readOnly=true)
 	public static Result add() {
 		Form<Customer> newForm = form(Customer.class);
-		return ok(views.html.customer.createCustomer.render(newForm));
+		return ok(createCustomer.render(newForm));
 	}
 	
 	@Transactional
@@ -24,13 +27,13 @@ public class Customers extends Controller {
 		Form<Customer> filledForm = form(Customer.class).bindFromRequest();
 				
 		if(filledForm.hasErrors())
-			return badRequest(views.html.customer.createCustomer.render(filledForm));
+			return badRequest(createCustomer.render(filledForm));
 		
 		Customer customerToBeCreated = filledForm.get();
 		
 		if(Customer.hasDuplicity(customerToBeCreated)) {
 			flash("error", Customer.validateDuplicity(customerToBeCreated));
-			return badRequest(views.html.customer.createCustomer.render(filledForm));
+			return badRequest(createCustomer.render(filledForm));
 		}
 		
 		Customer.create(customerToBeCreated);
@@ -40,7 +43,7 @@ public class Customers extends Controller {
 	@Transactional(readOnly=true)
 	public static Result edit(Long id) {
 		Form<Customer> filledForm = form(Customer.class).fill(Customer.read(id));
-		return ok(views.html.customer.editCustomer.render(id, filledForm));
+		return ok(editCustomer.render(id, filledForm));
 	}
 	
 	@Transactional
@@ -48,13 +51,13 @@ public class Customers extends Controller {
 		Form<Customer> filledForm = form(Customer.class).bindFromRequest();
 			
 		if(filledForm.hasErrors())
-			return badRequest(views.html.customer.editCustomer.render(id, filledForm));
+			return badRequest(editCustomer.render(id, filledForm));
 		
 		Customer customerToBeUpdated = filledForm.get();
 		
 		if(Customer.hasDuplicity(id, customerToBeUpdated)) {
 			flash("error", Customer.validateDuplicity(id, customerToBeUpdated));
-			return badRequest(views.html.customer.editCustomer.render(id, filledForm));
+			return badRequest(editCustomer.render(id, filledForm));
 		}
 		
 		Customer.update(id, customerToBeUpdated);
