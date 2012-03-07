@@ -1,9 +1,12 @@
 package util;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
 
 public class DateUtil {
 	
@@ -20,6 +23,20 @@ public class DateUtil {
 	
 	public static boolean between(Date dateToCheck, Date beginDate, Date endDate) {		
 		return dateToCheck.after(beginDate) && dateToCheck.before(maximizeTimeOfDate(endDate));
+	}
+	
+	public static int currentWeekNumber() {
+		return new DateTime().getWeekOfWeekyear();
+	}
+	
+	public static DateTime firstDateOfWeek(DateTime date) {
+		LocalDate now = date.toLocalDate();
+		return now.withDayOfWeek(DateTimeConstants.MONDAY).toDateTimeAtStartOfDay();
+	}
+	
+	public static DateTime lastDateOfWeek(DateTime date) {
+		LocalDate now = date.toLocalDate();
+		return now.withDayOfWeek(DateTimeConstants.SUNDAY).toDateTimeAtStartOfDay();
 	}
 
 }

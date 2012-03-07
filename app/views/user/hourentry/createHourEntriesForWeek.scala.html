@@ -1,0 +1,18 @@
+@(userId: Long)
+
+@import helper._
+@import helper.twitterBootstrap._
+
+@main("Enter hours per week") {
+	
+	@if(flash.containsKey("error")) {
+    	<div class="alert-message error">
+            <strong>Oops!</strong> @flash.get("error")
+        </div>
+    }
+    
+    
+
+} {
+	@sidebar.userMenu(userId)
+}

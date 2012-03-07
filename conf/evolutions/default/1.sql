@@ -23,8 +23,22 @@ insert into projectassignment (id, project_id, user_id, startdate, enddate, hour
 insert into projectassignment (id, project_id, user_id, startdate, enddate, hourlyrate) values (3, 1, 4, '2012-02-01 00:00:00.0', '2012-03-30 23:59:59.999', '56.45');
 insert into projectassignment (id, project_id, user_id, startdate, enddate, hourlyrate) values (4, 3, 1, '2012-02-01 00:00:00.0', '2012-03-30 23:59:59.999', '54.50');
 
+insert into hourentry (id, assignment_id, date, hours, minutes) values (1, 1, '2012-03-05 00:00:00.0', 7, 40);
+insert into hourentry (id, assignment_id, date, hours, minutes) values (2, 1, '2012-03-06 00:00:00.0', 8, 0);
+insert into hourentry (id, assignment_id, date, hours, minutes) values (3, 1, '2012-03-07 00:00:00.0', 0, 0);
+insert into hourentry (id, assignment_id, date, hours, minutes) values (4, 1, '2012-03-08 00:00:00.0', 5, 30);
+insert into hourentry (id, assignment_id, date, hours, minutes) values (5, 1, '2012-03-09 00:00:00.0', 8, 0);
+insert into hourentry (id, assignment_id, date, hours, minutes) values (6, 1, '2012-03-10 00:00:00.0', 0, 0);
+insert into hourentry (id, assignment_id, date, hours, minutes) values (7, 1, '2012-03-11 00:00:00.0', 0, 0);
+insert into hourentry (id, assignment_id, date, hours, minutes) values (8, 4, '2012-03-05 00:00:00.0', 0, 40);
+insert into hourentry (id, assignment_id, date, hours, minutes) values (9, 2, '2012-03-07 00:00:00.0', 3, 50);
+insert into hourentry (id, assignment_id, date, hours, minutes) values (10, 3, '2012-03-08 00:00:00.0', 8, 30);
+insert into hourentry (id, assignment_id, date, hours, minutes) values (11, 4, '2012-03-08 00:00:00.0', 2, 10);
+
+
 # --- !Downs
 
+delete from hourentry;
 delete from projectassignment;
 delete from project;
 delete from customer;

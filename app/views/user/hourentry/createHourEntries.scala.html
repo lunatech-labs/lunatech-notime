@@ -1,0 +1,63 @@
+@(userId: Long, entriesForm: Form[util.form.binding.HourEntriesBinder], indices: List[Integer])
+
+@import helper._
+@import helper.twitterBootstrap._
+
+@entry(form: Form[util.form.binding.HourEntriesBinder], index: Integer, className: String = "entry") = {
+	<div class="@className">
+		@select(form("hourEntries[" + index + "].assignment.id"), options(User.assignments(userId)), '_label -> "Project")
+
+		@inputDate(form("hourEntries[" + index + "].date"), '_label -> "Date")
+		
+		@inputText(form("hourEntries[" + index + "].hours"), '_label -> "Hours")
+		
+		@inputText(form("hourEntries[" + index + "].minutes"), '_label -> "Minutes")
+		
+		<div class="clearfix" id="tags_string_field">
+			<label for="tags_string">Tags</label>
+			<div class="input">
+				<input type="text" name="hourEntries[" + index + "].tagsString">
+			</div>
+		</div>
+		<a class="removeEntry btn danger">Remove</a>
+    </div>
+}
+
+@main("Enter hours") {
+	
+	@if(flash.containsKey("error")) {
+    	<div class="alert-message error">
+            <strong>Oops!</strong> @flash.get("error")
+        </div>
+    }
+    
+    @form(routes.HourEntries.createMultiple(userId)) {   
+    
+    	<div class="entries">
+			@entry(entriesForm, -1, "entry_template")
+    	    @for(index <- indices) {
+    	    	@entry(entriesForm, index)
+    	    }
+    	</div>
+    	
+		<input type="submit" value="Submit">
+		<a href="@routes.Users.read(userId)">Cancel</a>
+
+	}
+	
+	<script type="text/javascript" charset="utf-8">
+        
+        $('.removeEntry').live('click', function(e) {
+            var manager = $(this).parents('.entries')
+            $(this).parents('.entry').remove()
+        })
+        
+        $('.addEntry').live('click', function(e) {
+            var manager = $(this).parents('.entries')
+        })
+        
+    </script>
+
+} {
+	@sidebar.userMenu(userId)
+}

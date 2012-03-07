@@ -47,6 +47,11 @@ POST	/user/:id/hourentry					controllers.HourEntries.create(id: Long)
 GET		/user/:uId/hourentry/:eId/edit		controllers.HourEntries.edit(uId: Long, eId: Long)
 POST	/user/:uId/hourentry/:eId			controllers.HourEntries.update(uId: Long, eId: Long)
 POST	/user/:uId/hourentry/:eId/delete	controllers.HourEntries.delete(uId: Long, eId: Long)
+GET		/user/:id/hourentries/multiple		controllers.HourEntries.addMultiple(id: Long)
+POST	/user/:id/hourentries/multiple		controllers.HourEntries.createMultiple(id: Long)
+
+
+GET		/user/:id/hourentries/week			controllers.HourEntries.addForWeek(id: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

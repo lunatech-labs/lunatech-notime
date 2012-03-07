@@ -9,15 +9,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
 import play.data.validation.Constraints.Required;
-import play.db.ebean.Model;
 import play.db.jpa.JPA;
-import views.html.customer.customers;
 
 @Entity
 @SequenceGenerator(name = "project_seq", sequenceName = "project_seq")
