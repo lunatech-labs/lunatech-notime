@@ -16,7 +16,6 @@ public class Transformers {
 
 		@Override
 		public Integer apply(String input) {
-			System.out.println(input);
 			Pattern numberBetweenSquareBrackets = Pattern.compile("\\[(\\d+)\\]");
 			Matcher m = numberBetweenSquareBrackets.matcher(input);
 			m.find(1);

@@ -18,7 +18,7 @@ import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
 import util.Transformers;
-import util.form.binding.HourEntriesBinder;
+import util.form.binding.HourEntriesList;
 import views.html.user.hourentry.createHourEntries;
 import views.html.user.hourentry.createHourEntriesForWeek;
 import views.html.user.hourentry.createHourEntry;
@@ -40,7 +40,7 @@ public class HourEntries extends Controller {
 
 	@Transactional(readOnly = true)
 	public static Result addMultiple(Long userId) {
-		Form<HourEntriesBinder> newForm = form(HourEntriesBinder.class);
+		Form<HourEntriesList> newForm = form(HourEntriesList.class);
 		List<Integer> indices = new ArrayList<Integer>();
 		indices.add(0);
 		return ok(createHourEntries.render(userId, newForm, indices));
@@ -99,7 +99,7 @@ public class HourEntries extends Controller {
 
 	@Transactional
 	public static Result createMultiple(Long userId) {
-		Form<HourEntriesBinder> filledForm = form(HourEntriesBinder.class)
+		Form<HourEntriesList> filledForm = form(HourEntriesList.class)
 				.bindFromRequest();
 
 		Set<String> keys = filledForm.data().keySet();
@@ -113,13 +113,11 @@ public class HourEntries extends Controller {
 			return badRequest(createHourEntries.render(userId, filledForm,
 					new ArrayList<Integer>(uniqueIndices)));
 
-		HourEntriesBinder entries = filledForm.get();
-		for (HourEntry entry : entries.hourEntries) {
-			// Because an item in the middle of the list can be deleted and Play
-			// binds an empty HourEntry to that position, these need to be
-			// skipped
-			if (entry.assignment != null)
-				HourEntry.create(entry, new String());
+		HourEntriesList entries = filledForm.get();
+		for (int i = 0; i < entries.hourEntries.size(); i++) {
+			String tagsString = filledForm.field(
+					"hourEntries[" + i + "].tagsString").value();
+			HourEntry.create(entries.hourEntries.get(i), tagsString);
 		}
 
 		return redirect(routes.HourEntries.allFor(userId));

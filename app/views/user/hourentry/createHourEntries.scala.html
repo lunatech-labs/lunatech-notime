@@ -1,9 +1,9 @@
-@(userId: Long, entriesForm: Form[util.form.binding.HourEntriesBinder], indices: List[Integer])
+@(userId: Long, entriesForm: Form[util.form.binding.HourEntriesList], indices: List[Integer])
 
 @import helper._
 @import helper.twitterBootstrap._
 
-@entry(form: Form[util.form.binding.HourEntriesBinder], index: Integer, className: String = "entry") = {
+@entry(form: Form[util.form.binding.HourEntriesList], index: Integer, className: String = "entry") = {
 	<div class="@className">
 		@select(form("hourEntries[" + index + "].assignment.id"), options(User.assignments(userId)), '_label -> "Project")
 
@@ -16,7 +16,7 @@
 		<div class="clearfix" id="tags_string_field">
 			<label for="tags_string">Tags</label>
 			<div class="input">
-				<input type="text" name="hourEntries[@index].tagsString">
+				<input type="text" name="hourEntries[@index].tagsString" value="@entriesForm.data.get("hourEntries[" + index + "].tagsString")">
 			</div>
 		</div>
 		<div class="input">
@@ -26,12 +26,14 @@
 }
 
 @main("Enter hours") {
+
+	@entriesForm.data.get("hourEntries[0].tagsString")
 	
 	@if(flash.containsKey("error")) {
     	<div class="alert-message error">
             <strong>Oops!</strong> @flash.get("error")
         </div>
-    }
+    }    
     
     @form(routes.HourEntries.createMultiple(userId), 'id -> "form") {   
     
@@ -54,29 +56,30 @@
 	
 	<script type="text/javascript" charset="utf-8">
 	
-		var nextIndex = @indices.last + 1
-        
         $('.removeEntry').live('click', function(e) {
+            var entries = $(this).parents('.entries')
             $(this).parents('.entry').remove()
+            renumber(entries)
         })
         
         $('.addEntry').live('click', function(e) {
-            var entry = $(this).parents('.entries')
-            var template = $('.entry_template', entry)
+            var entries = $(this).parents('.entries')
+            var template = $('.entry_template', entries)
             template.before('<div class="entry">' + template.html() + '</div>')
-            renumber(entry)
+            renumber(entries)
         })
         
         $('#form').submit(function() {
             $('.entry_template').remove()
         })
         
-        var renumber = function(manager) {
-			$('.entry:last input, .entry:last select', manager).each(function() {
-				$(this).attr('name', $(this).attr('name').replace(/hourEntries\[.+\]/g, 'hourEntries[' + nextIndex + ']'))
+        var renumber = function(entries) {
+			$('.entry', entries).each(function(i) {
+				$('input, select', this).each(function() {
+					$(this).attr('name', $(this).attr('name').replace(/hourEntries\[.+\]/g, 'hourEntries[' + i + ']'))	
+				})
 			})
-			nextIndex++
-        }
+		}
         
     </script>
 

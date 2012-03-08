@@ -22,8 +22,7 @@ import org.hibernate.annotations.Type;
 
 import play.data.format.Formats;
 import play.data.format.Formatters;
-import play.data.validation.Constraints.Max;
-import play.data.validation.Constraints.Required;
+import play.data.validation.Constraints;
 import play.db.jpa.JPA;
 
 @Entity
@@ -37,18 +36,18 @@ public class HourEntry {
 	@ManyToOne
 	public ProjectAssignment assignment;
 
-	@Required
+	@Constraints.Required
 	@Formats.DateTime(pattern = "dd-MM-yyyy")
     @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
 	public DateTime date;
 
-	@Required
-	@Max(23)
-	public int hours;
+	@Constraints.Required
+	@Constraints.Max(23)
+	public Integer hours;
 
-	@Required
-	@Max(59)
-	public int minutes;
+	@Constraints.Required
+	@Constraints.Max(59)
+	public Integer minutes;
 
 	@ManyToMany
 	@JoinTable(name = "hourentry_tag", joinColumns = @JoinColumn(name = "hourentry_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
