@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
+import org.joda.time.DateTime;
 import org.mindrot.jbcrypt.BCrypt;
 
 import play.data.validation.Constraints.Email;
@@ -99,7 +100,7 @@ public class User {
         LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
         
         for(ProjectAssignment assignment: assignments) {
-        	if(ProjectAssignment.isDateInAssignmentRange(new Date(), assignment.id))
+        	if(ProjectAssignment.isDateInAssignmentRange(new DateTime(), assignment.id))
         		options.put(assignment.id.toString(), assignment.project.name.toString());
         }
         return options;

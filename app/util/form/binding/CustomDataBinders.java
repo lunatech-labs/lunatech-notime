@@ -32,6 +32,7 @@ public class CustomDataBinders {
 					public String print(DateTime input, Locale l) {
 						return input.toString(fmt);
 					}
+					
 				});
 	}
 

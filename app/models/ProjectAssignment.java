@@ -11,6 +11,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
+import org.joda.time.DateTime;
+import org.hibernate.annotations.Type;
+
 import play.data.format.Formats;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
@@ -32,11 +35,13 @@ public class ProjectAssignment {
 	
 	@Required
 	@Formats.DateTime(pattern="dd-MM-yy")
-	public Date startDate;
+    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
+	public DateTime startDate;
 	
 	@Required
 	@Formats.DateTime(pattern="dd-MM-yy")
-	public Date endDate;
+    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
+	public DateTime endDate;
 	
 	@Required
 	@Column(scale=2)
@@ -71,13 +76,13 @@ public class ProjectAssignment {
 	}
 	
 	public static String validateDates(ProjectAssignment assignment) {
-		if (assignment.startDate.after(assignment.endDate))
+		if (assignment.startDate.toLocalDate().compareTo(assignment.endDate.toLocalDate()) > 0)
 			return "Start date is after the End date";
 		else
 			return new String();		
 	}
 	
-	public static boolean isDateInAssignmentRange(Date date, Long assignmentId) {
+	public static boolean isDateInAssignmentRange(DateTime date, Long assignmentId) {
 		ProjectAssignment assignment = ProjectAssignment.read(assignmentId);
 		return DateUtil.between(date, assignment.startDate, assignment.endDate);
 	}

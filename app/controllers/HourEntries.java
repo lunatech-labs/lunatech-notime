@@ -99,22 +99,29 @@ public class HourEntries extends Controller {
 
 	@Transactional
 	public static Result createMultiple(Long userId) {
-		Form<HourEntriesBinder> filledForm = form(HourEntriesBinder.class).bindFromRequest();
-		
+		Form<HourEntriesBinder> filledForm = form(HourEntriesBinder.class)
+				.bindFromRequest();
+
 		Set<String> keys = filledForm.data().keySet();
 		// Remove strange key
-		keys.remove("hourEntries[");		
-		Collection<Integer> indices = Collections2.transform(keys, Transformers.indexTransformer);
+		keys.remove("hourEntries[");
+		Collection<Integer> indices = Collections2.transform(keys,
+				Transformers.indexTransformer);
 		Set<Integer> uniqueIndices = new HashSet<Integer>(indices);
-		
-		if(filledForm.hasErrors())
-			return badRequest(createHourEntries.render(userId, filledForm, new ArrayList<Integer>(uniqueIndices)));
-		
+
+		if (filledForm.hasErrors())
+			return badRequest(createHourEntries.render(userId, filledForm,
+					new ArrayList<Integer>(uniqueIndices)));
+
 		HourEntriesBinder entries = filledForm.get();
-		for(HourEntry entry : entries.hourEntries) {				
-			HourEntry.create(entry, new String());
+		for (HourEntry entry : entries.hourEntries) {
+			// Because an item in the middle of the list can be deleted and Play
+			// binds an empty HourEntry to that position, these need to be
+			// skipped
+			if (entry.assignment != null)
+				HourEntry.create(entry, new String());
 		}
-		
+
 		return redirect(routes.HourEntries.allFor(userId));
 	}
 

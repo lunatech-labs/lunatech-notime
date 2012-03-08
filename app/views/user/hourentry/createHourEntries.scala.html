@@ -16,10 +16,12 @@
 		<div class="clearfix" id="tags_string_field">
 			<label for="tags_string">Tags</label>
 			<div class="input">
-				<input type="text" name="hourEntries[" + index + "].tagsString">
+				<input type="text" name="hourEntries[@index].tagsString">
 			</div>
 		</div>
-		<a class="removeEntry btn danger">Remove</a>
+		<div class="input">
+			<a class="removeEntry btn danger">Remove</a>
+		</div>
     </div>
 }
 
@@ -31,30 +33,50 @@
         </div>
     }
     
-    @form(routes.HourEntries.createMultiple(userId)) {   
+    @form(routes.HourEntries.createMultiple(userId), 'id -> "form") {   
     
     	<div class="entries">
-			@entry(entriesForm, -1, "entry_template")
     	    @for(index <- indices) {
     	    	@entry(entriesForm, index)
     	    }
+
+			@entry(entriesForm, -1, "entry_template")
+	    	    
+    	    <div class="input">
+    	    	<a class="addEntry btn success">Add another entry</a>
+    	    </div>
+    	        	    
+    	    <input type="submit" value="Submit">
+			<a href="@routes.Users.read(userId)">Cancel</a>
     	</div>
-    	
-		<input type="submit" value="Submit">
-		<a href="@routes.Users.read(userId)">Cancel</a>
 
 	}
 	
 	<script type="text/javascript" charset="utf-8">
+	
+		var nextIndex = @indices.last + 1
         
         $('.removeEntry').live('click', function(e) {
-            var manager = $(this).parents('.entries')
             $(this).parents('.entry').remove()
         })
         
         $('.addEntry').live('click', function(e) {
-            var manager = $(this).parents('.entries')
+            var entry = $(this).parents('.entries')
+            var template = $('.entry_template', entry)
+            template.before('<div class="entry">' + template.html() + '</div>')
+            renumber(entry)
         })
+        
+        $('#form').submit(function() {
+            $('.entry_template').remove()
+        })
+        
+        var renumber = function(manager) {
+			$('.entry:last input, .entry:last select', manager).each(function() {
+				$(this).attr('name', $(this).attr('name').replace(/hourEntries\[.+\]/g, 'hourEntries[' + nextIndex + ']'))
+			})
+			nextIndex++
+        }
         
     </script>
 

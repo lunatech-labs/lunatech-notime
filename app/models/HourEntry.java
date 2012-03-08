@@ -60,16 +60,18 @@ public class HourEntry {
 
 	public static List<HourEntry> allFor(Long userId) {
 		return JPA.em().createQuery(
-					"from HourEntry he where he.assignment.user.id = :userId")
+					"from HourEntry he " +
+					"where he.assignment.user.id = :userId " +
+					"order by he.date desc")
 				.setParameter("userId", userId)
 				.getResultList();
 	}
 	
 	public static List<HourEntry> allBetween(Long userId, DateTime beginDate, DateTime endDate) {
 		return JPA.em().createQuery(
-					"from HourEntry he where " +
-					"he.assignment.user.id = :userId and " +		
-					"he.date between :beginDate and :endDate")
+					"from HourEntry he " +
+					"where he.assignment.user.id = :userId " +
+					"and he.date between :beginDate and :endDate")
 				.setParameter("userId", userId)
 				.setParameter("beginDate", beginDate)
 				.setParameter("endDate", endDate)
@@ -117,10 +119,9 @@ public class HourEntry {
 	}
 
 	public static String validateDate(HourEntry hourEntry) {
-		return new String();
-//		return ProjectAssignment.isDateInAssignmentRange(hourEntry.date,
-//				hourEntry.assignment.id) ? new String()
-//				: "Date not in assignment date range";
+		return ProjectAssignment.isDateInAssignmentRange(hourEntry.date,
+				hourEntry.assignment.id) ? new String()
+				: "Date not in assignment date range";
 	}
 
 	public String tagsString() {
