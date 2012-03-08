@@ -23,6 +23,8 @@ import org.hibernate.annotations.Type;
 import play.data.format.Formats;
 import play.data.format.Formatters;
 import play.data.validation.Constraints;
+import play.data.validation.Constraints.Max;
+import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
 
 @Entity
@@ -41,12 +43,12 @@ public class HourEntry {
     @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
 	public DateTime date;
 
-	@Constraints.Required
-	@Constraints.Max(23)
+	@Required
+	@Max(23)
 	public Integer hours;
 
-	@Constraints.Required
-	@Constraints.Max(59)
+	@Required
+	@Max(59)
 	public Integer minutes;
 
 	@ManyToMany
