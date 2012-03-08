@@ -17,6 +17,7 @@
 			<label for="tags_string">Tags</label>
 			<div class="input">
 				<input type="text" name="hourEntries[@index].tagsString" value="@entriesForm.data.get("hourEntries[" + index + "].tagsString")">
+				<span class="help-block">Please use the same tags for the same type of work. So do not use 'test' and 'testing'</span>
 			</div>
 		</div>
 		<div class="input">
@@ -45,6 +46,11 @@
     	    <div class="input">
     	    	<a class="addEntry btn success">Add another entry</a>
     	    </div>
+    	    
+    	    <p>
+				Used tags: @Tag.tagsString
+				(This line becomes unnecessary when the autocompletion works)
+			</p>
     	        	    
     	    <input type="submit" value="Submit">
 			<a href="@routes.Users.read(userId)">Cancel</a>
