@@ -30,7 +30,7 @@ public class User {
 	public Long id;
 	
     @Required
-    @Column(unique = true)
+	@Column(unique = true)
     public String username;
     
     @Required
@@ -87,9 +87,8 @@ public class User {
     }
     
     public static Map<String,String> options() {
-        List<User> users = all();
         LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
-        for(User u: users) {
+        for(User u: all()) {
             options.put(u.id.toString(), u.fullname);
         }
         return options;

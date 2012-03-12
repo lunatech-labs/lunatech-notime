@@ -75,9 +75,8 @@ public class Customer {
 	}
 	
     public static Map<String,String> options() {
-        List<Customer> customers = all();
         LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
-        for(Customer c : customers) {
+        for(Customer c : all()) {
             options.put(c.id.toString(), c.name);
         }
         return options;

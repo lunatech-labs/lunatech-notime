@@ -100,18 +100,21 @@ public class HourEntries extends Controller {
 	@Transactional
 	public static Result createMultiple(Long userId) {
 		Form<HourEntriesList> filledForm = form(HourEntriesList.class)
-				.bindFromRequest();
+				.bindFromRequest();		
 
-		Set<String> keys = filledForm.data().keySet();
-		// Remove strange key
-		keys.remove("hourEntries[");
-		Collection<Integer> indices = Collections2.transform(keys,
-				Transformers.indexTransformer);
-		Set<Integer> uniqueIndices = new HashSet<Integer>(indices);
-
-		if (filledForm.hasErrors())
+		if (filledForm.hasErrors()) {
+			// Get the indices of the submitted form-inputs
+			Set<String> keys = filledForm.data().keySet();
+			// Remove strange key
+			keys.remove("hourEntries[");
+			Collection<Integer> indices = Collections2.transform(keys,
+					Transformers.indexTransformer);
+			Set<Integer> uniqueIndices = new HashSet<Integer>(indices);
+			
 			return badRequest(createHourEntries.render(userId, filledForm,
 					new ArrayList<Integer>(uniqueIndices)));
+		}
+			
 
 		HourEntriesList entries = filledForm.get();
 		for (int i = 0; i < entries.hourEntries.size(); i++) {

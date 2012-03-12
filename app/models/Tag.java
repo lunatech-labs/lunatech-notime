@@ -2,6 +2,7 @@ package models;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,30 +21,45 @@ public class Tag {
 	public Long id;
 
 	@Required
+	@Column(unique = true)
 	public String tag;
+
+	public static List<Tag> all() {
+		return JPA.em().createQuery("from Tag").getResultList();
+	}
+
+	public static List<Tag> find(String tag) {
+		return JPA.em().createQuery("from Tag t where t.tag = :tag")
+				.setParameter("tag", tag).getResultList();
+	}
+
+	public static List<String> findTagsWhichContain(String term) {
+		return JPA.em().createQuery("select tag from Tag where tag like :term")
+				.setParameter("term", "%" + term + "%").getResultList();
+	}
 
 	public static void create(Tag tag) {
 		JPA.em().persist(tag);
 	}
 
 	public static Tag create(String tagString) {
-		Tag tag = new Tag();
-		tag.tag = tagString.trim();
-		JPA.em().persist(tag);
-		return tag;
+		tagString = tagString.trim();
+		if (tagString.isEmpty()) {
+			return null;
+		} else {
+			Tag tag = new Tag();
+			tag.tag = tagString;
+			JPA.em().persist(tag);
+			return tag;
+		}
 	}
 
-	public static String tagsString() {
-		List<String> tags = JPA.em().createQuery("select tag from Tag").getResultList();
-		String tagsString = new String();
-		for(int i = 0; i < tags.size(); i++) {
-			if(tags.size()-1 == i) {
-				tagsString += tags.get(i) + ".";
-			}
-			else {
-				tagsString += tags.get(i) + ", ";
-			}		
-		}
-		return tagsString;
+	public static Tag findOrCreate(String tagString) {
+		tagString = tagString.trim();
+		if (find(tagString).isEmpty())
+			return create(tagString);
+		else
+			return find(tagString).get(0);
 	}
+
 }

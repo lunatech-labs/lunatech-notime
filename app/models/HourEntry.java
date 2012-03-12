@@ -40,7 +40,7 @@ public class HourEntry {
 
 	@Constraints.Required
 	@Formats.DateTime(pattern = "dd-MM-yyyy")
-    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
+	@Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
 	public DateTime date;
 
 	@Required
@@ -60,23 +60,26 @@ public class HourEntry {
 	}
 
 	public static List<HourEntry> allFor(Long userId) {
-		return JPA.em().createQuery(
-					"from HourEntry he " +
-					"where he.assignment.user.id = :userId " +
-					"order by he.date desc")
-				.setParameter("userId", userId)
-				.getResultList();
+		return JPA
+				.em()
+				.createQuery(
+						"from HourEntry he "
+								+ "where he.assignment.user.id = :userId "
+								+ "order by he.date desc")
+				.setParameter("userId", userId).getResultList();
 	}
-	
-	public static List<HourEntry> allBetween(Long userId, DateTime beginDate, DateTime endDate) {
-		return JPA.em().createQuery(
-					"from HourEntry he " +
-					"where he.assignment.user.id = :userId " +
-					"and he.date between :beginDate and :endDate")
+
+	public static List<HourEntry> allBetween(Long userId, DateTime beginDate,
+			DateTime endDate) {
+		return JPA
+				.em()
+				.createQuery(
+						"from HourEntry he "
+								+ "where he.assignment.user.id = :userId "
+								+ "and he.date between :beginDate and :endDate")
 				.setParameter("userId", userId)
 				.setParameter("beginDate", beginDate)
-				.setParameter("endDate", endDate)
-				.getResultList();
+				.setParameter("endDate", endDate).getResultList();
 	}
 
 	public static void create(HourEntry entry, String tagsString) {
@@ -84,7 +87,7 @@ public class HourEntry {
 			entry.tags = new ArrayList<Tag>();
 			String tags[] = tagsString.split(";");
 			for (int i = 0; i < tags.length; i++)
-				entry.tags.add(Tag.create(tags[i]));
+				entry.tags.add(Tag.findOrCreate(tags[i]));
 		}
 		JPA.em().persist(entry);
 	}
@@ -105,8 +108,8 @@ public class HourEntry {
 		if (!tagsString.isEmpty()) {
 			String tags[] = tagsString.split(";");
 			for (int i = 0; i < tags.length; i++)
-				entry.tags.add(Tag.create(tags[i]));
-		}		
+				entry.tags.add(Tag.findOrCreate(tags[i]));
+		}
 
 		JPA.em().merge(entry);
 	}
@@ -125,10 +128,10 @@ public class HourEntry {
 				: "Date not in assignment date range";
 	}
 
-	public String tagsString() {
+	public String enteredTagsString() {
 		String tagsString = new String();
 		for (Tag tag : tags)
-			tagsString += tag.tag + ";";
+			tagsString += tag.tag + "; ";
 		return tagsString;
 	}
 

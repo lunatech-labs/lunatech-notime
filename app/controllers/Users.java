@@ -16,7 +16,7 @@ public class Users extends Controller {
 		return ok(users.render(User.all()));
 	}
 	
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public static Result read(Long id) {
 		return ok(views.html.user.user.render(User.read(id)));
 	}

@@ -50,6 +50,8 @@ POST	/user/:uId/hourentry/:eId/delete	controllers.HourEntries.delete(uId: Long, 
 GET		/user/:id/hourentries/multiple		controllers.HourEntries.addMultiple(id: Long)
 POST	/user/:id/hourentries/multiple		controllers.HourEntries.createMultiple(id: Long)
 
+# Tags
+GET		/tag						controllers.Tags.find()
 
 GET		/user/:id/hourentries/week			controllers.HourEntries.addForWeek(id: Long)
 
