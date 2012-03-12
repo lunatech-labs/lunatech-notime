@@ -31,10 +31,15 @@
 		</div>
 
 
-		<input type="submit" value="Submit">
-		<a href="@routes.Users.read(userId)">Cancel</a>
+		<input type="submit" value="Submit hours">
+		
+		
 
 	}
+	@form(routes.HourEntries.delete(userId, entryId)) {
+		<input type="submit" value="Delete entered hours">
+	}
+	<a href="@routes.Users.read(userId)">Cancel</a>
 
 } {
 	@sidebar.userMenu(userId)

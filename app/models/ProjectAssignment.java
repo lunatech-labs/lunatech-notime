@@ -17,7 +17,7 @@ import org.hibernate.annotations.Type;
 import play.data.format.Formats;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
-import util.DateUtil;
+import util.DateTimeUtil;
 
 @Entity
 @SequenceGenerator(name = "projectassignment_seq", sequenceName = "projectassignment_seq")
@@ -49,7 +49,7 @@ public class ProjectAssignment {
 	
 	public static void create(ProjectAssignment assignment, Long projectId) {
 		assignment.project = Project.read(projectId);
-		assignment.endDate = DateUtil.maximizeTimeOfDate(assignment.endDate);
+		assignment.endDate = DateTimeUtil.maximizeTimeOfDate(assignment.endDate);
 		JPA.em().persist(assignment);
 	}
 	
@@ -62,7 +62,7 @@ public class ProjectAssignment {
 		assignment.project = Project.read(projectId);
 		assignment.user = assignmentToBeUpdated.user;
 		assignment.startDate = assignmentToBeUpdated.startDate;
-		assignment.endDate = DateUtil.maximizeTimeOfDate(assignmentToBeUpdated.endDate);
+		assignment.endDate = DateTimeUtil.maximizeTimeOfDate(assignmentToBeUpdated.endDate);
 		assignment.hourlyRate = assignmentToBeUpdated.hourlyRate;
 		JPA.em().merge(assignment);
 	}
@@ -84,6 +84,6 @@ public class ProjectAssignment {
 	
 	public static boolean isDateInAssignmentRange(DateTime date, Long assignmentId) {
 		ProjectAssignment assignment = ProjectAssignment.read(assignmentId);
-		return DateUtil.between(date, assignment.startDate, assignment.endDate);
+		return DateTimeUtil.between(date, assignment.startDate, assignment.endDate);
 	}
 }

@@ -4,19 +4,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-import com.sun.org.apache.bcel.internal.generic.NEW;
+import org.joda.time.DateTime;
 
 import models.HourEntry;
 import play.data.Form;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
+import util.DateTimeUtil;
 import util.Transformers;
 import util.form.binding.HourEntriesList;
 import views.html.user.hourentry.createHourEntries;
@@ -24,12 +22,25 @@ import views.html.user.hourentry.createHourEntriesForWeek;
 import views.html.user.hourentry.createHourEntry;
 import views.html.user.hourentry.editHourEntry;
 import views.html.user.hourentry.hourEntries;
+import views.html.user.hourentry.hourEntriesTable;
+
+import com.google.common.collect.Collections2;
 
 public class HourEntries extends Controller {
 
 	@Transactional(readOnly = true)
 	public static Result allFor(Long userId) {
-		return ok(hourEntries.render(userId, HourEntry.allFor(userId)));
+		return ok(hourEntries.render(userId, HourEntry.allForUser(userId)));
+	}
+
+	@Transactional(readOnly = true)
+	public static Result tableOverview(Long userId) {
+		DateTime currentDate = new DateTime();
+		return ok(hourEntriesTable.render(
+				userId,
+				HourEntry.getAssignmentsForUserBetween(userId,
+						DateTimeUtil.firstDateOfMonth(currentDate),
+						DateTimeUtil.lastDateOfMonth(currentDate))));
 	}
 
 	@Transactional(readOnly = true)
@@ -100,7 +111,7 @@ public class HourEntries extends Controller {
 	@Transactional
 	public static Result createMultiple(Long userId) {
 		Form<HourEntriesList> filledForm = form(HourEntriesList.class)
-				.bindFromRequest();		
+				.bindFromRequest();
 
 		if (filledForm.hasErrors()) {
 			// Get the indices of the submitted form-inputs
@@ -110,11 +121,10 @@ public class HourEntries extends Controller {
 			Collection<Integer> indices = Collections2.transform(keys,
 					Transformers.indexTransformer);
 			Set<Integer> uniqueIndices = new HashSet<Integer>(indices);
-			
+
 			return badRequest(createHourEntries.render(userId, filledForm,
 					new ArrayList<Integer>(uniqueIndices)));
 		}
-			
 
 		HourEntriesList entries = filledForm.get();
 		for (int i = 0; i < entries.hourEntries.size(); i++) {

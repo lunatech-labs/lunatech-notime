@@ -19,7 +19,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import play.data.validation.Constraints.Email;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
-import util.DateUtil;
+import util.DateTimeUtil;
 
 @Entity
 @SequenceGenerator(name = "user_seq", sequenceName = "user_seq")

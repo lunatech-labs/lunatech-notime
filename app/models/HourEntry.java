@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.persistence.Entity;
@@ -59,7 +60,7 @@ public class HourEntry {
 		return JPA.em().createQuery("from HourEntry").getResultList();
 	}
 
-	public static List<HourEntry> allFor(Long userId) {
+	public static List<HourEntry> allForUser(Long userId) {
 		return JPA
 				.em()
 				.createQuery(
@@ -67,6 +68,20 @@ public class HourEntry {
 								+ "where he.assignment.user.id = :userId "
 								+ "order by he.date desc")
 				.setParameter("userId", userId).getResultList();
+	}
+
+	public static List<Map<String, ?>> getAssignmentsForUserBetween(
+			Long userId, DateTime beginDate, DateTime endDate) {
+		return JPA
+				.em()
+				.createQuery(
+						"select new map(he.assignment as assignment, sum(he.hours) as hours, sum(he.minutes) as minutes) from HourEntry he "
+								+ "where he.assignment.user.id = :userId "
+								+ "and he.date between :beginDate and :endDate "
+								+ "group by he.assignment")
+				.setParameter("userId", userId)
+				.setParameter("beginDate", beginDate)
+				.setParameter("endDate", endDate).getResultList();
 	}
 
 	public static List<HourEntry> allBetween(Long userId, DateTime beginDate,

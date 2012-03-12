@@ -5,7 +5,7 @@ import org.joda.time.DateTimeConstants;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 
-public class DateUtil {
+public class DateTimeUtil {
 
 	public static DateTime maximizeTimeOfDate(DateTime date) {
 		return new DateTime(date.getYear(), date.getMonthOfYear(),
@@ -30,8 +30,16 @@ public class DateUtil {
 
 	public static DateTime lastDateOfWeek(DateTime date) {
 		LocalDate now = date.toLocalDate();
-		return now.withDayOfWeek(DateTimeConstants.SUNDAY)
-				.toDateTimeAtStartOfDay();
+		return maximizeTimeOfDate(now.withDayOfWeek(DateTimeConstants.SUNDAY)
+				.toDateTimeAtStartOfDay());
+	}
+	
+	public static DateTime firstDateOfMonth(DateTime date) {
+		return date.dayOfMonth().withMinimumValue();
+	}
+
+	public static DateTime lastDateOfMonth(DateTime date) {
+		return maximizeTimeOfDate(date.dayOfMonth().withMaximumValue());
 	}
 
 }
