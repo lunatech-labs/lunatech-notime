@@ -27,7 +27,7 @@ import play.data.validation.Constraints;
 import play.data.validation.Constraints.Max;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
-import util.datastructures.TotalsPerEmployeePerAssignment;
+import util.datastructures.TotalsForUserPerAssignment;
 
 @Entity
 @SequenceGenerator(name = "hourentry_seq", sequenceName = "hourentry_seq")
@@ -70,22 +70,8 @@ public class HourEntry {
 								+ "order by he.date desc")
 				.setParameter("userId", userId).getResultList();
 	}
-
-	public static List<TotalsPerEmployeePerAssignment> getAssignmentsForUserBetween(
-			Long userId, DateTime beginDate, DateTime endDate) {
-		return JPA
-				.em()
-				.createQuery(
-						"select new util.datastructures.TotalsPerEmployeePerAssignment(he.assignment, sum(he.hours), sum(he.minutes)) from HourEntry he "
-								+ "where he.assignment.user.id = :userId "
-								+ "and he.date between :beginDate and :endDate "
-								+ "group by he.assignment")
-				.setParameter("userId", userId)
-				.setParameter("beginDate", beginDate)
-				.setParameter("endDate", endDate).getResultList();
-	}
-
-	public static List<HourEntry> allBetween(Long userId, DateTime beginDate,
+	
+	public static List<HourEntry> allForUserBetween(Long userId, DateTime beginDate,
 			DateTime endDate) {
 		return JPA
 				.em()
@@ -93,6 +79,20 @@ public class HourEntry {
 						"from HourEntry he "
 								+ "where he.assignment.user.id = :userId "
 								+ "and he.date between :beginDate and :endDate")
+				.setParameter("userId", userId)
+				.setParameter("beginDate", beginDate)
+				.setParameter("endDate", endDate).getResultList();
+	}
+	
+	public static List<TotalsForUserPerAssignment> getTotalsForUserBetween(
+			Long userId, DateTime beginDate, DateTime endDate) {
+		return JPA
+				.em()
+				.createQuery(
+						"select new util.datastructures.TotalsForUserPerAssignment(he.assignment, sum(he.hours), sum(he.minutes)) from HourEntry he "
+								+ "where he.assignment.user.id = :userId "
+								+ "and he.date between :beginDate and :endDate "
+								+ "group by he.assignment")
 				.setParameter("userId", userId)
 				.setParameter("beginDate", beginDate)
 				.setParameter("endDate", endDate).getResultList();

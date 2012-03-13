@@ -6,7 +6,7 @@ import util.CalculationUtil;
 
 import models.ProjectAssignment;
 
-public class TotalsPerEmployeePerAssignment {
+public class TotalsForUserPerAssignment {
 
 	public ProjectAssignment assignment;
 
@@ -18,7 +18,7 @@ public class TotalsPerEmployeePerAssignment {
 	
 	public BigDecimal turnover;
 
-	public TotalsPerEmployeePerAssignment(ProjectAssignment assignment,
+	public TotalsForUserPerAssignment(ProjectAssignment assignment,
 			long hours, long minutes) {
 		this.assignment = assignment;
 		this.minutes = minutes;

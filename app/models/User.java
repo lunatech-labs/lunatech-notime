@@ -20,7 +20,6 @@ import play.data.validation.Constraints.Email;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
 import util.DateTimeUtil;
-import util.form.validators.Unique;
 
 @Entity
 @SequenceGenerator(name = "user_seq", sequenceName = "user_seq")
@@ -38,7 +37,6 @@ public class User {
     public String password;
     
     @Required
-    @Unique
     public String fullname;
     
     @Required

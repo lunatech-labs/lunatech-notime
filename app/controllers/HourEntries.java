@@ -17,11 +17,13 @@ import play.mvc.Result;
 import util.DateTimeUtil;
 import util.Transformers;
 import util.datastructures.HourEntriesList;
+import util.datastructures.calendar.CalendarMonth;
 import views.html.user.hourentry.createHourEntries;
 import views.html.user.hourentry.createHourEntriesForWeek;
 import views.html.user.hourentry.createHourEntry;
 import views.html.user.hourentry.editHourEntry;
 import views.html.user.hourentry.hourEntries;
+import views.html.user.hourentry.hourEntriesCalendar;
 import views.html.user.hourentry.hourEntriesTable;
 
 import com.google.common.collect.Collections2;
@@ -36,11 +38,19 @@ public class HourEntries extends Controller {
 	@Transactional(readOnly = true)
 	public static Result tableOverview(Long userId) {
 		DateTime currentDate = new DateTime();
-		return ok(hourEntriesTable.render(
-				userId,
-				HourEntry.getAssignmentsForUserBetween(userId,
+		return ok(hourEntriesTable.render(userId, HourEntry
+				.getTotalsForUserBetween(userId,
 						DateTimeUtil.firstDateOfMonth(currentDate),
 						DateTimeUtil.lastDateOfMonth(currentDate))));
+	}
+
+	@Transactional(readOnly = true)
+	public static Result calendarOverview(Long userId) {
+		DateTime currentDate = new DateTime();
+		CalendarMonth calendar = new CalendarMonth(currentDate, userId);
+		return ok(hourEntriesCalendar.render(
+				userId,
+				calendar));
 	}
 
 	@Transactional(readOnly = true)
