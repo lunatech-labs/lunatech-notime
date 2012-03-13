@@ -16,7 +16,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import util.DateTimeUtil;
 import util.Transformers;
-import util.form.binding.HourEntriesList;
+import util.datastructures.HourEntriesList;
 import views.html.user.hourentry.createHourEntries;
 import views.html.user.hourentry.createHourEntriesForWeek;
 import views.html.user.hourentry.createHourEntry;

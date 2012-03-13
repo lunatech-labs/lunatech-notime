@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 public class CalculationUtil {
 	
+	// Calculates the total hours and minutes. Returns a String with the format 5h30m
 	public static String totalHoursMinutesFormatter(long hours, long minutes) {
 		hours += minutes / 60;
 		minutes = minutes % 60;

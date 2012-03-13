@@ -1,4 +1,4 @@
-@(userId: Long, entries: List[Map[String, _]])
+@(userId: Long, entries: List[util.datastructures.TotalsPerEmployeePerAssignment])
 
 @import helper._
 
@@ -23,12 +23,12 @@
 			<tbody>
 				@for(entry <- entries) {
 					<tr>
-						<td>@entry.get("assignment").asInstanceOf[ProjectAssignment].project.customer.name</td>
-						<td>@entry.get("assignment").asInstanceOf[ProjectAssignment].project.code</td>
-						<td>@entry.get("assignment").asInstanceOf[ProjectAssignment].project.name</td>
-						<td>@entry.get("assignment").asInstanceOf[ProjectAssignment].hourlyRate</td>
-						<td>@util.CalculationUtil.totalHoursMinutesFormatter(entry.get("hours").asInstanceOf[Long], entry.get("minutes").asInstanceOf[Long])</td>
-						<td>@util.CalculationUtil.totalTurnover(entry.get("hours").asInstanceOf[Long], entry.get("minutes").asInstanceOf[Long], entry.get("assignment").asInstanceOf[ProjectAssignment].hourlyRate)</td>
+						<td>@entry.assignment.project.customer.name</td>
+						<td>@entry.assignment.project.code</td>
+						<td>@entry.assignment.project.name</td>
+						<td>@entry.assignment.hourlyRate</td>
+						<td>@entry.hoursMinutes</td>
+						<td>@entry.turnover</td>
 					</tr>
 				}
 			</tbody>

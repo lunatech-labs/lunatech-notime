@@ -1,4 +1,4 @@
-package util.form.binding;
+package util.form.binders;
 
 import java.text.ParseException;
 import java.util.Locale;
@@ -10,11 +10,11 @@ import org.joda.time.format.DateTimeFormatter;
 import play.data.format.Formatters;
 
 public class CustomDataBinders {
-	
+
 	public void register() {
 		registerDateTimeFormatter();
 	}
-	
+
 	private void registerDateTimeFormatter() {
 		Formatters.register(DateTime.class,
 				new Formatters.SimpleFormatter<DateTime>() {
@@ -32,7 +32,7 @@ public class CustomDataBinders {
 					public String print(DateTime input, Locale l) {
 						return input.toString(fmt);
 					}
-					
+
 				});
 	}
 

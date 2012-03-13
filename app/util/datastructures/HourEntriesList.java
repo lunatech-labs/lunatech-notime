@@ -1,4 +1,4 @@
-package util.form.binding;
+package util.datastructures;
 
 import java.util.List;
 

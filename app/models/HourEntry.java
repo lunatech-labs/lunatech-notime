@@ -27,6 +27,7 @@ import play.data.validation.Constraints;
 import play.data.validation.Constraints.Max;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
+import util.datastructures.TotalsPerEmployeePerAssignment;
 
 @Entity
 @SequenceGenerator(name = "hourentry_seq", sequenceName = "hourentry_seq")
@@ -70,12 +71,12 @@ public class HourEntry {
 				.setParameter("userId", userId).getResultList();
 	}
 
-	public static List<Map<String, ?>> getAssignmentsForUserBetween(
+	public static List<TotalsPerEmployeePerAssignment> getAssignmentsForUserBetween(
 			Long userId, DateTime beginDate, DateTime endDate) {
 		return JPA
 				.em()
 				.createQuery(
-						"select new map(he.assignment as assignment, sum(he.hours) as hours, sum(he.minutes) as minutes) from HourEntry he "
+						"select new util.datastructures.TotalsPerEmployeePerAssignment(he.assignment, sum(he.hours), sum(he.minutes)) from HourEntry he "
 								+ "where he.assignment.user.id = :userId "
 								+ "and he.date between :beginDate and :endDate "
 								+ "group by he.assignment")
