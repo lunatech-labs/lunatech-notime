@@ -30,11 +30,10 @@ import play.db.jpa.JPA;
 import util.datastructures.TotalsForUserPerAssignment;
 
 @Entity
-@SequenceGenerator(name = "hourentry_seq", sequenceName = "hourentry_seq")
 public class HourEntry {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hourentry_seq")
+	@GeneratedValue
 	public Long id;
 
 	@ManyToOne

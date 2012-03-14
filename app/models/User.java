@@ -22,11 +22,10 @@ import play.db.jpa.JPA;
 import util.DateTimeUtil;
 
 @Entity
-@SequenceGenerator(name = "user_seq", sequenceName = "user_seq")
 public class User {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
+	@GeneratedValue
 	public Long id;
 	
     @Required

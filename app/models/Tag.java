@@ -13,11 +13,10 @@ import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
 
 @Entity
-@SequenceGenerator(name = "tag_seq", sequenceName = "tag_seq")
 public class Tag {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tag_seq")
+	@GeneratedValue
 	public Long id;
 
 	@Required

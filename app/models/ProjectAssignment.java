@@ -20,11 +20,10 @@ import play.db.jpa.JPA;
 import util.DateTimeUtil;
 
 @Entity
-@SequenceGenerator(name = "projectassignment_seq", sequenceName = "projectassignment_seq")
 public class ProjectAssignment {
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "projectassignment_seq")
+    @GeneratedValue
 	public Long id;
 	
 	@ManyToOne
