@@ -56,7 +56,7 @@ public class User {
 	public List<ProjectAssignment> assignments;
 
 	/**
-	 * Inserts this new user
+	 * Encrypts the user's password and inserts this new user
 	 */
 	public void save() {
 		encryptPassword();
@@ -64,7 +64,7 @@ public class User {
 	}
 
 	/**
-	 * Updates this user
+	 * Encrypts the user's password if updated and updates this user
 	 * 
 	 * @param userId
 	 *            The id of the user that is going to be updated
@@ -145,7 +145,7 @@ public class User {
 		}
 		return assignments;
 	}
-	
+
 	/**
 	 * Encrypts password with BCrypt
 	 */

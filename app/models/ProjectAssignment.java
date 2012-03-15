@@ -23,66 +23,93 @@ import util.DateTimeUtil;
 public class ProjectAssignment {
 
 	@Id
-    @GeneratedValue
+	@GeneratedValue
 	public Long id;
-	
+
 	@ManyToOne
 	public Project project;
-	
+
 	@ManyToOne
 	public User user;
-	
+
 	@Required
-	@Formats.DateTime(pattern="dd-MM-yy")
-    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
+	@Formats.DateTime(pattern = "dd-MM-yy")
+	@Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
 	public DateTime startDate;
-	
+
 	@Required
-	@Formats.DateTime(pattern="dd-MM-yy")
-    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
+	@Formats.DateTime(pattern = "dd-MM-yy")
+	@Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
 	public DateTime endDate;
-	
+
 	@Required
-	@Column(scale=2)
+	@Column(scale = 2)
 	public BigDecimal hourlyRate;
-	
-	public static void create(ProjectAssignment assignment, Long projectId) {
-		assignment.project = Project.findById(projectId);
-		assignment.endDate = DateTimeUtil.maximizeTimeOfDate(assignment.endDate);
-		JPA.em().persist(assignment);
+
+	/**
+	 * Sets the project, maximizes the time of the endDate and inserts this
+	 * project assignment
+	 * 
+	 * @param projectId
+	 *            The id of the related project
+	 */
+	public void save(Long projectId) {
+		this.project = Project.findById(projectId);
+		this.endDate = DateTimeUtil.maximizeTimeOfDate(this.endDate);
+		JPA.em().persist(this);
 	}
-	
-	public static ProjectAssignment read(Long id) {
-		return JPA.em().find(ProjectAssignment.class, id);	
+
+	/**
+	 * Sets the project, maximizes the time of the endDate and updates this
+	 * project assignment
+	 * 
+	 * @param assignmentId
+	 *            The id of the project assignment that is going to the updated
+	 * @param projectId
+	 *            The id of the related project
+	 */
+	public void update(Long assignmentId, Long projectId) {
+		this.id = assignmentId;
+		this.project = Project.findById(projectId);
+		this.endDate = DateTimeUtil.maximizeTimeOfDate(this.endDate);
+		JPA.em().merge(this);
 	}
-	
-	public static void update(Long assignmentId, Long projectId, ProjectAssignment assignmentToBeUpdated) {
-		ProjectAssignment assignment = read(assignmentId);
-		assignment.project = Project.findById(projectId);
-		assignment.user = assignmentToBeUpdated.user;
-		assignment.startDate = assignmentToBeUpdated.startDate;
-		assignment.endDate = DateTimeUtil.maximizeTimeOfDate(assignmentToBeUpdated.endDate);
-		assignment.hourlyRate = assignmentToBeUpdated.hourlyRate;
-		JPA.em().merge(assignment);
+
+	/**
+	 * Deletes this project assignment
+	 */
+	public void delete() {
+		JPA.em().remove(this);
 	}
-	
-	public static void delete(Long id) {
-		JPA.em().remove(ProjectAssignment.read(id));
+
+	/**
+	 * Find a project assignment by id
+	 * 
+	 * @param assignmentId
+	 *            The id of the project assignment to be found
+	 * @return A project assignment
+	 */
+	public static ProjectAssignment findById(Long assignmentId) {
+		return JPA.em().find(ProjectAssignment.class, assignmentId);
 	}
-	
+
+	// VALIDATION METHODS NEED TO BE REPLACED BY ANNOTATIONS OR BE REWRITTEN
 	public static boolean hasValidDates(ProjectAssignment assignment) {
 		return validateDates(assignment).isEmpty();
 	}
-	
+
 	public static String validateDates(ProjectAssignment assignment) {
-		if (assignment.startDate.toLocalDate().compareTo(assignment.endDate.toLocalDate()) > 0)
+		if (assignment.startDate.toLocalDate().compareTo(
+				assignment.endDate.toLocalDate()) > 0)
 			return "Start date is after the End date";
 		else
-			return new String();		
+			return new String();
 	}
-	
-	public static boolean isDateInAssignmentRange(DateTime date, Long assignmentId) {
-		ProjectAssignment assignment = ProjectAssignment.read(assignmentId);
-		return DateTimeUtil.between(date, assignment.startDate, assignment.endDate);
+
+	public static boolean isDateInAssignmentRange(DateTime date,
+			Long assignmentId) {
+		ProjectAssignment assignment = ProjectAssignment.findById(assignmentId);
+		return DateTimeUtil.between(date, assignment.startDate,
+				assignment.endDate);
 	}
 }

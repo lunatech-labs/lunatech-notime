@@ -23,20 +23,20 @@ public class ProjectAssignments extends Controller {
 		if(filledForm.hasErrors())
 			return badRequest(createProjectAssignment.render(projectId, filledForm));
 		
-		ProjectAssignment assignment = filledForm.get();
+		ProjectAssignment assignmentToBeCreated = filledForm.get();
 		
-		if(!ProjectAssignment.hasValidDates(assignment)) {
-			flash("error", ProjectAssignment.validateDates(assignment));
+		if(!ProjectAssignment.hasValidDates(assignmentToBeCreated)) {
+			flash("error", ProjectAssignment.validateDates(assignmentToBeCreated));
 			return badRequest(createProjectAssignment.render(projectId, filledForm)); 
 		}		
 		
-		ProjectAssignment.create(assignment, projectId);
+		assignmentToBeCreated.save(projectId);
 		return redirect(routes.Projects.all());
 	}
 	
 	@Transactional(readOnly=true)
 	public static Result edit(Long projectId, Long assignmentId) {
-		Form<ProjectAssignment> newForm = form(ProjectAssignment.class).fill(ProjectAssignment.read(assignmentId));
+		Form<ProjectAssignment> newForm = form(ProjectAssignment.class).fill(ProjectAssignment.findById(assignmentId));
 		return ok(editProjectAssignment.render(projectId, assignmentId, newForm));
 	}
 	
@@ -47,20 +47,20 @@ public class ProjectAssignments extends Controller {
 		if(filledForm.hasErrors())
 			return badRequest(editProjectAssignment.render(projectId, assignmentId, filledForm));
 		
-		ProjectAssignment assignment = filledForm.get();
+		ProjectAssignment assignmentToBeUpdated = filledForm.get();
 		
-		if(!ProjectAssignment.hasValidDates(assignment)) {
-			flash("error", ProjectAssignment.validateDates(assignment));
+		if(!ProjectAssignment.hasValidDates(assignmentToBeUpdated)) {
+			flash("error", ProjectAssignment.validateDates(assignmentToBeUpdated));
 			return badRequest(editProjectAssignment.render(projectId, assignmentId, filledForm)); 
 		}
 		
-		ProjectAssignment.update(assignmentId, projectId, assignment);
+		assignmentToBeUpdated.update(assignmentId, projectId);
 		return redirect(routes.Projects.all());
 	}
 	
 	@Transactional
-	public static Result delete(Long projectAssignmentId) {
-		ProjectAssignment.delete(projectAssignmentId);
+	public static Result delete(Long assignmentId) {
+		ProjectAssignment.findById(assignmentId).delete();
 		return redirect(routes.Projects.all());
 	}
 
