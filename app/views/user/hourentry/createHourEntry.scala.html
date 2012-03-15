@@ -13,7 +13,7 @@
     
     @form(routes.HourEntries.create(userId)) {
     
-    	@select(entryForm("assignment.id"), options(User.assignments(userId)), '_label -> "Project")
+    	@select(entryForm("assignment.id"), options(User.assignmentsFor(userId)), '_label -> "Project")
 
 		@inputDate(entryForm("date"), '_label -> "Date")
 		

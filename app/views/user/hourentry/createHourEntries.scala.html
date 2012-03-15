@@ -5,7 +5,7 @@
 
 @entry(form: Form[util.datastructures.HourEntriesList], index: Integer, className: String = "entry") = {
 	<div class="@className">
-		@select(form("hourEntries[" + index + "].assignment.id"), options(User.assignments(userId)), '_label -> "Project")
+		@select(form("hourEntries[" + index + "].assignment.id"), options(User.assignmentsFor(userId)), '_label -> "Project")
 
 		@inputDate(form("hourEntries[" + index + "].date"), '_label -> "Date")
 		

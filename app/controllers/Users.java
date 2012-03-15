@@ -13,12 +13,12 @@ public class Users extends Controller {
 	
 	@Transactional(readOnly=true)
 	public static Result all() {
-		return ok(users.render(User.all()));
+		return ok(users.render(User.findAll()));
 	}
 	
 	@Transactional(readOnly = true)
 	public static Result read(Long id) {
-		return ok(views.html.user.user.render(User.read(id)));
+		return ok(views.html.user.user.render(User.findById(id)));
 	}
 
 	public static Result add() {
@@ -40,13 +40,13 @@ public class Users extends Controller {
 			return badRequest(createUser.render(filledForm));
 		}
 
-		User.create(userToBeCreated);
+		userToBeCreated.save();
 		return redirect(routes.Users.all());
 	}
 	
 	@Transactional(readOnly=true)
 	public static Result edit(Long id) {
-		Form<User> filledForm = form(User.class).fill(User.read(id));
+		Form<User> filledForm = form(User.class).fill(User.findById(id));
 		return ok(editUser.render(id, filledForm));
 	}
 	
@@ -64,13 +64,13 @@ public class Users extends Controller {
 			return badRequest(editUser.render(id, filledForm));
 		}
 
-		User.update(id, userToBeUpdated);
+		userToBeUpdated.update(id);
 		return redirect(routes.Users.all());
 	}
 	
 	@Transactional
 	public static Result delete(Long id) {
-		User.delete(id);
+		User.findById(id).delete();
 		return redirect(routes.Users.all());
 	}
 
