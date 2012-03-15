@@ -9,7 +9,7 @@
 				@for(day <- week.days) {
 					<td class="day">
 						<div class="dayNumber">@org.joda.time.format.DateTimeFormat.forPattern("E d-M").print(day.date)</div>
-						@for(entry <- day.hourEntries) {
+						@for(entry <- day.getHourEntries) {
 							<div class="entry">
 								<a href="@routes.HourEntries.edit(userId, entry.id)">
 									@entry.assignment.project.code - <b>@entry.hours</b>h<b>@entry.minutes</b>m

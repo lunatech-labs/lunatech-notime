@@ -7,24 +7,36 @@ import org.joda.time.DateTime;
 
 import util.DateTimeUtil;
 
-/*
- *  Datastructure for displaying a calendar
+/**
+ * Datastructure for displaying a calendar
  */
 public class CalendarWeek {
 
-	public List<CalendarDay> days;
+	public final List<CalendarDay> days;
 
 	public CalendarWeek() {
 		days = new ArrayList<CalendarDay>();
 	}
 
-	public static List<CalendarWeek> createWeeks(DateTime firstDateOfMonth,	Long userId) {
-		DateTime lastDateOfMonth = DateTimeUtil.lastDateOfMonth(firstDateOfMonth);
-		DateTime firstDateOfWeek = DateTimeUtil.firstDateOfWeek(firstDateOfMonth);
+	/**
+	 * Creates the weeks. Only full weeks are created, so the beginning of the
+	 * first week can contain a few days from the last month and the last week
+	 * can contain a few days of the next month.
+	 * 
+	 * @param firstDateOfMonth
+	 * @param userId
+	 * @return
+	 */
+	public static List<CalendarWeek> createWeeks(DateTime firstDateOfMonth,
+			Long userId) {
+		DateTime lastDateOfMonth = DateTimeUtil
+				.lastDateOfMonth(firstDateOfMonth);
+		DateTime firstDateOfWeek = DateTimeUtil
+				.firstDateOfWeek(firstDateOfMonth);
 		DateTime currentDate = firstDateOfWeek;
 
 		List<CalendarWeek> weeks = new ArrayList<CalendarWeek>();
-		
+
 		while (currentDate.getMonthOfYear() <= lastDateOfMonth.getMonthOfYear()) {
 			CalendarWeek week = new CalendarWeek();
 			DateTime lastDateOfWeek = DateTimeUtil.lastDateOfWeek(currentDate);

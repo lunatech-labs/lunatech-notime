@@ -6,17 +6,20 @@ import java.util.regex.Pattern;
 import com.google.common.base.Function;
 
 public class Transformers {
-	
-	/*
-	 * Returns the integer between square brackets in a String.
-	 * Useful for forms with inputs with an index, as: foo[0], foo[1].
-	 * Input: foo[0]. Output: 0
+
+	/**
+	 * Function to get an int, between square brackets, out of a String.
+	 * 
+	 * Is used to get the index out of a form's key field. When a List is
+	 * submitted by a form, the keys need to be this format: foo[0]. This method
+	 * will get the 0 out of foo[0]
 	 */
 	public static final Function<String, Integer> indexTransformer = new Function<String, Integer>() {
 
 		@Override
 		public Integer apply(String input) {
-			Pattern numberBetweenSquareBrackets = Pattern.compile("\\[(\\d+)\\]");
+			Pattern numberBetweenSquareBrackets = Pattern
+					.compile("\\[(\\d+)\\]");
 			Matcher m = numberBetweenSquareBrackets.matcher(input);
 			m.find(1);
 			return Integer.parseInt(m.group(1));

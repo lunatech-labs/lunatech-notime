@@ -27,7 +27,7 @@ import play.data.validation.Constraints;
 import play.data.validation.Constraints.Max;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
-import util.datastructures.TotalsForUserPerAssignment;
+import util.datastructures.TotalsPerAssignment;
 
 @Entity
 public class HourEntry {
@@ -168,14 +168,14 @@ public class HourEntry {
 	 *            The date from which entries are to be searched for
 	 * @param endDate
 	 *            The date till which entries are to be searched for
-	 * @return A List of {@link TotalsForUserPerAssignment} objects
+	 * @return A List of {@link TotalsPerAssignment} objects
 	 */
-	public static List<TotalsForUserPerAssignment> getTotalsForUserBetween(
+	public static List<TotalsPerAssignment> getTotalsForUserBetween(
 			Long userId, DateTime beginDate, DateTime endDate) {
 		return JPA
 				.em()
 				.createQuery(
-						"select new util.datastructures.TotalsForUserPerAssignment(he.assignment, sum(he.hours), sum(he.minutes)) from HourEntry he "
+						"select new util.datastructures.TotalsPerAssignment(he.assignment, sum(he.hours), sum(he.minutes)) from HourEntry he "
 								+ "where he.assignment.user.id = :userId "
 								+ "and he.date between :beginDate and :endDate "
 								+ "group by he.assignment")
