@@ -13,7 +13,7 @@ public class Projects extends Controller{
 	
 	@Transactional(readOnly=true)
 	public static Result all() {
-		return ok(projects.render(Project.all()));
+		return ok(projects.render(Project.findAll()));
 	}
 	
 	@Transactional(readOnly=true)
@@ -36,13 +36,13 @@ public class Projects extends Controller{
 			return badRequest(createProject.render(filledForm));
 		}
 		
-		Project.create(projectToBeCreated);
+		projectToBeCreated.save();
 		return redirect(routes.Projects.all());
 	}
 	
 	@Transactional(readOnly=true)
 	public static Result edit(Long id) {
-		Form<Project> filledForm = form(Project.class).fill(Project.read(id));
+		Form<Project> filledForm = form(Project.class).fill(Project.findById(id));
 		return ok(editProject.render(id, filledForm));
 	}
 	
@@ -60,13 +60,13 @@ public class Projects extends Controller{
 			return badRequest(editProject.render(id, filledForm));
 		}
 		
-		Project.update(id, projectToBeUpdated);
+		projectToBeUpdated.update(id);
 		return redirect(routes.Projects.all());
 	}
 	
 	@Transactional
 	public static Result delete(Long id) {
-		Project.delete(id);
+		Project.findById(id).delete();
 		return redirect(routes.Projects.all());
 	}
 

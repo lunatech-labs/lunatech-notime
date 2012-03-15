@@ -47,7 +47,7 @@ public class ProjectAssignment {
 	public BigDecimal hourlyRate;
 	
 	public static void create(ProjectAssignment assignment, Long projectId) {
-		assignment.project = Project.read(projectId);
+		assignment.project = Project.findById(projectId);
 		assignment.endDate = DateTimeUtil.maximizeTimeOfDate(assignment.endDate);
 		JPA.em().persist(assignment);
 	}
@@ -58,7 +58,7 @@ public class ProjectAssignment {
 	
 	public static void update(Long assignmentId, Long projectId, ProjectAssignment assignmentToBeUpdated) {
 		ProjectAssignment assignment = read(assignmentId);
-		assignment.project = Project.read(projectId);
+		assignment.project = Project.findById(projectId);
 		assignment.user = assignmentToBeUpdated.user;
 		assignment.startDate = assignmentToBeUpdated.startDate;
 		assignment.endDate = DateTimeUtil.maximizeTimeOfDate(assignmentToBeUpdated.endDate);
