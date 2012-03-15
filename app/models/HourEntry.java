@@ -82,7 +82,7 @@ public class HourEntry {
 	 */
 	public void update(Long entryId, String tagsString) {
 		this.id = entryId;
-		this.tags.clear();
+		this.tags = new ArrayList<Tag>();
 		if (!tagsString.isEmpty()) {
 			String tags[] = tagsString.split(";");
 			for (int i = 0; i < tags.length; i++)

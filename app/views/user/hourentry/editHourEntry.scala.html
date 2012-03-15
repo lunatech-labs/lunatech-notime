@@ -26,7 +26,7 @@
 		<div class="clearfix" id="tags_string_field">
 			<label for="tags_string">Tags</label>
 			<div class="input">
-				<input type="text" class="autocomplete" name="tagsString" value="@HourEntry.read(entryId).enteredTagsString" data-url="@routes.Tags.find">
+				<input type="text" class="autocomplete" name="tagsString" value="@HourEntry.findById(entryId).enteredTagsString" data-url="@routes.Tags.find">
 			</div>
 		</div>
 

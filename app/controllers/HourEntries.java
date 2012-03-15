@@ -106,15 +106,15 @@ public class HourEntries extends Controller {
 		if (filledForm.hasErrors())
 			return badRequest(createHourEntry.render(userId, filledForm));
 
-		HourEntry entry = filledForm.get();
+		HourEntry entryToBeCreated = filledForm.get();
 
-		if (!HourEntry.hasValidDate(entry)) {
-			flash("error", HourEntry.validateDate(entry));
+		if (!HourEntry.hasValidDate(entryToBeCreated)) {
+			flash("error", HourEntry.validateDate(entryToBeCreated));
 			return badRequest(createHourEntry.render(userId, filledForm));
 		}
 
 		String tagsString = filledForm.field("tagsString").value();
-		HourEntry.save(entry, tagsString);
+		entryToBeCreated.save(tagsString);
 		return redirect(routes.HourEntries.allFor(userId));
 	}
 
@@ -140,7 +140,7 @@ public class HourEntries extends Controller {
 		for (int i = 0; i < entries.hourEntries.size(); i++) {
 			String tagsString = filledForm.field(
 					"hourEntries[" + i + "].tagsString").value();
-			HourEntry.save(entries.hourEntries.get(i), tagsString);
+			entries.hourEntries.get(i).save(tagsString);
 		}
 
 		return redirect(routes.HourEntries.allFor(userId));
@@ -160,21 +160,21 @@ public class HourEntries extends Controller {
 		if (filledForm.hasErrors())
 			return badRequest(editHourEntry.render(userId, entryId, filledForm));
 
-		HourEntry entry = filledForm.get();
+		HourEntry entryToBeUpdated = filledForm.get();
 
-		if (!HourEntry.hasValidDate(entry)) {
-			flash("error", HourEntry.validateDate(entry));
+		if (!HourEntry.hasValidDate(entryToBeUpdated)) {
+			flash("error", HourEntry.validateDate(entryToBeUpdated));
 			return badRequest(editHourEntry.render(userId, entryId, filledForm));
 		}
 
 		String tagsString = filledForm.field("tagsString").value();
-		HourEntry.update(entryId, entry, tagsString);
+		entryToBeUpdated.update(entryId, tagsString);
 		return redirect(routes.HourEntries.allFor(userId));
 	}
 
 	@Transactional
 	public static Result delete(Long userId, Long entryId) {
-		HourEntry.delete(entryId);
+		HourEntry.findById(entryId).delete();
 		return redirect(routes.HourEntries.allFor(userId));
 	}
 
