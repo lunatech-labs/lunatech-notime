@@ -64,6 +64,17 @@ public class Customer {
 	}
 
 	/**
+	 * Find a customer by id
+	 * 
+	 * @param customerId
+	 *            The id of the customer to be searched for
+	 * @return A customer
+	 */
+	public static Customer findById(Long customerId) {
+		return JPA.em().find(Customer.class, customerId);
+	}
+
+	/**
 	 * Find all customers
 	 * 
 	 * @return A List of customer objects
@@ -83,17 +94,6 @@ public class Customer {
 		List<Customer> customers = findAll();
 		customers.remove(findById(customerId));
 		return customers;
-	}
-
-	/**
-	 * Find a customer by id
-	 * 
-	 * @param customerId
-	 *            The id of the customer to be found
-	 * @return A customer
-	 */
-	public static Customer findById(Long customerId) {
-		return JPA.em().find(Customer.class, customerId);
 	}
 
 	/**

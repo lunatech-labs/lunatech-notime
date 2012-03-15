@@ -32,7 +32,7 @@ public class HourEntries extends Controller {
 
 	@Transactional(readOnly = true)
 	public static Result allFor(Long userId) {
-		return ok(hourEntries.render(userId, HourEntry.allForUser(userId)));
+		return ok(hourEntries.render(userId, HourEntry.findAllForUser(userId)));
 	}
 
 	@Transactional(readOnly = true)
@@ -114,7 +114,7 @@ public class HourEntries extends Controller {
 		}
 
 		String tagsString = filledForm.field("tagsString").value();
-		HourEntry.create(entry, tagsString);
+		HourEntry.save(entry, tagsString);
 		return redirect(routes.HourEntries.allFor(userId));
 	}
 
@@ -140,7 +140,7 @@ public class HourEntries extends Controller {
 		for (int i = 0; i < entries.hourEntries.size(); i++) {
 			String tagsString = filledForm.field(
 					"hourEntries[" + i + "].tagsString").value();
-			HourEntry.create(entries.hourEntries.get(i), tagsString);
+			HourEntry.save(entries.hourEntries.get(i), tagsString);
 		}
 
 		return redirect(routes.HourEntries.allFor(userId));
@@ -149,7 +149,7 @@ public class HourEntries extends Controller {
 	@Transactional(readOnly = true)
 	public static Result edit(Long userId, Long entryId) {
 		Form<HourEntry> newForm = form(HourEntry.class).fill(
-				HourEntry.read(entryId));
+				HourEntry.findById(entryId));
 		return ok(editHourEntry.render(userId, entryId, newForm));
 	}
 

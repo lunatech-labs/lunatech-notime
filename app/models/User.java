@@ -84,6 +84,17 @@ public class User {
 	}
 
 	/**
+	 * Find a user by id
+	 * 
+	 * @param userId
+	 *            The id of the user to be searched for
+	 * @return A user
+	 */
+	public static User findById(Long userId) {
+		return JPA.em().find(User.class, userId);
+	}
+
+	/**
 	 * Find all users
 	 * 
 	 * @return A List of user objects
@@ -103,17 +114,6 @@ public class User {
 		List<User> users = findAll();
 		users.remove(findById(userId));
 		return users;
-	}
-
-	/**
-	 * Find a user by id
-	 * 
-	 * @param userId
-	 *            The id of the user to be found
-	 * @return A user
-	 */
-	public static User findById(Long userId) {
-		return JPA.em().find(User.class, userId);
 	}
 
 	/**

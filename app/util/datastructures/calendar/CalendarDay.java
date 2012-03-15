@@ -19,7 +19,7 @@ public class CalendarDay {
 
 	public CalendarDay(DateTime date, Long userId) {
 		this.date = date;
-		hourEntries = HourEntry.allForUserBetween(userId,
+		hourEntries = HourEntry.findAllForUserBetween(userId,
 				DateTimeUtil.minimizeTimeOfDate(date),
 				DateTimeUtil.maximizeTimeOfDate(date));
 	}

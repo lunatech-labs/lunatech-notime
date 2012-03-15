@@ -77,6 +77,17 @@ public class Project {
 	}
 
 	/**
+	 * Find a project by id
+	 * 
+	 * @param projectId
+	 *            The id of the project to be searched for
+	 * @return A project
+	 */
+	public static Project findById(Long projectId) {
+		return JPA.em().find(Project.class, projectId);
+	}
+
+	/**
 	 * Find all projects
 	 * 
 	 * @return A list of project objects
@@ -90,7 +101,7 @@ public class Project {
 	 * 
 	 * @param projectId
 	 *            The id of the project that needs to be filtered
-	 * @return A list of project objects
+	 * @return A List of project objects
 	 */
 	public static List<Project> findAllExcept(Long projectId) {
 		List<Project> projects = findAll();
@@ -99,18 +110,8 @@ public class Project {
 	}
 
 	/**
-	 * Find a project by id
-	 * 
-	 * @param projectId
-	 *            The id of the project to be found
-	 * @return A project
-	 */
-	public static Project findById(Long projectId) {
-		return JPA.em().find(Project.class, projectId);
-	}
-
-	/**
 	 * All project types
+	 * 
 	 * @return A List with the name of the types
 	 */
 	public static List<String> types() {

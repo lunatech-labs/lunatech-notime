@@ -64,7 +64,7 @@ public class ProjectAssignment {
 	 * project assignment
 	 * 
 	 * @param assignmentId
-	 *            The id of the project assignment that is going to the updated
+	 *            The id of the project assignment that is going to be updated
 	 * @param projectId
 	 *            The id of the related project
 	 */
@@ -86,7 +86,7 @@ public class ProjectAssignment {
 	 * Find a project assignment by id
 	 * 
 	 * @param assignmentId
-	 *            The id of the project assignment to be found
+	 *            The id of the project assignment to be searched for
 	 * @return A project assignment
 	 */
 	public static ProjectAssignment findById(Long assignmentId) {

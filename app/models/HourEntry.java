@@ -56,11 +56,76 @@ public class HourEntry {
 	@JoinTable(name = "hourentry_tag", joinColumns = @JoinColumn(name = "hourentry_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
 	public List<Tag> tags;
 
-	public static List<HourEntry> all() {
+	/**
+	 * Sets the tags and inserts this hour entry
+	 * 
+	 * @param tagsString
+	 *            A String of tags, delimited by a semicolon
+	 */
+	public void save(String tagsString) {
+		if (!tagsString.isEmpty()) {
+			this.tags = new ArrayList<Tag>();
+			String tags[] = tagsString.split(";");
+			for (int i = 0; i < tags.length; i++)
+				this.tags.add(Tag.findOrCreate(tags[i]));
+		}
+		JPA.em().persist(this);
+	}
+
+	/**
+	 * Sets the tags and updates this hour entry
+	 * 
+	 * @param entryId
+	 *            The id of the hour entry that is going to be updated
+	 * @param tagsString
+	 *            A String of tags, delimited by a semicolon
+	 */
+	public void update(Long entryId, String tagsString) {
+		this.id = entryId;
+		this.tags.clear();
+		if (!tagsString.isEmpty()) {
+			String tags[] = tagsString.split(";");
+			for (int i = 0; i < tags.length; i++)
+				this.tags.add(Tag.findOrCreate(tags[i]));
+		}
+		JPA.em().merge(this);
+	}
+
+	/**
+	 * Deletes this hour entry
+	 */
+	public void delete() {
+		JPA.em().remove(this);
+	}
+
+	/**
+	 * Find a hour entry by id
+	 * 
+	 * @param userId
+	 *            The id of the hour entry to be searched for
+	 * @return A hour entry
+	 */
+	public static HourEntry findById(Long userId) {
+		return JPA.em().find(HourEntry.class, userId);
+	}
+
+	/**
+	 * Find all hour entries
+	 * 
+	 * @return A List of hour entry objects
+	 */
+	public static List<HourEntry> findAll() {
 		return JPA.em().createQuery("from HourEntry").getResultList();
 	}
 
-	public static List<HourEntry> allForUser(Long userId) {
+	/**
+	 * Find all hour entries for a user
+	 * 
+	 * @param userId
+	 *            The id of the user which entries are to be searched for
+	 * @return A List of hour entry objects
+	 */
+	public static List<HourEntry> findAllForUser(Long userId) {
 		return JPA
 				.em()
 				.createQuery(
@@ -69,9 +134,20 @@ public class HourEntry {
 								+ "order by he.date desc")
 				.setParameter("userId", userId).getResultList();
 	}
-	
-	public static List<HourEntry> allForUserBetween(Long userId, DateTime beginDate,
-			DateTime endDate) {
+
+	/**
+	 * Find all hour entries for a user between two dates
+	 * 
+	 * @param userId
+	 *            The id of the user which entries are to be searched for
+	 * @param beginDate
+	 *            The date from which entries are to be searched for
+	 * @param endDate
+	 *            The date till which entries are to be searched for
+	 * @return A List of hour entry objects
+	 */
+	public static List<HourEntry> findAllForUserBetween(Long userId,
+			DateTime beginDate, DateTime endDate) {
 		return JPA
 				.em()
 				.createQuery(
@@ -82,7 +158,18 @@ public class HourEntry {
 				.setParameter("beginDate", beginDate)
 				.setParameter("endDate", endDate).getResultList();
 	}
-	
+
+	/**
+	 * Find the totals of the hour entries for a user between two dates
+	 * 
+	 * @param userId
+	 *            The id of the user which entries are to be searched for
+	 * @param beginDate
+	 *            The date from which entries are to be searched for
+	 * @param endDate
+	 *            The date till which entries are to be searched for
+	 * @return A List of {@link TotalsForUserPerAssignment} objects
+	 */
 	public static List<TotalsForUserPerAssignment> getTotalsForUserBetween(
 			Long userId, DateTime beginDate, DateTime endDate) {
 		return JPA
@@ -97,42 +184,19 @@ public class HourEntry {
 				.setParameter("endDate", endDate).getResultList();
 	}
 
-	public static void create(HourEntry entry, String tagsString) {
-		if (!tagsString.isEmpty()) {
-			entry.tags = new ArrayList<Tag>();
-			String tags[] = tagsString.split(";");
-			for (int i = 0; i < tags.length; i++)
-				entry.tags.add(Tag.findOrCreate(tags[i]));
-		}
-		JPA.em().persist(entry);
+	/**
+	 * Creates a String of the related tags, delimited by a semicolon
+	 * 
+	 * @return String of related tags, delimited by a semicolon
+	 */
+	public String enteredTagsString() {
+		String tagsString = new String();
+		for (Tag tag : tags)
+			tagsString += tag.tag + "; ";
+		return tagsString;
 	}
 
-	public static HourEntry read(Long id) {
-		return JPA.em().find(HourEntry.class, id);
-	}
-
-	public static void update(Long entryId, HourEntry entryToBeUpdated,
-			String tagsString) {
-		HourEntry entry = read(entryId);
-		entry.assignment = entryToBeUpdated.assignment;
-		entry.date = entryToBeUpdated.date;
-		entry.hours = entryToBeUpdated.hours;
-		entry.minutes = entryToBeUpdated.minutes;
-
-		entry.tags.clear();
-		if (!tagsString.isEmpty()) {
-			String tags[] = tagsString.split(";");
-			for (int i = 0; i < tags.length; i++)
-				entry.tags.add(Tag.findOrCreate(tags[i]));
-		}
-
-		JPA.em().merge(entry);
-	}
-
-	public static void delete(Long id) {
-		JPA.em().remove(HourEntry.read(id));
-	}
-
+	// VALIDATION METHODS NEED TO BE REPLACED BY ANNOTATIONS OR BE REWRITTEN
 	public static boolean hasValidDate(HourEntry hourEntry) {
 		return validateDate(hourEntry).isEmpty();
 	}
@@ -141,13 +205,6 @@ public class HourEntry {
 		return ProjectAssignment.isDateInAssignmentRange(hourEntry.date,
 				hourEntry.assignment.id) ? new String()
 				: "Date not in assignment date range";
-	}
-
-	public String enteredTagsString() {
-		String tagsString = new String();
-		for (Tag tag : tags)
-			tagsString += tag.tag + "; ";
-		return tagsString;
 	}
 
 }
