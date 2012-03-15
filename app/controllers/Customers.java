@@ -13,7 +13,7 @@ public class Customers extends Controller {
 	
 	@Transactional(readOnly=true)
 	public static Result all() {
-		return ok(customers.render(Customer.all()));
+		return ok(customers.render(Customer.findAll()));
 	}
 	
 	@Transactional(readOnly=true)
@@ -36,13 +36,13 @@ public class Customers extends Controller {
 			return badRequest(createCustomer.render(filledForm));
 		}
 		
-		Customer.create(customerToBeCreated);
+		customerToBeCreated.save();
 		return redirect(routes.Customers.all());
 	}
 	
 	@Transactional(readOnly=true)
 	public static Result edit(Long id) {
-		Form<Customer> filledForm = form(Customer.class).fill(Customer.read(id));
+		Form<Customer> filledForm = form(Customer.class).fill(Customer.findById(id));
 		return ok(editCustomer.render(id, filledForm));
 	}
 	
@@ -60,13 +60,13 @@ public class Customers extends Controller {
 			return badRequest(editCustomer.render(id, filledForm));
 		}
 		
-		Customer.update(id, customerToBeUpdated);
+		customerToBeUpdated.update(id);
 		return redirect(routes.Customers.all());
 	}
 	
 	@Transactional
 	public static Result delete(Long id) {
-		Customer.delete(id);
+		Customer.findById(id).delete();
 		return redirect(routes.Customers.all());
 	}
 

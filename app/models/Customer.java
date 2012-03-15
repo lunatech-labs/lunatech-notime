@@ -21,91 +21,125 @@ import play.db.jpa.JPA;
 public class Customer {
 
 	@Id
-    @GeneratedValue
+	@GeneratedValue
 	public Long id;
-	
+
 	@Required
 	@Column(unique = true)
 	public String name;
-	
+
 	@Required
 	@Column(unique = true)
 	public String code;
-	
+
 	public String description;
-	
+
 	@ManyToMany
-	@JoinTable(
-		name="customermanager", 
-		joinColumns=@JoinColumn(name="customer_id"), 
-		inverseJoinColumns=@JoinColumn(name="user_id")
-	)
+	@JoinTable(name = "customermanager", joinColumns = @JoinColumn(name = "customer_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
 	public List<User> customerManagers;
-		
-	public static List<Customer> all() {
+
+	/**
+	 * Inserts this new customer
+	 */
+	public void save() {
+		JPA.em().persist(this);
+	}
+
+	/**
+	 * Updates this customer
+	 * 
+	 * @param customerId
+	 *            The id of the customer that is going to be updated
+	 */
+	public void update(Long customerId) {
+		this.id = customerId;
+		JPA.em().merge(this);
+	}
+
+	/**
+	 * Deletes this customer
+	 */
+	public void delete() {
+		JPA.em().remove(this);
+	}
+
+	/**
+	 * Find all customers
+	 * 
+	 * @return A List of customer objects
+	 */
+	public static List<Customer> findAll() {
 		return JPA.em().createQuery("from Customer").getResultList();
 	}
-	
-	public static List<Customer> allExcept(Long id) {
-		List<Customer> customers = all();
-		customers.remove(read(id));
+
+	/**
+	 * Find all customers except one customer
+	 * 
+	 * @param customerId
+	 *            The id of the customer that needs to be filtered
+	 * @return A List of customer objects
+	 */
+	public static List<Customer> findAllExcept(Long customerId) {
+		List<Customer> customers = findAll();
+		customers.remove(findById(customerId));
 		return customers;
 	}
-	
-	public static void create(Customer customer) {
-		JPA.em().persist(customer);
+
+	/**
+	 * Find a customer by id
+	 * 
+	 * @param customerId
+	 *            The id of the customer to be found
+	 * @return A customer
+	 */
+	public static Customer findById(Long customerId) {
+		return JPA.em().find(Customer.class, customerId);
 	}
-	
-	public static Customer read(Long id) {
-		return JPA.em().find(Customer.class, id);
+
+	/**
+	 * All existing customers
+	 * 
+	 * @return A Map with as key the customer's id and as value the customer's
+	 *         name
+	 */
+	public static Map<String, String> options() {
+		LinkedHashMap<String, String> options = new LinkedHashMap<String, String>();
+		for (Customer c : findAll()) {
+			options.put(c.id.toString(), c.name);
+		}
+		return options;
 	}
-	
-	public static void update(Long id, Customer customerToBeUpdated) {
-		Customer customer = read(id);
-		customer.name = customerToBeUpdated.name;
-		customer.code = customerToBeUpdated.code;
-		customer.description = customerToBeUpdated.description;		
-		customer.customerManagers = customerToBeUpdated.customerManagers;		
-		JPA.em().merge(customer);
-	}
-	
-	public static void delete(Long id) {
-		JPA.em().remove(Customer.read(id));
-	}
-	
-    public static Map<String,String> options() {
-        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
-        for(Customer c : all()) {
-            options.put(c.id.toString(), c.name);
-        }
-        return options;
-    }
-	
+
+	// VALIDATION METHODS NEED TO BE REPLACED BY ANNOTATIONS OR BE REWRITTEN
 	public static boolean hasDuplicity(Customer customerToBeCreated) {
-        return !validateDuplicity(customerToBeCreated).isEmpty();
-    }
+		return !validateDuplicity(customerToBeCreated).isEmpty();
+	}
 
-    public static String validateDuplicity(Customer customerToBeCreated) {
-        for(Customer existingCustomer : all()) {
-            if(existingCustomer.name.equalsIgnoreCase(customerToBeCreated.name))
-                return "Duplicate name!";
-            if(existingCustomer.code.equalsIgnoreCase(customerToBeCreated.code))
-                return "Duplicate code!";
-        }
-        return new String();
-    }
+	public static String validateDuplicity(Customer customerToBeCreated) {
+		for (Customer existingCustomer : findAll()) {
+			if (existingCustomer.name
+					.equalsIgnoreCase(customerToBeCreated.name))
+				return "Duplicate name!";
+			if (existingCustomer.code
+					.equalsIgnoreCase(customerToBeCreated.code))
+				return "Duplicate code!";
+		}
+		return new String();
+	}
 
-    public static boolean hasDuplicity(Long id, Customer customerToBeUpdated) {
-        return !validateDuplicity(id, customerToBeUpdated).isEmpty();
-    }
-    
-    public static String validateDuplicity(Long id, Customer customerToBeUpdated) {
-    	for(Customer existingCustomer : allExcept(id)) {
-            if(existingCustomer.name.equalsIgnoreCase(customerToBeUpdated.name))
-                return "Duplicate name!";
-            if(existingCustomer.code.equalsIgnoreCase(customerToBeUpdated.code))
-                return "Duplicate code!";
-        }
-        return new String();
-    }
+	public static boolean hasDuplicity(Long id, Customer customerToBeUpdated) {
+		return !validateDuplicity(id, customerToBeUpdated).isEmpty();
+	}
+
+	public static String validateDuplicity(Long id, Customer customerToBeUpdated) {
+		for (Customer existingCustomer : findAllExcept(id)) {
+			if (existingCustomer.name
+					.equalsIgnoreCase(customerToBeUpdated.name))
+				return "Duplicate name!";
+			if (existingCustomer.code
+					.equalsIgnoreCase(customerToBeUpdated.code))
+				return "Duplicate code!";
+		}
+		return new String();
+	}
 }
