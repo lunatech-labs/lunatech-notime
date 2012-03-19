@@ -5,10 +5,12 @@ import play.data.Form;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Security;
 import views.html.admin.user.createUser;
 import views.html.admin.user.editUser;
 import views.html.admin.user.users;
 
+@Security.Authenticated(Secured.class)
 public class Users extends Controller {
 	
 	@Transactional(readOnly=true)

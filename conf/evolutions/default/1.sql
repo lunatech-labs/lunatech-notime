@@ -2,11 +2,11 @@
 
 # --- !Ups
 
-insert into user (id, username, password, fullname, email, employee, admin) values (1, 'leonard', 'secret', 'Leonard Punt', 'leonard@test.nl', 0, 0);
-insert into user (id, username, password, fullname, email, employee, admin) values (2, 'gerrit', 'secret', 'Gerrit Foo', 'foo@test.nl', 0, 0);
-insert into user (id, username, password, fullname, email, employee, admin) values (3, 'kees', 'secret', 'Kees Bar', 'bar@test.nl', 0, 0);
-insert into user (id, username, password, fullname, email, employee, admin) values (4, 'klaas', 'secret', 'Klaas Bar', 'klaas@test.nl', 0, 0);
-insert into user (id, username, password, fullname, email, employee, admin) values (5, 'piet', 'secret', 'Piet Foo', 'piet@test.nl', 0, 0);
+insert into user (id, username, password, fullname, email, employee, admin) values (1, 'leonard', '$2a$10$S4oWmAIMLvUxOuspF2Fg4eMehfZzyJvvgyYkT8mzYvQyih/FyhKBG', 'Leonard Punt', 'leonard@test.nl', 0, 0);
+insert into user (id, username, password, fullname, email, employee, admin) values (2, 'gerrit', '$2a$10$S4oWmAIMLvUxOuspF2Fg4eMehfZzyJvvgyYkT8mzYvQyih/FyhKBG', 'Gerrit Foo', 'foo@test.nl', 0, 0);
+insert into user (id, username, password, fullname, email, employee, admin) values (3, 'kees', '$2a$10$S4oWmAIMLvUxOuspF2Fg4eMehfZzyJvvgyYkT8mzYvQyih/FyhKBG', 'Kees Bar', 'bar@test.nl', 0, 0);
+insert into user (id, username, password, fullname, email, employee, admin) values (4, 'klaas', '$2a$10$S4oWmAIMLvUxOuspF2Fg4eMehfZzyJvvgyYkT8mzYvQyih/FyhKBG', 'Klaas Bar', 'klaas@test.nl', 0, 0);
+insert into user (id, username, password, fullname, email, employee, admin) values (5, 'piet', '$2a$10$S4oWmAIMLvUxOuspF2Fg4eMehfZzyJvvgyYkT8mzYvQyih/FyhKBG', 'Piet Foo', 'piet@test.nl', 0, 0);
 
 insert into customer (id, name, code, description) values (1, 'Lunatech', 'LUNA', '');
 insert into customer (id, name, code, description) values (2, 'Belastingdienst', 'BEL', 'Leuker kunnen we het niet maken, wel makkelijker..');

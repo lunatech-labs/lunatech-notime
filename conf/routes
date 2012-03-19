@@ -5,7 +5,12 @@
 # Home page
 GET     /                           controllers.Application.index()
 
-#Admin
+# Authenticate
+GET     /login						controllers.Application.login()
+POST	/login						controllers.Application.authenticate()
+GET		/logout						controllers.Application.logout()
+
+# Admin
 GET		/admin						controllers.Application.admin()
 
 # Users

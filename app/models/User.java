@@ -1,6 +1,5 @@
 package models;
 
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,15 +7,8 @@ import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 import org.joda.time.DateTime;
 import org.mindrot.jbcrypt.BCrypt;
@@ -24,7 +16,6 @@ import org.mindrot.jbcrypt.BCrypt;
 import play.data.validation.Constraints.Email;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
-import util.DateTimeUtil;
 
 @Entity
 public class User {
@@ -59,7 +50,7 @@ public class User {
 	 * Encrypts the user's password and inserts this new user
 	 */
 	public void save() {
-		encryptPassword();
+		password = User.encryptPassword(password);
 		JPA.em().persist(this);
 	}
 
@@ -71,7 +62,7 @@ public class User {
 	 */
 	public void update(Long userId) {
 		if (!password.equals(findById(userId).password))
-			encryptPassword();
+			password = User.encryptPassword(password);
 		this.id = userId;
 		JPA.em().merge(this);
 	}
@@ -92,6 +83,25 @@ public class User {
 	 */
 	public static User findById(Long userId) {
 		return JPA.em().find(User.class, userId);
+	}
+
+	/**
+	 * Find a user by username
+	 * 
+	 * @param username
+	 *            The username of the user to be searched for
+	 * @return If 0 or more than 1 (more than one means non-unique value, which
+	 *         shouldn't be possible) users are found, null is returned. If one
+	 *         is found, this user is returned
+	 */
+	public static User findByUsername(String username) {
+		List<User> users = JPA.em()
+				.createQuery("from User where username = :username")
+				.setParameter("username", username).getResultList();
+		if (users.isEmpty() || users.size() > 1)
+			return null;
+		else
+			return users.get(0);
 	}
 
 	/**
@@ -148,9 +158,44 @@ public class User {
 
 	/**
 	 * Encrypts password with BCrypt
+	 * 
+	 * @param password
+	 *            The password to be encrypted
+	 * @return The encrypted password
 	 */
-	public void encryptPassword() {
-		password = BCrypt.hashpw(password, BCrypt.gensalt());
+	public static String encryptPassword(String password) {
+		return BCrypt.hashpw(password, BCrypt.gensalt());
+	}
+
+	/**
+	 * Checks if password are equal
+	 * 
+	 * @param input
+	 *            The non-encrypted password which is checked against the user's
+	 *            password
+	 * @return True if the passwords are equal, false if not
+	 */
+	public boolean checkPassword(String input) {
+		return BCrypt.checkpw(input, password);
+	}
+
+	/**
+	 * Authenticate a user
+	 * 
+	 * @param username
+	 *            The username of the user to be authenticated
+	 * @param password
+	 *            The non-encrypted password of the user to be authenticated
+	 * @return If no user is found or the passwords aren't equal, null is
+	 *         returned. Otherwise the user is returned
+	 */
+	public static User authenticate(String username, String password) {
+		User user = findByUsername(username);
+
+		if (user == null || !user.checkPassword(password))
+			return null;
+		else
+			return user;
 	}
 
 	// VALIDATION METHODS NEED TO BE REPLACED BY ANNOTATIONS OR BE REWRITTEN

@@ -1,0 +1,24 @@
+@(loginForm: Form[util.datastructures.Login])
+
+@import helper._
+@import helper.twitterBootstrap._
+
+@main("Login") { 
+
+	@form(routes.Application.authenticate()) {
+	
+		@if(loginForm.hasGlobalErrors) { 
+        	<p class="alert-message error">
+				@loginForm.globalError.message
+			</p>
+		}
+	
+		@inputText(loginForm("username"), '_label -> "Username")
+
+		@inputPassword(loginForm("password"), '_label -> "Password")
+		
+		<input type="submit" value="Submit">
+		
+	}
+	
+} { }
