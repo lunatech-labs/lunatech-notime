@@ -1,5 +1,6 @@
 package controllers;
 
+import models.User;
 import play.data.Form;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
@@ -21,8 +22,9 @@ public class Application extends Controller {
 		if (loginForm.hasErrors()) {
 			return badRequest(login.render(loginForm));
 		} else {
-			session("username", loginForm.get().username);
-			return redirect(routes.Projects.all());
+			String username = loginForm.get().username;
+			session("username", username);
+			return redirect(routes.Users.read(User.findByUsername(username).id));
 		}
 	}
 
@@ -33,7 +35,7 @@ public class Application extends Controller {
 	}
 
 	public static Result index() {
-		return ok(index.render());
+		return redirect(routes.Application.login());
 	}
 
 	public static Result admin() {
