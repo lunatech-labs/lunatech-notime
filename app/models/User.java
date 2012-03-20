@@ -140,23 +140,6 @@ public class User {
 	}
 
 	/**
-	 * All assignments for a user
-	 * 
-	 * @return A Map with as key the assignment id and as value the project name
-	 */
-	public static Map<String, String> assignmentsFor(Long userId) {
-		LinkedHashMap<String, String> assignments = new LinkedHashMap<String, String>();
-
-		for (ProjectAssignment assignment : findById(userId).assignments) {
-			if (ProjectAssignment.isDateInAssignmentRange(new DateTime(),
-					assignment.id))
-				assignments.put(assignment.id.toString(),
-						assignment.project.name.toString());
-		}
-		return assignments;
-	}
-
-	/**
 	 * Encrypts password with BCrypt
 	 * 
 	 * @param password

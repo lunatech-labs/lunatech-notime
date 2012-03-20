@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 
 import models.HourEntry;
 import play.data.Form;
+import play.data.validation.ValidationError;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -102,19 +103,12 @@ public class HourEntries extends Controller {
 	@Transactional
 	public static Result create(Long userId) {
 		Form<HourEntry> filledForm = form(HourEntry.class).bindFromRequest();
-
+		
 		if (filledForm.hasErrors())
 			return badRequest(createHourEntry.render(userId, filledForm));
 
-		HourEntry entryToBeCreated = filledForm.get();
-
-		if (!HourEntry.hasValidDate(entryToBeCreated)) {
-			flash("error", HourEntry.validateDate(entryToBeCreated));
-			return badRequest(createHourEntry.render(userId, filledForm));
-		}
-
 		String tagsString = filledForm.field("tagsString").value();
-		entryToBeCreated.save(tagsString);
+		filledForm.get().save(tagsString);
 		return redirect(routes.HourEntries.allFor(userId));
 	}
 
@@ -160,15 +154,8 @@ public class HourEntries extends Controller {
 		if (filledForm.hasErrors())
 			return badRequest(editHourEntry.render(userId, entryId, filledForm));
 
-		HourEntry entryToBeUpdated = filledForm.get();
-
-		if (!HourEntry.hasValidDate(entryToBeUpdated)) {
-			flash("error", HourEntry.validateDate(entryToBeUpdated));
-			return badRequest(editHourEntry.render(userId, entryId, filledForm));
-		}
-
 		String tagsString = filledForm.field("tagsString").value();
-		entryToBeUpdated.update(entryId, tagsString);
+		filledForm.get().update(entryId, tagsString);
 		return redirect(routes.HourEntries.allFor(userId));
 	}
 

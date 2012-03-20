@@ -7,39 +7,37 @@
 
 	<h1>Hour entry</h1>
 	
-	@if(flash.containsKey("error")) {
+	@if(entryForm.hasGlobalErrors()) {
     	<div class="alert-message error">
-            <strong>Oops!</strong> @flash.get("error")
+            <strong>Oops!</strong> @entryForm.globalError().message
         </div>
     }
     
-    @form(routes.HourEntries.update(userId, entryId)) {
-    
-    	@select(entryForm("assignment.id"), options(User.assignmentsFor(userId)), '_label -> "Project")
-
-		@inputDate(entryForm("date"), '_label -> "Date")
-		
-		@inputText(entryForm("hours"), '_label -> "Hours")
-		
-		@inputText(entryForm("minutes"), '_label -> "Minutes")
-		
-		<div class="clearfix" id="tags_string_field">
-			<label for="tags_string">Tags</label>
-			<div class="input">
-				<input type="text" class="autocomplete" name="tagsString" value="@HourEntry.findById(entryId).enteredTagsString" data-url="@routes.Tags.find">
+    @form(routes.HourEntries.update(userId, entryId), 'class -> "entry-form") {
+	    <div class="entry">
+	    	@select(entryForm("assignment.id"), options(ProjectAssignment.optionsFor(userId)), '_label -> "Project")
+	
+			@inputDate(entryForm("date"), '_label -> "Date")
+			
+			@inputText(entryForm("hours"), '_label -> "Hours")
+			
+			@inputText(entryForm("minutes"), '_label -> "Minutes")
+			
+			<div class="clearfix" id="tags_string_field">
+				<label for="tags_string">Tags</label>
+				<div class="input">
+					<input type="text" class="autocomplete" name="tagsString" value="@HourEntry.findById(entryId).enteredTagsString" data-url="@routes.Tags.find">
+				</div>
 			</div>
+	
+	
+			<input class="btn btn-primary" type="submit" value="Submit">
+			<a class="btn" href="@routes.Users.read(userId)">Cancel</a>	
 		</div>
-
-
-		<input type="submit" value="Submit hours">
-		
-		
-
 	}
 	@form(routes.HourEntries.delete(userId, entryId)) {
-		<input type="submit" value="Delete entered hours">
+		<input class="btn btn-danger" type="submit" value="Delete">
 	}
-	<a href="@routes.Users.read(userId)">Cancel</a>
 
 } {
 	@sidebar.userMenu(userId)

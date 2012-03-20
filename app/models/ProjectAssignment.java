@@ -1,18 +1,18 @@
 package models;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 
-import org.joda.time.DateTime;
 import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 
 import play.data.format.Formats;
 import play.data.validation.Constraints.Required;
@@ -91,6 +91,41 @@ public class ProjectAssignment {
 	 */
 	public static ProjectAssignment findById(Long assignmentId) {
 		return JPA.em().find(ProjectAssignment.class, assignmentId);
+	}
+
+	/**
+	 * Find all project assignment for a user
+	 * 
+	 * @param userId
+	 *            The id of the user which project assignments are to be searched for
+	 * @return A List of project assignments
+	 */
+	public static List<ProjectAssignment> findAllForUser(Long userId) {
+		return JPA
+				.em()
+				.createQuery(
+						"from ProjectAssignment pa "
+								+ "where pa.user.id = :userId "
+								+ "order by pa.id desc")
+				.setParameter("userId", userId).getResultList();
+	}
+
+	/**
+	 * All assignments for a user
+	 * 
+	 * @return A Map with as key the assignment id and as value the project name
+	 */
+	public static Map<String, String> optionsFor(Long userId) {
+		LinkedHashMap<String, String> assignments = new LinkedHashMap<String, String>();
+		assignments.put("", "");
+		
+		for (ProjectAssignment assignment : findAllForUser(userId)) {
+			if (ProjectAssignment.isDateInAssignmentRange(new DateTime(),
+					assignment.id))
+				assignments.put(assignment.id.toString(),
+						assignment.project.name.toString());
+		}
+		return assignments;
 	}
 
 	// VALIDATION METHODS NEED TO BE REPLACED BY ANNOTATIONS OR BE REWRITTEN

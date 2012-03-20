@@ -5,7 +5,7 @@
 
 @entry(form: Form[util.datastructures.HourEntriesList], index: Integer, className: String = "entry") = {
 	<div class="@className">
-		@select(form("hourEntries[" + index + "].assignment.id"), options(User.assignmentsFor(userId)), '_label -> "Project")
+		@select(form("hourEntries[" + index + "].assignment.id"), options(ProjectAssignment.optionsFor(userId)), '_label -> "Project")
 
 		@inputDate(form("hourEntries[" + index + "].date"), '_label -> "Date")
 		
@@ -21,20 +21,20 @@
 			</div>
 		</div>
 		<div class="input">
-			<a class="removeEntry btn danger">Remove</a>
+			<a class="removeEntry btn btn-danger">Remove</a>
 		</div>
     </div>
 }
 
 @main("Enter hours") {
 	
-	@if(flash.containsKey("error")) {
+	@if(entriesForm.hasGlobalErrors()) {
     	<div class="alert-message error">
-            <strong>Oops!</strong> @flash.get("error")
+            <strong>Oops!</strong> @entriesForm.globalError().message
         </div>
-    }    
+    }   
     
-    @form(routes.HourEntries.createMultiple(userId), 'id -> "form") {   
+    @form(routes.HourEntries.createMultiple(userId), 'id -> "form", 'class -> "entry-form") {   
     
     	<div class="entries">
     	    @for(index <- indices) {
@@ -44,11 +44,11 @@
 			@entry(entriesForm, -1, "entry_template")
 	    	    
     	    <div class="input">
-    	    	<a class="addEntry btn success">Add another entry</a>
+    	    	<a class="addEntry btn">Add another entry</a>
     	    </div>
     	        	    
-    	    <input type="submit" value="Submit">
-			<a href="@routes.Users.read(userId)">Cancel</a>
+    	    <input class="btn btn-primary" type="submit" value="Submit">
+			<a class="btn" href="@routes.Users.read(userId)">Cancel</a>
     	</div>
 
 	}
@@ -74,7 +74,7 @@
         
         var renumber = function(entries) {
 			$('.entry', entries).each(function(i) {
-				$('input, select', this).each(function() {
+				$('input:not(.exclude-from-renumbering), select', this).each(function() {
 					$(this).attr('name', $(this).attr('name').replace(/hourEntries\[.+\]/g, 'hourEntries[' + i + ']'))	
 				})
 			})

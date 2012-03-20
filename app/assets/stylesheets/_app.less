@@ -88,6 +88,15 @@
     
     // SECTION
     
+    a.btn, a.btn:hover, a.btn:visited {
+    	color: #333;
+    	text-shadow: none;
+    }
+    
+    a.btn-danger, a.btn-danger:hover, a.btn-danger:visited {
+    	color: #FFF;
+    }
+    
     ul li {
     	list-style-type: none;
 
@@ -163,6 +172,28 @@
     	font-size:  0.9em;
     	border: none;
     	margin: 1px;
+    }
+    
+    .entry-form input.ui-button-left {
+    	float: left;
+    }
+    
+    .entry-form input.ui-corner-left {
+    	border-radius: 0;
+    	border-top-left-radius: @rad;
+        border-bottom-left-radius: @rad;  
+        .background-clip;
+    }
+    
+    .entry-form button {
+    	display: block;
+    	margin: 0;
+    	padding: 0;
+    }
+    
+    .entry-form button span.ui-button-text {
+    	display: block;
+    	height: 10px;
     }
     
     // SIDEBAR

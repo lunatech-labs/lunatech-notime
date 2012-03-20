@@ -1,29 +1,20 @@
 package models;
 
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 
-import org.joda.time.DateTime;
 import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 
 import play.data.format.Formats;
-import play.data.format.Formatters;
-import play.data.validation.Constraints;
 import play.data.validation.Constraints.Max;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
@@ -39,7 +30,7 @@ public class HourEntry {
 	@ManyToOne
 	public ProjectAssignment assignment;
 
-	@Constraints.Required
+	@Required
 	@Formats.DateTime(pattern = "dd-MM-yyyy")
 	@Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
 	public DateTime date;
@@ -197,14 +188,20 @@ public class HourEntry {
 	}
 
 	// VALIDATION METHODS NEED TO BE REPLACED BY ANNOTATIONS OR BE REWRITTEN
-	public static boolean hasValidDate(HourEntry hourEntry) {
-		return validateDate(hourEntry).isEmpty();
+	public String validate() {
+		if (!isValidAssignment())
+			return "Project is not valid!";
+		if (!isDateInRange())
+			return "Date is not in assigned range!";		
+		return null;
+	}
+	
+	public boolean isDateInRange() {
+		return ProjectAssignment.isDateInAssignmentRange(date, assignment.id);
 	}
 
-	public static String validateDate(HourEntry hourEntry) {
-		return ProjectAssignment.isDateInAssignmentRange(hourEntry.date,
-				hourEntry.assignment.id) ? new String()
-				: "Date not in assignment date range";
+	public boolean isValidAssignment() {
+		return assignment.id != null;
 	}
 
 }

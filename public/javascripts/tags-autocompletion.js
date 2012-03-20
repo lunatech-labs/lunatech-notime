@@ -6,17 +6,17 @@ $(function() {
 		return split(term).pop();
 	}
 
-	$('input.autocomplete').live( 'focus', function(event) {	
+	$( "input.autocomplete" ).live( "focus", function(event) {	
 		var $input = $(this);
 		// don't navigate away from the field on tab when selecting an item
-		$input.bind( 'keydown', function(event) {
-			if (event.keyCode === $.ui.keyCode.TAB && $(this).data("autocomplete").menu.active) {
+		$input.bind( "keydown", function(event) {
+			if (event.keyCode === $.ui.keyCode.TAB && $(this).data( "autocomplete" ).menu.active) {
 				event.preventDefault();
 			}
 		}).autocomplete({
 			minLength : 0,
 			source : function(request, response) {
-				$.getJSON( $input.data('url'), {
+				$.getJSON( $input.data( "url" ), {
 					term : extractLast(request.term)
 				}, response);
 			},
