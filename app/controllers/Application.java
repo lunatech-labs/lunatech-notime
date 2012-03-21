@@ -6,7 +6,6 @@ import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
 import util.datastructures.Login;
-import views.html.index;
 import views.html.login;
 import views.html.admin.overview;
 

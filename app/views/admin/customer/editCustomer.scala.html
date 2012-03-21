@@ -14,7 +14,11 @@
 	}
 }
 
-@main("Edit customer") {
+@script = {
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/multipleCustomerManagers.js")"></script>
+}
+
+@main("Edit customer", script = script) {
 	
 	@if(flash.containsKey("error")) {
     	<div class="alert-message error">
@@ -53,33 +57,6 @@
 		</div>
 	}
 	
-	
-	<script type="text/javascript" charset="utf-8">
-        
-        $('.removeManager').live('click', function(e) {
-            var manager = $(this).parents('.managers')
-            $(this).parents('.manager').remove()
-            renumber(manager)
-        })
-        
-        $('.addManager').live('click', function(e) {
-            var manager = $(this).parents('.managers')
-            var template = $('.manager_template', manager)
-            template.before('<div class="clearfix manager">' + template.html() + '</div>')
-            renumber(manager)
-        })
-        
-        $('#form').submit(function() {
-            $('.manager_template').remove()
-        })
-        
-        var renumber = function(manager) {
-			$('.manager select', manager).each(function(i) {
-				$(this).attr('name', $(this).attr('name').replace(/customerManagers\[.+\]/g, 'customerManagers[' + i + ']'))
-			})
-        }
-        
-    </script>
 } {
 	@sidebar.adminMenu()
 }

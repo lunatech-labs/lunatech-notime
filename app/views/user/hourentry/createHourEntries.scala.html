@@ -26,7 +26,11 @@
     </div>
 }
 
-@main("Enter hours") {
+@script = {
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/multipleHourEntries.js")"></script>
+}
+
+@main("Enter hours", script = script) {
 	
 	@if(entriesForm.hasGlobalErrors()) {
     	<div class="alert-message error">
@@ -34,7 +38,7 @@
         </div>
     }   
     
-    @form(routes.HourEntries.createMultiple(userId), 'id -> "form", 'class -> "entry-form") {   
+    @form(routes.HourEntries.createMultiple(userId), 'id -> "entriesForm") {   
     
     	<div class="entries">
     	    @for(index <- indices) {
@@ -52,35 +56,6 @@
     	</div>
 
 	}
-	
-	<script type="text/javascript" charset="utf-8">
-	
-        $('.removeEntry').live('click', function(e) {
-            var entries = $(this).parents('.entries')
-            $(this).parents('.entry').remove()
-            renumber(entries)
-        })
-        
-        $('.addEntry').live('click', function(e) {
-            var entries = $(this).parents('.entries')
-            var template = $('.entry_template', entries)
-            template.before('<div class="entry">' + template.html() + '</div>')
-            renumber(entries)
-        })
-        
-        $('#form').submit(function() {
-            $('.entry_template').remove()
-        })
-        
-        var renumber = function(entries) {
-			$('.entry', entries).each(function(i) {
-				$('input:not(.exclude-from-renumbering), select', this).each(function() {
-					$(this).attr('name', $(this).attr('name').replace(/hourEntries\[.+\]/g, 'hourEntries[' + i + ']'))	
-				})
-			})
-		}
-        
-    </script>
 
 } {
 	@sidebar.userMenu(userId)

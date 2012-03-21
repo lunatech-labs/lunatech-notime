@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import org.joda.time.DateTime;
 import org.mindrot.jbcrypt.BCrypt;
 
 import play.data.validation.Constraints.Email;
