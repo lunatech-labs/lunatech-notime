@@ -39,28 +39,30 @@ POST	/project/:id				controllers.Projects.update(id: Long)
 POST	/project/:id/delete			controllers.Projects.delete(id: Long)
 
 # ProjectAssignments
-GET		/project/:id/assignment					controllers.ProjectAssignments.add(id: Long)
-POST	/project/:id/assignment					controllers.ProjectAssignments.create(id: Long)
-GET		/project/:pId/assignment/:aId/edit		controllers.ProjectAssignments.edit(pId: Long, aId: Long)
-POST	/project/:pId/assignment/:aId			controllers.ProjectAssignments.update(pId: Long, aId: Long)
-POST	/assignment/:id/delete 					controllers.ProjectAssignments.delete(id: Long)
+GET		/project/:id/assignment		controllers.ProjectAssignments.add(id: Long)
+POST	/project/:id/assignment		controllers.ProjectAssignments.create(id: Long)
+GET		/project/:pId/assignment/:aId/edit	controllers.ProjectAssignments.edit(pId: Long, aId: Long)
+POST	/project/:pId/assignment/:aId	controllers.ProjectAssignments.update(pId: Long, aId: Long)
+POST	/assignment/:id/delete 		controllers.ProjectAssignments.delete(id: Long)
 
 # HourEntries
-GET		/user/:id/hourentries				controllers.HourEntries.allFor(id: Long)
-GET		/user/:id/hourentries/table			controllers.HourEntries.tableOverview(id: Long)
-GET		/user/:id/hourentries/calendar		controllers.HourEntries.calendarOverview(id: Long)
-GET		/user/:id/hourentry					controllers.HourEntries.add(id: Long)
-POST	/user/:id/hourentry					controllers.HourEntries.create(id: Long)
-GET		/user/:uId/hourentry/:eId/edit		controllers.HourEntries.edit(uId: Long, eId: Long)
-POST	/user/:uId/hourentry/:eId			controllers.HourEntries.update(uId: Long, eId: Long)
+GET		/user/:id/hourentries		controllers.HourEntries.allFor(id: Long)
+GET		/user/:id/hourentries/table	controllers.HourEntries.tableOverview(id: Long)
+GET		/user/:id/hourentries/calendar	controllers.HourEntries.calendarOverview(id: Long)
+GET		/user/:id/hourentry			controllers.HourEntries.add(id: Long)
+GET		/user/:id/hourentry/:date	controllers.HourEntries.addForDay(id: Long, date: DateTime)
+POST	/user/:id/hourentry			controllers.HourEntries.create(id: Long)
+GET		/user/:uId/hourentry/:eId/edit	controllers.HourEntries.edit(uId: Long, eId: Long)
+POST	/user/:uId/hourentry/:eId	controllers.HourEntries.update(uId: Long, eId: Long)
 POST	/user/:uId/hourentry/:eId/delete	controllers.HourEntries.delete(uId: Long, eId: Long)
-GET		/user/:id/hourentries/multiple		controllers.HourEntries.addMultiple(id: Long)
-POST	/user/:id/hourentries/multiple		controllers.HourEntries.createMultiple(id: Long)
+GET		/user/:id/hourentries/multiple	controllers.HourEntries.addMultiple(id: Long)
+POST	/user/:id/hourentries/multiple	controllers.HourEntries.createMultiple(id: Long)
 
 # Tags
 GET		/tag						controllers.Tags.find()
 
-GET		/user/:id/hourentries/week			controllers.HourEntries.addForWeek(id: Long)
+# Javascript routing
+GET     /assets/javascripts/routes	controllers.Application.javascriptRoutes()
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /assets/*file				controllers.Assets.at(path="/public", file)

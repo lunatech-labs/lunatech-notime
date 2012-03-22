@@ -10,12 +10,13 @@ require(["jquery-1.7.1.min"], function() {
 			});
 		});
 		
+	//  jQuery UI datapicker (lazyloaded) for dateswitcher
 		$( "#date-picker" ).each(function() { 
 			var $elem = $(this);
 			require(["jquery-ui-1.8.18.custom.min"], function() {
-				$elem.datepicker( {
+				$elem.datepicker({ dateFormat: 'dd-mm-yy',
 					onSelect: function(date) {
-			            console.log(date);
+			            location.href = jsRoutes.controllers.HourEntries.addForDay("1", date).url;
 			        }
 				}); 
 			});
@@ -23,7 +24,7 @@ require(["jquery-1.7.1.min"], function() {
 		
 		//	jQuery UI autocomplete (with combobox widget) on select fields
 		require(["jquery.livequery.min"], function(){
-			$( "#entriesForm .entry select" ).livequery(function(event) {
+			$( "#entriesForm .entry select, #entryForm .entry select" ).livequery(function(event) {
 				var $elem = $(this);
 				require(["jquery-ui-1.8.18.custom.min", "combobox"], function() {
 					$elem.combobox(); 

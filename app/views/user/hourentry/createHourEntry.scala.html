@@ -11,7 +11,7 @@
         </div>
     }
     
-    @form(routes.HourEntries.create(userId), 'class -> "entry-form") {
+    @form(routes.HourEntries.create(userId), 'id -> "entryForm") {
 		<div class="entry">
 	    	@select(entryForm("assignment.id"), options(ProjectAssignment.optionsFor(userId)), '_label -> "Project")
 	

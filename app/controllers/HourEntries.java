@@ -58,6 +58,14 @@ public class HourEntries extends Controller {
 		Form<HourEntry> newForm = form(HourEntry.class);
 		return ok(createHourEntry.render(userId, newForm));
 	}
+	
+	@Transactional(readOnly = true)
+	public static Result addForDay(Long userId, DateTime date) {
+		HourEntry defaultValues = new HourEntry();
+		defaultValues.date = date;
+		Form<HourEntry> newForm = form(HourEntry.class).fill(defaultValues);		
+		return ok(createHourEntry.render(userId, newForm));
+	}
 
 	@Transactional(readOnly = true)
 	public static Result addMultiple(Long userId) {

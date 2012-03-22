@@ -1,6 +1,7 @@
 package controllers;
 
 import models.User;
+import play.Routes;
 import play.data.Form;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
@@ -40,5 +41,15 @@ public class Application extends Controller {
 	public static Result admin() {
 		return ok(overview.render());
 	}
-
+	
+	// Javascript routing    
+    public static Result javascriptRoutes() {
+        response().setContentType("text/javascript");
+        return ok(
+            Routes.javascriptRouter("jsRoutes",            
+                controllers.routes.javascript.HourEntries.addForDay()                
+            )
+        );
+    }
+    
 }

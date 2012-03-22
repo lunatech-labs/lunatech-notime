@@ -13,7 +13,7 @@
         </div>
     }
     
-    @form(routes.HourEntries.update(userId, entryId), 'class -> "entry-form") {
+    @form(routes.HourEntries.update(userId, entryId), 'id -> "entryForm") {
 	    <div class="entry">
 	    	@select(entryForm("assignment.id"), options(ProjectAssignment.optionsFor(userId)), '_label -> "Project")
 	

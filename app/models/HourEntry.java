@@ -46,7 +46,7 @@ public class HourEntry {
 	@ManyToMany
 	@JoinTable(name = "hourentry_tag", joinColumns = @JoinColumn(name = "hourentry_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
 	public List<Tag> tags;
-
+	
 	/**
 	 * Sets the tags and inserts this hour entry
 	 * 
