@@ -30,7 +30,7 @@ public class ProjectAssignments extends Controller {
 			return badRequest(createProjectAssignment.render(projectId, filledForm)); 
 		}		
 		
-		assignmentToBeCreated.save(projectId);
+		assignmentToBeCreated.saveAndMaximizeTime(projectId);
 		return redirect(routes.Projects.all());
 	}
 	

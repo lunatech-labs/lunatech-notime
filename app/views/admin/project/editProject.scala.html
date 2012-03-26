@@ -27,6 +27,8 @@
     	
     	@select(projectForm("projectManager.id"), options(User.options), '_label -> "Project Manager")
     	
+    	@checkbox(projectForm("defaultProject"), '_label -> "Default Project")
+    	
     	<input type="submit" value="Submit">
     	<a href="@routes.Projects.all()">Cancel</a>
     	

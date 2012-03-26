@@ -32,19 +32,26 @@ public class ProjectAssignment {
 	@ManyToOne
 	public User user;
 
-	@Required
 	@Formats.DateTime(pattern = "dd-MM-yy")
 	@Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
 	public DateTime startDate;
 
-	@Required
 	@Formats.DateTime(pattern = "dd-MM-yy")
 	@Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
 	public DateTime endDate;
 
-	@Required
 	@Column(scale = 2)
-	public BigDecimal hourlyRate;
+	public BigDecimal hourlyRate = new BigDecimal(0);
+
+	/**
+	 * Inserts this project assignment
+	 * 
+	 * @param projectId
+	 *            The id of the related project
+	 */
+	public void save() {
+		JPA.em().persist(this);
+	}
 
 	/**
 	 * Sets the project, maximizes the time of the endDate and inserts this
@@ -53,7 +60,7 @@ public class ProjectAssignment {
 	 * @param projectId
 	 *            The id of the related project
 	 */
-	public void save(Long projectId) {
+	public void saveAndMaximizeTime(Long projectId) {
 		this.project = Project.findById(projectId);
 		this.endDate = DateTimeUtil.maximizeTimeOfDate(this.endDate);
 		JPA.em().persist(this);
@@ -94,10 +101,11 @@ public class ProjectAssignment {
 	}
 
 	/**
-	 * Find all project assignment for a user
+	 * Find all project assignments for a user
 	 * 
 	 * @param userId
-	 *            The id of the user which project assignments are to be searched for
+	 *            The id of the user which project assignments are to be
+	 *            searched for
 	 * @return A List of project assignments
 	 */
 	public static List<ProjectAssignment> findAllForUser(Long userId) {
@@ -111,6 +119,28 @@ public class ProjectAssignment {
 	}
 
 	/**
+	 * Find all project assignments for a user on a project
+	 * 
+	 * @param user
+	 *            The user which project assignments are to be searched for
+	 * @param project
+	 *            The project which project assignments are to be searched for
+	 * @return A List of project assignments
+	 */
+	public static List<ProjectAssignment> findByUserAndProject(User user,
+			Project project) {
+		return JPA
+				.em()
+				.createQuery(
+						"from ProjectAssignment pa "
+								+ "where pa.user.id = :userId "
+								+ "and pa.project.id = :projectId "
+								+ "order by pa.id desc")
+				.setParameter("userId", user.id)
+				.setParameter("projectId", project.id).getResultList();
+	}
+
+	/**
 	 * All assignments for a user
 	 * 
 	 * @return A Map with as key the assignment id and as value the project name
@@ -118,7 +148,7 @@ public class ProjectAssignment {
 	public static Map<String, String> optionsFor(Long userId) {
 		LinkedHashMap<String, String> assignments = new LinkedHashMap<String, String>();
 		assignments.put("", "");
-		
+
 		for (ProjectAssignment assignment : findAllForUser(userId)) {
 			if (ProjectAssignment.isDateInAssignmentRange(new DateTime(),
 					assignment.id))
@@ -126,6 +156,54 @@ public class ProjectAssignment {
 						assignment.project.name.toString());
 		}
 		return assignments;
+	}
+
+	/**
+	 * Assigns all users to a project
+	 * 
+	 * @param project
+	 *            The project all users are assigned to
+	 */
+	public static void assignAllUsersTo(Project project) {
+		List<User> users = User.findAll();
+		for (User user : users) {
+			if (!isExistingAssignment(user, project)) {
+				ProjectAssignment pa = new ProjectAssignment();
+				pa.user = user;
+				pa.project = project;
+				pa.save();
+			}
+		}
+	}
+
+	/**
+	 * Assigns all default projects to a user
+	 * 
+	 * @param user
+	 *            The user all default projects are assigned to
+	 */
+	public static void assignAllDefaultProjectsTo(User user) {
+		List<Project> defaultProjects = Project.findAllDefaultProjects();
+		for (Project defaultProject : defaultProjects) {
+			ProjectAssignment pa = new ProjectAssignment();
+			pa.user = user;
+			pa.project = defaultProject;
+			pa.save();
+		}
+	}
+
+	/**
+	 * Checks if a user is already assigned to a project
+	 * 
+	 * @param user
+	 *            The user to be checked for
+	 * @param project
+	 *            The project to be checked for
+	 * @return A boolean which is true if there are 1 or more assignments with
+	 *         this user and project
+	 */
+	public static boolean isExistingAssignment(User user, Project project) {
+		return !findByUserAndProject(user, project).isEmpty();
 	}
 
 	// VALIDATION METHODS NEED TO BE REPLACED BY ANNOTATIONS OR BE REWRITTEN

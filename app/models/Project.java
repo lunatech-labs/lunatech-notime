@@ -1,5 +1,6 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,26 +47,40 @@ public class Project {
 	@OneToMany(mappedBy = "project")
 	public List<ProjectAssignment> assignments;
 
+	/**
+	 * A default project is a project on which all current and all new users are
+	 * assigned too. If an existing default project is made non-default the
+	 * existing assignments aren't removed, but new users aren't assigned
+	 * automatically anymore.
+	 */
+	public boolean defaultProject;
+
 	public enum Type {
 		FIXED_PRICE, HOURLY_BASED
 	}
 
 	/**
-	 * Inserts this project
+	 * Inserts this project. If the project is a defaultProject, all users will
+	 * be assigned to it.
 	 */
 	public void save() {
 		JPA.em().persist(this);
+		if (defaultProject)
+			ProjectAssignment.assignAllUsersTo(this);
 	}
 
 	/**
-	 * Updates this project
+	 * Updates this project. If the project is a defaultProject, all users will
+	 * be assigned to it.
 	 * 
 	 * @param projectId
 	 *            The id of the project that is going to be updated
 	 */
 	public void update(Long projectId) {
-		this.id = projectId;
+		id = projectId;
 		JPA.em().merge(this);
+		if (defaultProject)
+			ProjectAssignment.assignAllUsersTo(this);
 	}
 
 	/**
@@ -106,6 +121,20 @@ public class Project {
 		List<Project> projects = findAll();
 		projects.remove(findById(projectId));
 		return projects;
+	}
+
+	/**
+	 * Find all default projects
+	 * 
+	 * @return A list of project objects
+	 */
+	public static List<Project> findAllDefaultProjects() {
+		return JPA
+				.em()
+				.createQuery(
+						"from Project p "
+								+ "where p.defaultProject = :defaultProject")
+				.setParameter("defaultProject", true).getResultList();
 	}
 
 	/**
