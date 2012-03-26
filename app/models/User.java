@@ -38,19 +38,17 @@ public class User {
 	@Column(unique = true)
 	public String email;
 
-	public boolean employee;
-
-	public boolean admin;
-
 	@OneToMany(mappedBy = "user")
 	public List<ProjectAssignment> assignments;
 
 	/**
-	 * Encrypts the user's password and inserts this new user
+	 * Encrypts the user's password and inserts this new user. The user will
+	 * also be assigned to all default projects.
 	 */
 	public void save() {
 		password = User.encryptPassword(password);
 		JPA.em().persist(this);
+		ProjectAssignment.assignAllDefaultProjectsTo(this);
 	}
 
 	/**
