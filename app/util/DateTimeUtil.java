@@ -52,7 +52,7 @@ public class DateTimeUtil {
 	 * @return A new DateTime object with as value the first date of a week
 	 */
 	public static DateTime firstDateOfWeek(DateTime date) {
-		return date.dayOfWeek().withMinimumValue();
+		return minimizeTimeOfDate(date.dayOfWeek().withMinimumValue());
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class DateTimeUtil {
 	 * @return A new DateTime object with as value the first date of a month
 	 */
 	public static DateTime firstDateOfMonth(DateTime date) {
-		return date.dayOfMonth().withMinimumValue();
+		return minimizeTimeOfDate(date.dayOfMonth().withMinimumValue());
 	}
 
 	/**

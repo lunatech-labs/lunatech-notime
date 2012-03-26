@@ -1,4 +1,4 @@
-@(userId: Long)
+@(userId: Long, week: util.datastructures.weekoverview.HourEntriesWeekTable)
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -11,8 +11,30 @@
         </div>
     }
     
-    
-
+    @if(week.assignmentRows.isEmpty) {
+    	No entries
+    } else {
+	    <table>
+	    	<tr>
+	    		<th></th>
+	    		@for(day <- week.assignmentRows.get(0).dayFields) {
+	    			<th>@org.joda.time.format.DateTimeFormat.forPattern("E d-M").print(day.date)</div></th>
+	    		}
+	    	</tr>	    
+		   	@for(row <- week.assignmentRows) {
+		    	<tr>
+		    		<td>@row.assignment.project.name</td>
+			    		@for(day <- row.dayFields) {
+			    		   	<td>
+			    		   		@for(entry <- day.entries) {
+			    		   			<span><b>@entry.hours</b>h<b>@entry.minutes</b>m</span>
+			    		   		}
+			    		   	</td>
+			    		}
+		    	</tr>
+		    } 
+	    </table>  
+	}
 } {
 	@sidebar.userMenu(userId)
 }

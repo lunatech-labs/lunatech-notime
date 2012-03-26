@@ -1,6 +1,6 @@
 package util.datastructures.calendar;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -15,7 +15,7 @@ public class CalendarWeek {
 	public final List<CalendarDay> days;
 
 	public CalendarWeek() {
-		days = new ArrayList<CalendarDay>();
+		days = new LinkedList<CalendarDay>();
 	}
 
 	/**
@@ -35,7 +35,7 @@ public class CalendarWeek {
 				.firstDateOfWeek(firstDateOfMonth);
 		DateTime currentDate = firstDateOfWeek;
 
-		List<CalendarWeek> weeks = new ArrayList<CalendarWeek>();
+		List<CalendarWeek> weeks = new LinkedList<CalendarWeek>();
 
 		while (currentDate.getMonthOfYear() <= lastDateOfMonth.getMonthOfYear()) {
 			CalendarWeek week = new CalendarWeek();

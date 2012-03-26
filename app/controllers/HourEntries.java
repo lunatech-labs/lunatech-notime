@@ -3,6 +3,7 @@ package controllers;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +19,7 @@ import util.DateTimeUtil;
 import util.Transformers;
 import util.datastructures.HourEntriesList;
 import util.datastructures.calendar.CalendarMonth;
+import util.datastructures.weekoverview.HourEntriesWeekTable;
 import views.html.user.hourentry.createHourEntries;
 import views.html.user.hourentry.createHourEntriesForWeek;
 import views.html.user.hourentry.createHourEntry;
@@ -63,6 +65,7 @@ public class HourEntries extends Controller {
 	public static Result addForDay(Long userId, DateTime date) {
 		HourEntry defaultValues = new HourEntry();
 		defaultValues.date = date;
+		System.out.println(date.getWeekyear());
 		Form<HourEntry> newForm = form(HourEntry.class).fill(defaultValues);		
 		return ok(createHourEntry.render(userId, newForm));
 	}
@@ -102,8 +105,13 @@ public class HourEntries extends Controller {
 		// Map<Customer, Map<Project, List<HourEntry>>> projectsPerCustomer =
 		// new HashMap<Customer, Map<Project, List<HourEntry>>>();
 		// //Some for loop? Ugly!
+		
 
-		return ok(createHourEntriesForWeek.render(userId));
+		
+		
+		HourEntriesWeekTable week = new HourEntriesWeekTable(new DateTime(), userId);
+
+		return ok(createHourEntriesForWeek.render(userId, week));
 
 	}
 
