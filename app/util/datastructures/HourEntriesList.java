@@ -13,13 +13,17 @@ public class HourEntriesList {
 
 	@Valid
 	public List<HourEntry> hourEntries;
-	
+
 	public String validate() {
-		for(HourEntry entry : hourEntries) {
-			if (entry.validate() != null)
-				return entry.validate();
-		}
-		return null;
+		if (hourEntries == null) {
+			return "No entries submitted";
+		} else {
+			for (HourEntry entry : hourEntries) {
+				if (entry.validate() != null)
+					return entry.validate();
+			}
+			return null;
+		}		
 	}
 
 }

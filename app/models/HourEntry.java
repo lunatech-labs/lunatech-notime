@@ -10,9 +10,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Root;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import play.data.format.Formats;
 import play.data.validation.Constraints.Max;
@@ -151,7 +157,7 @@ public class HourEntry {
 	}
 
 	/**
-	 * Find the totals of the hour entries for a user between two dates
+	 * Find the totals of the hour entries for a user, per assignment, between two dates
 	 * 
 	 * @param userId
 	 *            The id of the user which entries are to be searched for
@@ -161,7 +167,7 @@ public class HourEntry {
 	 *            The date till which entries are to be searched for
 	 * @return A List of {@link TotalsPerAssignment} objects
 	 */
-	public static List<TotalsPerAssignment> getTotalsForUserBetween(
+	public static List<TotalsPerAssignment> getTotalsForUserPerAssignmentBetween(
 			Long userId, DateTime beginDate, DateTime endDate) {
 		return JPA
 				.em()
@@ -174,6 +180,22 @@ public class HourEntry {
 				.setParameter("beginDate", beginDate)
 				.setParameter("endDate", endDate).getResultList();
 	}
+	
+//	public static List<TotalsPerAssignment> getTotalForAssignmentBetween(Long assignmentId, DateTime beginDate, DateTime endDate) {
+//		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+//		
+//		CriteriaQuery<HourEntry> query = cb.createQuery(HourEntry.class);
+//		Root<HourEntry> type = query.from(HourEntry.class);
+//		ParameterExpression<Long> parAssignmentId = cb.parameter(Long.class);
+//		ParameterExpression<DateTime> parBeginDate = cb.parameter(DateTime.class);
+//		ParameterExpression<DateTime> parEndDate = cb.parameter(DateTime.class);
+//		query.select(type).where(
+//				cb.equal(type.get("assignment_id"), parAssignmentId),
+//				cb.between(type.get("date"), parBeginDate, parEndDate));
+//		
+//		return null;
+//		
+//	}
 
 	/**
 	 * Creates a String of the related tags, delimited by a semicolon
@@ -187,6 +209,11 @@ public class HourEntry {
 		return tagsString;
 	}
 
+	public String formattedDate() {
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("dd-MM-yyyy");
+		return date.toString(fmt);
+	}
+	
 	// VALIDATION METHODS NEED TO BE REPLACED BY ANNOTATIONS OR BE REWRITTEN
 	public String validate() {
 		if (!isValidAssignment())

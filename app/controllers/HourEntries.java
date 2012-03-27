@@ -41,7 +41,7 @@ public class HourEntries extends Controller {
 	public static Result tableOverview(Long userId) {
 		DateTime currentDate = new DateTime();
 		return ok(hourEntriesTable.render(userId, HourEntry
-				.getTotalsForUserBetween(userId,
+				.getTotalsForUserPerAssignmentBetween(userId,
 						DateTimeUtil.firstDateOfMonth(currentDate),
 						DateTimeUtil.lastDateOfMonth(currentDate))));
 	}
@@ -153,6 +153,16 @@ public class HourEntries extends Controller {
 		}
 
 		return redirect(routes.HourEntries.allFor(userId));
+	}
+	
+	@Transactional
+	public static Result createForWeek(Long userId) {
+		System.out.println(request().body().asFormUrlEncoded());
+		Form<HourEntriesList> filledForm = form(HourEntriesList.class)
+				.bindFromRequest();
+		System.out.println(filledForm.errors());
+		System.out.println(Integer.parseInt(request().body().asFormUrlEncoded().get("hourEntries[1].hours")[0]));
+		return redirect(routes.HourEntries.addForWeek(userId));
 	}
 
 	@Transactional(readOnly = true)

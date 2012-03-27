@@ -1,39 +1,73 @@
-@(userId: Long, week: util.datastructures.weekoverview.HourEntriesWeekTable)
+@(userId: Long, weekOverview: util.datastructures.weekoverview.HourEntriesWeekTable)
 
 @import helper._
 @import helper.twitterBootstrap._
+@import scala.collection.immutable.List
 
-@main("Enter hours per week") {
+@script = {
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/weekHourEntries.js")"></script>
+}
+
+@main("Enter hours per week", script = script) {
 	
 	@if(flash.containsKey("error")) {
     	<div class="alert-message error">
             <strong>Oops!</strong> @flash.get("error")
         </div>
     }
-    
-    @if(week.assignmentRows.isEmpty) {
+        
+    @if(weekOverview.assignmentRows.isEmpty) {
     	No entries
     } else {
-	    <table>
-	    	<tr>
-	    		<th></th>
-	    		@for(day <- week.assignmentRows.get(0).dayFields) {
-	    			<th>@org.joda.time.format.DateTimeFormat.forPattern("E d-M").print(day.date)</div></th>
-	    		}
-	    	</tr>	    
-		   	@for(row <- week.assignmentRows) {
-		    	<tr>
-		    		<td>@row.assignment.project.name</td>
-			    		@for(day <- row.dayFields) {
-			    		   	<td>
-			    		   		@for(entry <- day.entries) {
-			    		   			<span><b>@entry.hours</b>h<b>@entry.minutes</b>m</span>
-			    		   		}
-			    		   	</td>
+    	@form(routes.HourEntries.createForWeek(userId), 'id -> "entriesForm") {
+		    <table id="weekOverview">
+		    	<thead>
+			    	<tr>
+			    		<th></th>
+			    		@for(day <- weekOverview.assignmentRows.get(0).dayFields) {
+			    			<th>@org.joda.time.format.DateTimeFormat.forPattern("E d-M").print(day.date)</th>
 			    		}
-		    	</tr>
-		    } 
-	    </table>  
+			    	</tr>
+		    	</thead>
+		    	</tbody>
+				   	@for(assignment <- weekOverview.assignmentRows) {
+				    	<tr class="assignment">
+				    		<td>@assignment.assignment.project.code</td>
+					    		@for(day <- assignment.dayFields) {
+					    			<td class="day">
+						    			@if(day.entries.isEmpty) {
+						    				<span class="entry">
+						    					<input name="hourEntries[x].assignment.id" type="hidden" value="@assignment.assignment.id" />
+						    		   			<input name="hourEntries[x].date" type="hidden" value="@day.formattedDate" />
+						    		   			<input name="hourEntries[x].hours" type="text" />h
+						    		   			<input name="hourEntries[x].minutes" type="text" />m						    		   			
+						    		   		</span>
+						    			} else {
+						    				@for(entry <- day.entries) {
+						    		   			<span class="entry">
+						    		   				<input name="hourEntries[x].id" type="hidden" value="@entry.id" />
+						    		   				<input name="hourEntries[x].assignment.id" type="hidden" value="@entry.assignment.id" />
+						    		   				<input name="hourEntries[x].date" type="hidden" value="@entry.formattedDate" />
+						    		   				<input name="hourEntries[x].hours" type="text" value="@entry.hours" />h
+						    		   				<input name="hourEntries[x].minutes" type="text" value="@entry.minutes"/>m
+						    		   			</span>
+						    		   		}
+						    			}		    		   		
+					    		   	</td>
+					    		}
+				    	</tr>
+				    } 
+			    </tbody>
+		    </table>
+		    <input class="btn btn-primary" type="submit" value="Submit">
+		    
+		    @*@assignment.dayFields.flatMap(day => if(day.entries.isEmpty) {
+										List((day, None))
+				    				} else {				    				
+				    					day.entries.map(entry => (day, Some(entry)))
+				    				}).zipWithIndex.groupBy(_._1._1)*@
+			@*List[((Day, Option[Entry]), Int)]*@
+		}
 	}
 } {
 	@sidebar.userMenu(userId)
