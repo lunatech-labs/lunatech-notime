@@ -200,7 +200,7 @@ public class HourEntries extends Controller {
 
 		String tagsString = filledForm.field("tagsString").value();
 		filledForm.get().update(entryId, tagsString);
-		return redirect(routes.HourEntries.allFor(userId));
+		return redirect(routes.HourEntries.addForDay(userId, filledForm.get().date));
 	}
 
 	@Transactional
