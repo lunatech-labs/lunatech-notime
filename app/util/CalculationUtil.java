@@ -16,10 +16,26 @@ public class CalculationUtil {
 	 * @return A string of the total hours and the remaining minutes, in the
 	 *         format: 5h30m
 	 */
-	public static String totalHoursMinutesFormatter(long hours, long minutes) {
+	public static String formatTotalHoursMinutes(long hours, long minutes) {
 		hours += minutes / 60;
 		minutes = minutes % 60;
 		return hours + "h " + minutes + "m";
+	}
+
+	/**
+	 * Because the hours and minutes are saved apart, minutes can become more
+	 * than 59 when adding some entries. This method calculates the total hours
+	 * and the remaining minutes and formats them.
+	 * 
+	 * @param hours
+	 *            The hours
+	 * @param minutes
+	 *            The minutes, can be more than 59
+	 * @return A string of the total hours and the remaining minutes, in the
+	 *         format: 5h30m
+	 */
+	public static String formatTotalHoursMinutes(int hours, int minutes) {
+		return formatTotalHoursMinutes((long) hours, (long) minutes);
 	}
 
 	/**

@@ -1,10 +1,11 @@
-@(userId: Long, entryForm: Form[HourEntry], entries: List[HourEntry])
+@(userId: Long, entryForm: Form[HourEntry], entries: List[HourEntry], date: org.joda.time.DateTime)
 
 @import helper._
 @import helper.twitterBootstrap._
 @import util.CalculationUtil
+@import util.DateTimeUtil
 
-@main("Enter hours") {
+@main("Enter hours for " + DateTimeUtil.formatDate(date)) {
 	
 	@if(entryForm.hasGlobalErrors()) {
     	<div class="alert-message error">
@@ -12,11 +13,11 @@
         </div>
     }
         
-    @form(routes.HourEntries.create(userId), 'id -> "entryForm") {
+    @form(routes.HourEntries.createForDay(userId, date), 'id -> "entryForm") {
 		<div class="entry">
 	    	@select(entryForm("assignment.id"), options(ProjectAssignment.optionsFor(userId)), '_label -> "Project")
 	
-			@inputDate(entryForm("date"), '_label -> "Date")
+			@inputDate(entryForm("date"), '_label -> "Date", '_type -> "hidden")
 			
 			@inputText(entryForm("hours"), '_label -> "Hours")
 			

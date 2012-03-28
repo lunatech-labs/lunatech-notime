@@ -1,6 +1,7 @@
 @(userId: Long, hourEntries: List[HourEntry])
 
 @import helper._
+@import util.DateTimeUtil
 
 @main("Entered hours") {
 
@@ -11,7 +12,7 @@
 	} else {
 		<ul>
 			@for(hourEntry <- hourEntries) {
-				<li>@org.joda.time.format.DateTimeFormat.forPattern("dd-MM-yyyy").print(hourEntry.date) - @hourEntry.assignment.project.name - @hourEntry.hours:@hourEntry.minutes - 
+				<li>@DateTimeUtil.formatDate(hourEntry.date) - @hourEntry.assignment.project.name - @hourEntry.hours:@hourEntry.minutes - 
 					<a class="entryEdit" href="@routes.HourEntries.edit(userId, hourEntry.id)">Edit</a> - 
 					@form(routes.HourEntries.delete(userId, hourEntry.id)) {
 						<input type="submit" value="Delete">

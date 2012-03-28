@@ -7,8 +7,6 @@ import models.ProjectAssignment;
 
 import org.joda.time.DateTime;
 
-import util.DateTimeUtil;
-
 public class AssignmentRow {
 	
 	public final ProjectAssignment assignment;

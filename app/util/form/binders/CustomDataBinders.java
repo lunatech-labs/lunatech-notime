@@ -4,10 +4,9 @@ import java.text.ParseException;
 import java.util.Locale;
 
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import play.data.format.Formatters;
+import util.DateTimeUtil;
 
 public class CustomDataBinders {
 
@@ -19,18 +18,16 @@ public class CustomDataBinders {
 		Formatters.register(DateTime.class,
 				new Formatters.SimpleFormatter<DateTime>() {
 
-					DateTimeFormatter fmt = DateTimeFormat
-							.forPattern("dd-MM-yyyy");
 
 					@Override
 					public DateTime parse(String input, Locale l)
 							throws ParseException {
-						return fmt.parseDateTime(input);
+						return DateTimeUtil.parseDate(input);
 					}
 
 					@Override
 					public String print(DateTime input, Locale l) {
-						return input.toString(fmt);
+						return DateTimeUtil.formatDate(input);
 					}
 
 				});

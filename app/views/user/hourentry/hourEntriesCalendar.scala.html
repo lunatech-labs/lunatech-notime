@@ -1,6 +1,7 @@
 @(userId: Long, calendar: util.datastructures.calendar.CalendarMonth)
 
 @import helper._
+@import util.DateTimeUtil
 
 @main("Entered hours") {
 	<table class="calendarOverview">
@@ -8,7 +9,7 @@
 			<tr class="week">
 				@for(day <- week.days) {
 					<td class="day">
-						<div class="dayNumber">@org.joda.time.format.DateTimeFormat.forPattern("E d-M").print(day.date)</div>
+						<div class="dayNumber">@DateTimeUtil.formatDate(day.date, "E d-M")</div>
 						@for(entry <- day.getHourEntries) {
 							<div class="entry">
 								<a href="@routes.HourEntries.edit(userId, entry.id)">

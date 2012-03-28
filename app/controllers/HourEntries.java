@@ -3,7 +3,6 @@ package controllers;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -23,6 +22,7 @@ import util.datastructures.weekoverview.HourEntriesWeekTable;
 import views.html.user.hourentry.createHourEntries;
 import views.html.user.hourentry.createHourEntriesForWeek;
 import views.html.user.hourentry.createHourEntry;
+import views.html.user.hourentry.createHourEntryForDay;
 import views.html.user.hourentry.editHourEntry;
 import views.html.user.hourentry.hourEntries;
 import views.html.user.hourentry.hourEntriesCalendar;
@@ -58,16 +58,18 @@ public class HourEntries extends Controller {
 	@Transactional(readOnly = true)
 	public static Result add(Long userId) {
 		Form<HourEntry> newForm = form(HourEntry.class);
-		return ok(createHourEntry.render(userId, newForm));
+		DateTime date = new DateTime();
+		List<HourEntry> entries = HourEntry.findAllForUserBetween(userId, DateTimeUtil.minimizeTimeOfDate(date), DateTimeUtil.maximizeTimeOfDate(date));
+		return ok(createHourEntry.render(userId, newForm, entries));
 	}
 	
 	@Transactional(readOnly = true)
 	public static Result addForDay(Long userId, DateTime date) {
 		HourEntry defaultValues = new HourEntry();
 		defaultValues.date = date;
-		System.out.println(date.getWeekyear());
-		Form<HourEntry> newForm = form(HourEntry.class).fill(defaultValues);		
-		return ok(createHourEntry.render(userId, newForm));
+		Form<HourEntry> newForm = form(HourEntry.class).fill(defaultValues);
+		List<HourEntry> entries = HourEntry.findAllForUserBetween(userId, DateTimeUtil.minimizeTimeOfDate(date), DateTimeUtil.maximizeTimeOfDate(date));
+		return ok(createHourEntryForDay.render(userId, newForm, entries, date));
 	}
 
 	@Transactional(readOnly = true)
@@ -119,12 +121,29 @@ public class HourEntries extends Controller {
 	public static Result create(Long userId) {
 		Form<HourEntry> filledForm = form(HourEntry.class).bindFromRequest();
 		
+		DateTime date = new DateTime();
+		List<HourEntry> entries = HourEntry.findAllForUserBetween(userId, DateTimeUtil.minimizeTimeOfDate(date), DateTimeUtil.maximizeTimeOfDate(date));
+		
 		if (filledForm.hasErrors())
-			return badRequest(createHourEntry.render(userId, filledForm));
+			return badRequest(createHourEntry.render(userId, filledForm, entries));
 
 		String tagsString = filledForm.field("tagsString").value();
 		filledForm.get().save(tagsString);
-		return redirect(routes.HourEntries.allFor(userId));
+		return redirect(routes.HourEntries.addForDay(userId, filledForm.get().date));
+	}
+	
+	@Transactional
+	public static Result createForDay(Long userId, DateTime date) {
+		Form<HourEntry> filledForm = form(HourEntry.class).bindFromRequest();
+		System.out.println("test");
+		List<HourEntry> entries = HourEntry.findAllForUserBetween(userId, DateTimeUtil.minimizeTimeOfDate(date), DateTimeUtil.maximizeTimeOfDate(date));
+		
+		if (filledForm.hasErrors())
+			return badRequest(createHourEntryForDay.render(userId, filledForm, entries, date));
+
+		String tagsString = filledForm.field("tagsString").value();
+		filledForm.get().save(tagsString);
+		return redirect(routes.HourEntries.addForDay(userId, date));
 	}
 
 	@Transactional

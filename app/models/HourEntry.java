@@ -10,15 +10,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Root;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import play.data.format.Formats;
 import play.data.validation.Constraints.Max;
@@ -207,11 +201,6 @@ public class HourEntry {
 		for (Tag tag : tags)
 			tagsString += tag.tag + "; ";
 		return tagsString;
-	}
-
-	public String formattedDate() {
-		DateTimeFormatter fmt = DateTimeFormat.forPattern("dd-MM-yyyy");
-		return date.toString(fmt);
 	}
 	
 	// VALIDATION METHODS NEED TO BE REPLACED BY ANNOTATIONS OR BE REWRITTEN

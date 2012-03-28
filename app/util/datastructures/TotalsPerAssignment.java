@@ -38,7 +38,7 @@ public class TotalsPerAssignment {
 		this.assignment = assignment;
 		this.minutes = minutes;
 		this.hours = hours;
-		hoursMinutes = CalculationUtil.totalHoursMinutesFormatter(hours,
+		hoursMinutes = CalculationUtil.formatTotalHoursMinutes(hours,
 				minutes);
 		turnover = CalculationUtil.totalTurnover(hours, minutes,
 				assignment.hourlyRate);
