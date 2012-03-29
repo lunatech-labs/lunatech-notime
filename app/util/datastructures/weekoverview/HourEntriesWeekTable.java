@@ -21,7 +21,7 @@ public class HourEntriesWeekTable {
 		DateTime endDate = DateTimeUtil.lastDateOfWeek(currentDate);
 
 		assignments = createEntriesPerAssignment(userId, beginDate, endDate);
-		daysTotals = HourEntry.getTotalsForUserBetween(userId, beginDate,
+		daysTotals = HourEntry.getTotalsForUserPerDayBetween(userId, beginDate,
 				endDate);
 
 	}
