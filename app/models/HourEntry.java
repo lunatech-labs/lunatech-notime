@@ -176,6 +176,32 @@ public class HourEntry {
 				.setParameter("beginDate", beginDate)
 				.setParameter("endDate", endDate).getResultList();
 	}
+	
+	/**
+	 * Calculates the totals of the hour entries for a user, per day, between
+	 * two dates. Note that the amount of minutes can be more than 60
+	 * 
+	 * @param userId
+	 *            The id of the user which entries are to be summed
+	 * @param beginDate
+	 *            The date from which entries are to be searched for
+	 * @param endDate
+	 *            The date till which entries are to be searched for
+	 * @return A List of {@link TotalsDay} objects
+	 */
+	public static List<TotalsDay> getTotalsForUserPerDayBetween(Long userId,
+			DateTime beginDate, DateTime endDate) {
+		return JPA
+				.em()
+				.createQuery(
+						"select new util.datastructures.TotalsDay(he.date, sum(he.hours), sum(he.minutes)) from HourEntry he "
+								+ "where he.assignment.user.id = :userId "
+								+ "and he.date between :beginDate and :endDate "
+								+ "group by he.date order by he.date asc")
+				.setParameter("userId", userId)
+				.setParameter("beginDate", beginDate)
+				.setParameter("endDate", endDate).getResultList();
+	}
 
 	/**
 	 * Calculates the totals of the hour entries for an assignment, between two
@@ -201,20 +227,6 @@ public class HourEntry {
 				.setParameter("assignmentId", assignmentId)
 				.setParameter("beginDate", beginDate)
 				.setParameter("endDate", endDate).getResultList().get(0);
-	}
-
-	public static List<TotalsDay> getTotalsForUserBetween(Long userId,
-			DateTime beginDate, DateTime endDate) {
-		return JPA
-				.em()
-				.createQuery(
-						"select new util.datastructures.TotalsDay(he.date, sum(he.hours), sum(he.minutes)) from HourEntry he "
-								+ "where he.assignment.user.id = :userId "
-								+ "and he.date between :beginDate and :endDate "
-								+ "group by he.date order by he.date asc")
-				.setParameter("userId", userId)
-				.setParameter("beginDate", beginDate)
-				.setParameter("endDate", endDate).getResultList();
 	}
 
 	/**
