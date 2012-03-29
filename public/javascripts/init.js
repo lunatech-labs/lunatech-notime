@@ -10,7 +10,7 @@ require(["jquery-1.7.1.min"], function() {
 			});
 		});
 		
-	//  jQuery UI datapicker (lazyloaded) for dateswitcher
+		//  jQuery UI datapicker (lazyloaded) for dateswitcher
 		$( "#date-picker" ).each(function() { 
 			var $elem = $(this);
 			require(["jquery-ui-1.8.18.custom.min"], function() {
@@ -23,14 +23,16 @@ require(["jquery-1.7.1.min"], function() {
 		});
 		
 		//	jQuery UI autocomplete (with combobox widget) on select fields
-		require(["jquery.livequery.min"], function(){
-			$( "#entriesForm .entry select, #entryForm .entry select" ).livequery(function(event) {
-				var $elem = $(this);
-				require(["jquery-ui-1.8.18.custom.min", "combobox"], function() {
-					$elem.combobox(); 
+		if ($( "#entriesForm .entry select, #entryForm .entry select" ).length) {
+			require(["jquery.livequery.min"], function(){
+				$( "#entriesForm .entry select, #entryForm .entry select" ).livequery(function(event) {
+					var $elem = $(this);
+					require(["jquery-ui-1.8.18.custom.min", "combobox"], function() {
+						$elem.combobox(); 
+					});
 				});
 			});
-		});		
+		}		
 
 		//	jQuery UI autocomplete (is customized for entering tags)
 		$( "input.autocomplete" ).live("focus", function(event) {	

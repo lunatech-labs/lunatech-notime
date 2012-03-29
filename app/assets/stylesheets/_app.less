@@ -114,18 +114,7 @@
     	margin-bottom: 0;
     }
     
-    .entry {
-    	margin-bottom: 5px;
-    	border-bottom: 1px solid @grey2;
-    }
     
-    .entryEdit {
-    	float: none;
-    }
-    
-    .manager_template, .entry_template {
-    	display: none;
-    }
     
     .alert-message {
     	width: 400px;
@@ -190,6 +179,15 @@
     	width: 15px;
     }
     
+    .entry {
+    	margin-bottom: 5px;
+    	border-bottom: 1px solid @grey2;
+    }
+    
+    .manager_template, .entry_template {
+    	display: none;
+    }
+    
     #entriesForm input.ui-corner-left, #entryForm input.ui-corner-left, {
     	border-radius: 0;
     	border-top-left-radius: @rad;
@@ -199,6 +197,36 @@
     
     #entriesForm button, #entryForm button {
     	padding-bottom: 1px;
+    }
+    
+    .inline-entry-form .entry {
+    	border: none;
+    }
+    
+    .inline-entry-form .assignment, #entryForm .hours, #entryForm .minutes {
+    	float: left;
+    	margin: 5px;
+    }
+    
+    .inline-entry-form .assignment input {
+    	width: 400px;
+    }
+    
+    .inline-entry-form .hours input, #entryForm .minutes input {
+    	width: 20px;
+    }
+    
+    .inline-entry-form .tags {
+    	width: 700px;
+    	margin: 5px;
+    }
+    
+    .inline-entry-form .tags input {
+    	width: 500px;
+    }
+    
+    .inline-entry-form .input {
+    	margin-left: 0;
     }
     
     // SIDEBAR

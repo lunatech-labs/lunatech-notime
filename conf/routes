@@ -46,7 +46,6 @@ POST	/project/:pId/assignment/:aId	controllers.ProjectAssignments.update(pId: Lo
 POST	/assignment/:id/delete 		controllers.ProjectAssignments.delete(id: Long)
 
 # HourEntries
-GET		/user/:id/hourentries		controllers.HourEntries.allFor(id: Long)
 GET		/user/:id/hourentries/table	controllers.HourEntries.tableOverview(id: Long)
 GET		/user/:id/hourentries/calendar	controllers.HourEntries.calendarOverview(id: Long)
 GET		/user/:id/hourentry			controllers.HourEntries.add(id: Long)

@@ -54,6 +54,15 @@
 						}
 					}
 				}).addClass( "ui-corner-left ui-button-left exclude-from-renumbering" );
+			
+			// Set default value of the combobox
+            if ( !input.val() ) {
+            	input.val("Choose a project");
+            }
+			
+            input.focus( function() {            	
+            	$(this).val("");
+            });
 
 			input.data( "autocomplete" )._renderItem = function( ul, item ) {
 				return $( "<li></li>" )

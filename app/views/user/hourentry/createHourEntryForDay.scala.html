@@ -1,9 +1,12 @@
-@(userId: Long, entryForm: Form[HourEntry], entries: List[HourEntry], date: org.joda.time.DateTime)
+@(userId: Long, entryForm: Form[HourEntry], date: org.joda.time.DateTime, entries: List[HourEntry], totals: util.datastructures.TotalsDay)
 
 @import helper._
-@import helper.twitterBootstrap._
+
+@implicitFieldConstructor = @{ FieldConstructor(template.customInput.render) } 
+
 @import util.CalculationUtil
 @import util.DateTimeUtil
+
 
 @main("Enter hours for " + DateTimeUtil.formatDate(date)) {
 	
@@ -11,23 +14,26 @@
     	<div class="alert-message error">
             <strong>Oops!</strong> @entryForm.globalError().message
         </div>
-    }
+    }    
         
-    @form(routes.HourEntries.createForDay(userId, date), 'id -> "entryForm") {
+    @form(routes.HourEntries.createForDay(userId, date), 'id -> "entryForm", 'class -> "inline-entry-form") {
 		<div class="entry">
-	    	@select(entryForm("assignment.id"), options(ProjectAssignment.optionsFor(userId)), '_label -> "Project")
-	
-			@inputDate(entryForm("date"), '_label -> "Date", '_type -> "hidden")
+			<div class="hidden-date">
+				<div class="input">
+					<input id="date" type="hidden" name="date" value="@DateTimeUtil.formatDate(date)">
+				</div>
+			</div>
 			
-			@inputText(entryForm("hours"), '_label -> "Hours")
+	    	@select(entryForm("assignment.id"), options(ProjectAssignment.optionsFor(userId)), '_label -> "", '_default -> "-- Choose a Project --", '_class -> "assignment")
+				
+			@inputText(entryForm("hours"), '_label -> "h", '_class -> "hours")
 			
-			@inputText(entryForm("minutes"), '_label -> "Minutes")
+			@inputText(entryForm("minutes"), '_label -> "m", '_class -> "minutes")
 			
-			<div class="clearfix" id="tags_string_field">
-				<label for="tags_string">Tags</label>
+			<div class="tags">
 				<div class="input">
 					<input type="text" class="autocomplete" name="tagsString" value="@entryForm.data.get("tagsString")" data-url="@routes.Tags.find">
-					<span class="help-block">Please use the same tags for the same type of work. So do not use 'test' and 'testing'</span>
+					<!-- <span class="help-block">Please use the same tags for the same type of work. So do not use 'test' and 'testing'</span> -->
 				</div>
 			</div>
 			
@@ -54,11 +60,16 @@
 				@for(entry <- entries) {
 					
 					<tr>
-						<td>@entry.assignment.project.code</td>
-						<td>@CalculationUtil.formatTotalHoursMinutes(entry.hours, entry.minutes)</td>
+						<td>@entry.assignment.project.name</td>
+						<td><a href="@routes.HourEntries.edit(userId, entry.id)">@CalculationUtil.formatTotalHoursMinutes(entry.hours, entry.minutes)</a></td>
 						<td>@entry.enteredTagsString()</td>
 					</tr>
 				}
+				<tr>
+					<td></td>
+					<td>@totals.hoursMinutes</td>
+					<td></td>
+				</tr>
 			</tbody>
 		</table>
 	}
