@@ -9,7 +9,7 @@ import models.ProjectAssignment;
 /**
  * Datastructure for displaying the totals for an assignment
  */
-public class TotalsPerAssignment {
+public class TotalsAssignment {
 
 	public ProjectAssignment assignment;
 
@@ -22,7 +22,7 @@ public class TotalsPerAssignment {
 	public BigDecimal turnover;
 
 	/**
-	 * Constructor for {@link TotalsPerAssignment}. Also fills the hoursMinutes
+	 * Constructor for {@link TotalsAssignment}. Also fills the hoursMinutes
 	 * field with a formatted String of the hours and minutes. And calculates
 	 * the turnover field
 	 * 
@@ -33,7 +33,7 @@ public class TotalsPerAssignment {
 	 * @param minutes
 	 *            The total minutes booked on this minutes
 	 */
-	public TotalsPerAssignment(ProjectAssignment assignment, long hours,
+	public TotalsAssignment(ProjectAssignment assignment, long hours,
 			long minutes) {
 		this.assignment = assignment;
 		this.minutes = minutes;
