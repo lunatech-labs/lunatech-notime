@@ -75,44 +75,15 @@ public class HourEntries extends Controller {
 	@Transactional(readOnly = true)
 	public static Result addMultiple(Long userId) {
 		Form<HourEntriesList> newForm = form(HourEntriesList.class);
-		List<Integer> indices = new ArrayList<Integer>();
-		indices.add(0);
+		List<Integer> indices = new ArrayList<Integer>() {{
+			add(0);
+		}};
 		return ok(createHourEntries.render(userId, newForm, indices));
 	}
 
 	@Transactional(readOnly = true)
-	public static Result addForWeek(Long userId) {
-		// Some code for TIME-74
-		// DateTime currentDate = new DateTime();
-		// List<HourEntry> hourEntries = HourEntry.allBetween(userId,
-		// DateUtil.firstDateOfWeek(currentDate),
-		// DateUtil.lastDateOfWeek(currentDate));
-		//
-		// Map<Project, List<HourEntry>> entriesPerProject = new
-		// HashMap<Project, List<HourEntry>>();
-		// for(HourEntry hourEntry : hourEntries) {
-		// if(entriesPerProject.containsKey(hourEntry.assignment.project)) {
-		// List<HourEntry> entries =
-		// entriesPerProject.get(hourEntry.assignment.project);
-		// entries.add(hourEntry);
-		// entriesPerProject.put(hourEntry.assignment.project, entries);
-		// }
-		// else {
-		// List<HourEntry> entries = new ArrayList<HourEntry>();
-		// entries.add(hourEntry);
-		// entriesPerProject.put(hourEntry.assignment.project, entries);
-		// }
-		// }
-		//
-		// Map<Customer, Map<Project, List<HourEntry>>> projectsPerCustomer =
-		// new HashMap<Customer, Map<Project, List<HourEntry>>>();
-		// //Some for loop? Ugly!
-		
-
-		
-		
+	public static Result addForWeek(Long userId) {	
 		HourEntriesWeekTable week = new HourEntriesWeekTable(new DateTime(), userId);
-
 		return ok(createHourEntriesForWeek.render(userId, week));
 
 	}
@@ -135,7 +106,6 @@ public class HourEntries extends Controller {
 	@Transactional
 	public static Result createForDay(Long userId, DateTime date) {
 		Form<HourEntry> filledForm = form(HourEntry.class).bindFromRequest();
-		System.out.println("test");
 		List<HourEntry> entries = HourEntry.findAllForUserBetween(userId, DateTimeUtil.minimizeTimeOfDate(date), DateTimeUtil.maximizeTimeOfDate(date));
 		
 		if (filledForm.hasErrors())

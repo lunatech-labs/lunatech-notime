@@ -17,7 +17,7 @@
         </div>
     }
         
-    @if(weekOverview.assignmentRows.isEmpty) {
+    @if(weekOverview.assignments.isEmpty) {
     	No entries
     } else {
     	@form(routes.HourEntries.createForWeek(userId), 'id -> "entriesForm") {
@@ -25,49 +25,48 @@
 		    	<thead>
 			    	<tr>
 			    		<th></th>
-			    		@for(day <- weekOverview.assignmentRows.get(0).dayFields) {
+			    		@for(day <- weekOverview.assignments.get(0).days) {
 			    			<th>@DateTimeUtil.formatDate(day.date, "E d-M")</th>
 			    		}
 			    	</tr>
 		    	</thead>
 		    	</tbody>
-				   	@for(assignment <- weekOverview.assignmentRows) {
+				   	@for((assignment, assignmentIndex) <- weekOverview.assignments.zipWithIndex) {
 				    	<tr class="assignment">
 				    		<td>@assignment.assignment.project.code</td>
-					    		@for(day <- assignment.dayFields) {
-					    			<td class="day">
-						    			@if(day.entries.isEmpty) {
-						    				<span class="entry">
-						    					<input name="hourEntries[x].assignment.id" type="hidden" value="@assignment.assignment.id" />
-						    		   			<input name="hourEntries[x].date" type="hidden" value="@DateTimeUtil.formatDate(day.date)" />
-						    		   			<input name="hourEntries[x].hours" type="text" />h
-						    		   			<input name="hourEntries[x].minutes" type="text" />m						    		   			
-						    		   		</span>
-						    			} else {
-						    				@for(entry <- day.entries) {
+					    		@for((day, dayIndex) <- assignment.days.zipWithIndex) {
+					    			<td class="day">						    			
+						    				@for((entry, entryIndex) <- day.entries.zipWithIndex) {
 						    		   			<span class="entry">
 						    		   				<input name="hourEntries[x].id" type="hidden" value="@entry.id" />
 						    		   				<input name="hourEntries[x].assignment.id" type="hidden" value="@entry.assignment.id" />
 						    		   				<input name="hourEntries[x].date" type="hidden" value="@DateTimeUtil.formatDate(entry.date)" />
-						    		   				<input name="hourEntries[x].hours" type="text" value="@entry.hours" />h
-						    		   				<input name="hourEntries[x].minutes" type="text" value="@entry.minutes"/>m
+						    		   				<input name="hourEntries[x].hours" type="text" value="@entry.hours" />:
+						    		   				<input name="hourEntries[x].minutes" type="text" value="@entry.minutes"/>
 						    		   			</span>
 						    		   		}
-						    			}		    		   		
+											<span class="entry">
+						    					<input name="hourEntries[x].assignment.id" type="hidden" value="@assignment.assignment.id" />
+						    		   			<input name="hourEntries[x].date" type="hidden" value="@DateTimeUtil.formatDate(day.date)" />
+						    		   			<input name="hourEntries[x].hours" type="text" />:
+						    		   			<input name="hourEntries[x].minutes" type="text" />						    		   			
+						    		   		</span>	
 					    		   	</td>
 					    		}
+					    	<td>@assignment.assignmentTotals.hoursMinutes</td>
 				    	</tr>
-				    } 
+				    }
+				    <tr>
+				    	<td></td>
+				    	@for(dayTotals <- weekOverview.daysTotals) {
+				    		<td>@dayTotals.hoursMinutes</td>
+				    	}
+				    </tr>
+				    
 			    </tbody>
 		    </table>
 		    <input class="btn btn-primary" type="submit" value="Submit">
 		    
-		    @*@assignment.dayFields.flatMap(day => if(day.entries.isEmpty) {
-										List((day, None))
-				    				} else {				    				
-				    					day.entries.map(entry => (day, Some(entry)))
-				    				}).zipWithIndex.groupBy(_._1._1)*@
-			@*List[((Day, Option[Entry]), Int)]*@
 		}
 	}
 } {

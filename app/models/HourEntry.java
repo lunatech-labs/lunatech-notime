@@ -18,7 +18,8 @@ import play.data.format.Formats;
 import play.data.validation.Constraints.Max;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
-import util.datastructures.TotalsPerAssignment;
+import util.datastructures.TotalsAssignment;
+import util.datastructures.TotalsDay;
 
 @Entity
 public class HourEntry {
@@ -46,7 +47,7 @@ public class HourEntry {
 	@ManyToMany
 	@JoinTable(name = "hourentry_tag", joinColumns = @JoinColumn(name = "hourentry_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
 	public List<Tag> tags;
-	
+
 	/**
 	 * Sets the tags and inserts this hour entry
 	 * 
@@ -151,22 +152,23 @@ public class HourEntry {
 	}
 
 	/**
-	 * Find the totals of the hour entries for a user, per assignment, between two dates
+	 * Calculates the totals of the hour entries for a user, per assignment,
+	 * between two dates. Note that the amount of minutes can be more than 60
 	 * 
 	 * @param userId
-	 *            The id of the user which entries are to be searched for
+	 *            The id of the user which entries are to be summed
 	 * @param beginDate
 	 *            The date from which entries are to be searched for
 	 * @param endDate
 	 *            The date till which entries are to be searched for
-	 * @return A List of {@link TotalsPerAssignment} objects
+	 * @return A List of {@link TotalsAssignment} objects
 	 */
-	public static List<TotalsPerAssignment> getTotalsForUserPerAssignmentBetween(
+	public static List<TotalsAssignment> getTotalsForUserPerAssignmentBetween(
 			Long userId, DateTime beginDate, DateTime endDate) {
 		return JPA
 				.em()
 				.createQuery(
-						"select new util.datastructures.TotalsPerAssignment(he.assignment, sum(he.hours), sum(he.minutes)) from HourEntry he "
+						"select new util.datastructures.TotalsAssignment(he.assignment, sum(he.hours), sum(he.minutes)) from HourEntry he "
 								+ "where he.assignment.user.id = :userId "
 								+ "and he.date between :beginDate and :endDate "
 								+ "group by he.assignment")
@@ -174,22 +176,46 @@ public class HourEntry {
 				.setParameter("beginDate", beginDate)
 				.setParameter("endDate", endDate).getResultList();
 	}
-	
-//	public static List<TotalsPerAssignment> getTotalForAssignmentBetween(Long assignmentId, DateTime beginDate, DateTime endDate) {
-//		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
-//		
-//		CriteriaQuery<HourEntry> query = cb.createQuery(HourEntry.class);
-//		Root<HourEntry> type = query.from(HourEntry.class);
-//		ParameterExpression<Long> parAssignmentId = cb.parameter(Long.class);
-//		ParameterExpression<DateTime> parBeginDate = cb.parameter(DateTime.class);
-//		ParameterExpression<DateTime> parEndDate = cb.parameter(DateTime.class);
-//		query.select(type).where(
-//				cb.equal(type.get("assignment_id"), parAssignmentId),
-//				cb.between(type.get("date"), parBeginDate, parEndDate));
-//		
-//		return null;
-//		
-//	}
+
+	/**
+	 * Calculates the totals of the hour entries for an assignment, between two
+	 * dates
+	 * 
+	 * @param assignmentId
+	 *            The id of the assignment which entries are to be summed
+	 * @param beginDate
+	 *            The date from which entries are to be searched for
+	 * @param endDate
+	 *            The date till which entries are to be searched for
+	 * @return A {@link TotalsAssignment} object
+	 */
+	public static TotalsAssignment getTotalForAssignmentBetween(
+			Long assignmentId, DateTime beginDate, DateTime endDate) {
+		return (TotalsAssignment) JPA
+				.em()
+				.createQuery(
+						"select new util.datastructures.TotalsAssignment(he.assignment, sum(he.hours), sum(he.minutes)) from HourEntry he "
+								+ "where he.assignment.id = :assignmentId "
+								+ "and he.date between :beginDate and :endDate "
+								+ "group by he.assignment")
+				.setParameter("assignmentId", assignmentId)
+				.setParameter("beginDate", beginDate)
+				.setParameter("endDate", endDate).getResultList().get(0);
+	}
+
+	public static List<TotalsDay> getTotalsForUserBetween(Long userId,
+			DateTime beginDate, DateTime endDate) {
+		return JPA
+				.em()
+				.createQuery(
+						"select new util.datastructures.TotalsDay(he.date, sum(he.hours), sum(he.minutes)) from HourEntry he "
+								+ "where he.assignment.user.id = :userId "
+								+ "and he.date between :beginDate and :endDate "
+								+ "group by he.date order by he.date asc")
+				.setParameter("userId", userId)
+				.setParameter("beginDate", beginDate)
+				.setParameter("endDate", endDate).getResultList();
+	}
 
 	/**
 	 * Creates a String of the related tags, delimited by a semicolon
@@ -202,16 +228,16 @@ public class HourEntry {
 			tagsString += tag.tag + "; ";
 		return tagsString;
 	}
-	
+
 	// VALIDATION METHODS NEED TO BE REPLACED BY ANNOTATIONS OR BE REWRITTEN
 	public String validate() {
 		if (!isValidAssignment())
 			return "Project is not valid!";
 		if (!isDateInRange())
-			return "Date is not in assigned range!";		
+			return "Date is not in assigned range!";
 		return null;
 	}
-	
+
 	public boolean isDateInRange() {
 		return ProjectAssignment.isDateInAssignmentRange(date, assignment.id);
 	}
