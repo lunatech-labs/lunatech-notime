@@ -171,6 +171,7 @@ public class HourEntries extends Controller {
 	public static Result createForWeek(Long userId) {
 		Form<HourEntriesWeek> filledForm = form(HourEntriesWeek.class)
 				.bindFromRequest();
+		filledForm.get().validateAndProces();
 		return redirect(routes.HourEntries.addForWeek(userId));
 	}
 

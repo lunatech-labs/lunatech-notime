@@ -18,26 +18,23 @@ public class HourEntriesWeek {
 	 *   2.1. Hours & minutes are null or 0 -> delete @{link HourEntry}
 	 *   2.2. Hours & minutes have a value -> update @{link HourEntry}
 	 */
-	public void validate() {
+	public void validateAndProces() {
 		if (hourEntries != null) {
 			for (UnannotatedHourEntry entry : hourEntries) {
 				if (entry.id == null) {
 					if (!entry.hasNullOrZeroHours() || !entry.hasNullOrZeroMinutes()) {
 						entry.setHoursAndMinutesFromNullToZero();
 						if (entry.isValid()) {
-							System.out.println("create " + entry.id);
 							new HourEntry(entry).save("");
 						}
 					}
 				} else {
 					if (entry.hasNullOrZeroHours() && entry.hasNullOrZeroMinutes()) {
-						System.out.println("delete " + entry.id);
 						HourEntry hourEntry = HourEntry.findById(entry.id);
 						hourEntry.delete();
 					} else {
 						entry.setHoursAndMinutesFromNullToZero();
 						if (entry.isValid()) {
-							System.out.println("update " + entry.id);
 							new HourEntry(entry).update(entry.id, "");
 						}
 					}
