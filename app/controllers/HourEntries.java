@@ -18,9 +18,9 @@ import util.DateTimeUtil;
 import util.Transformers;
 import util.datastructures.TotalsDay;
 import util.datastructures.overview.calendar.CalendarMonth;
-import util.datastructures.overview.week.HourEntriesWeekTable;
-import util.form.beans.hourentry.HourEntriesList;
-import util.form.beans.hourentry.HourEntriesWeek;
+import util.datastructures.overview.week.WeekTable;
+import util.form.beans.hourentry.MultipleHourEntriesBean;
+import util.form.beans.hourentry.UnvalidatedHourEntriesBean;
 import views.html.user.hourentry.createHourEntries;
 import views.html.user.hourentry.createHourEntriesForWeek;
 import views.html.user.hourentry.createHourEntry;
@@ -81,7 +81,7 @@ public class HourEntries extends Controller {
 
 	@Transactional(readOnly = true)
 	public static Result addMultiple(Long userId) {
-		Form<HourEntriesList> newForm = form(HourEntriesList.class);
+		Form<MultipleHourEntriesBean> newForm = form(MultipleHourEntriesBean.class);
 		List<Integer> indices = new ArrayList<Integer>() {
 			{
 				add(0);
@@ -92,7 +92,7 @@ public class HourEntries extends Controller {
 
 	@Transactional(readOnly = true)
 	public static Result addForWeek(Long userId) {
-		HourEntriesWeekTable week = new HourEntriesWeekTable(new DateTime(),
+		WeekTable week = new WeekTable(new DateTime(),
 				userId);
 		return ok(createHourEntriesForWeek.render(userId, week));
 
@@ -141,7 +141,7 @@ public class HourEntries extends Controller {
 
 	@Transactional
 	public static Result createMultiple(Long userId) {
-		Form<HourEntriesList> filledForm = form(HourEntriesList.class)
+		Form<MultipleHourEntriesBean> filledForm = form(MultipleHourEntriesBean.class)
 				.bindFromRequest();
 
 		if (filledForm.hasErrors()) {
@@ -157,7 +157,7 @@ public class HourEntries extends Controller {
 					new ArrayList<Integer>(uniqueIndices)));
 		}
 
-		HourEntriesList entries = filledForm.get();
+		MultipleHourEntriesBean entries = filledForm.get();
 		for (int i = 0; i < entries.hourEntries.size(); i++) {
 			String tagsString = filledForm.field(
 					"hourEntries[" + i + "].tagsString").value();
@@ -169,7 +169,7 @@ public class HourEntries extends Controller {
 
 	@Transactional
 	public static Result createForWeek(Long userId) {
-		Form<HourEntriesWeek> filledForm = form(HourEntriesWeek.class)
+		Form<UnvalidatedHourEntriesBean> filledForm = form(UnvalidatedHourEntriesBean.class)
 				.bindFromRequest();
 		filledForm.get().validateAndProces();
 		return redirect(routes.HourEntries.addForWeek(userId));

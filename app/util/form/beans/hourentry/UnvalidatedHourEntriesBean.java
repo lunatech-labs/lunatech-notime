@@ -5,9 +5,9 @@ import java.util.List;
 
 import models.HourEntry;
 
-public class HourEntriesWeek {
+public class UnvalidatedHourEntriesBean {
 
-	public List<UnannotatedHourEntry> hourEntries;
+	public List<UnvalidatedHourEntryBean> hourEntries;
 
 	/**
 	 * Validates the binded data. For each entry are 4 possible actions: 
@@ -20,12 +20,12 @@ public class HourEntriesWeek {
 	 */
 	public void validateAndProces() {
 		if (hourEntries != null) {
-			for (UnannotatedHourEntry entry : hourEntries) {
+			for (UnvalidatedHourEntryBean entry : hourEntries) {
 				if (entry.id == null) {
 					if (!entry.hasNullOrZeroHours() || !entry.hasNullOrZeroMinutes()) {
 						entry.setHoursAndMinutesFromNullToZero();
 						if (entry.isValid()) {
-							new HourEntry(entry).save("");
+							entry.toHourEntry().save("");
 						}
 					}
 				} else {
@@ -35,12 +35,14 @@ public class HourEntriesWeek {
 					} else {
 						entry.setHoursAndMinutesFromNullToZero();
 						if (entry.isValid()) {
-							new HourEntry(entry).update(entry.id, "");
+							entry.toHourEntry().update(entry.id, "");
 						}
 					}
 				}
 			}
 		}
 	}
+	
+	
 
 }

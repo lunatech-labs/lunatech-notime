@@ -9,7 +9,7 @@ import models.HourEntry;
 /**
  * Datastructure for binding a list of {@link HourEntry} objects
  */
-public class HourEntriesList {
+public class MultipleHourEntriesBean {
 
 	@Valid
 	public List<HourEntry> hourEntries;

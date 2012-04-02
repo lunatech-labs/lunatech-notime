@@ -1,4 +1,4 @@
-@(userId: Long, weekOverview: util.datastructures.overview.week.HourEntriesWeekTable)
+@(userId: Long, weekOverview: util.datastructures.overview.week.WeekTable)
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -17,7 +17,7 @@
         </div>
     }
         
-    @if(weekOverview.assignments.isEmpty) {
+    @if(weekOverview.assignmentRows.isEmpty) {
     	No entries
     } else {
     	@form(routes.HourEntries.createForWeek(userId), 'id -> "entriesForm") {
@@ -25,13 +25,13 @@
 		    	<thead>
 			    	<tr>
 			    		<th></th>
-			    		@for(day <- weekOverview.assignments.get(0).days) {
+			    		@for(day <- weekOverview.assignmentRows.get(0).days) {
 			    			<th>@DateTimeUtil.formatDate(day.date, "E d-M")</th>
 			    		}
 			    	</tr>
 		    	</thead>
 		    	</tbody>
-				   	@for((assignment, assignmentIndex) <- weekOverview.assignments.zipWithIndex) {
+				   	@for((assignment, assignmentIndex) <- weekOverview.assignmentRows.zipWithIndex) {
 				    	<tr class="assignment">
 				    		<td>@assignment.assignment.project.code</td>
 					    		@for((day, dayIndex) <- assignment.days.zipWithIndex) {

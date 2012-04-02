@@ -2,12 +2,13 @@ package util.form.beans.hourentry;
 
 import java.util.List;
 
+import models.HourEntry;
 import models.ProjectAssignment;
 import models.Tag;
 
 import org.joda.time.DateTime;
 
-public class UnannotatedHourEntry {
+public class UnvalidatedHourEntryBean {
 
 	public Long id;
 
@@ -71,6 +72,17 @@ public class UnannotatedHourEntry {
 
 	public boolean hasValidMinutes() {
 		return minutes < 60;
+	}
+	
+	public HourEntry toHourEntry() {
+		HourEntry entry = new HourEntry();
+		entry.id = id;
+		entry.assignment = assignment;
+		entry.date = date;
+		entry.hours = hours;
+		entry.minutes = minutes;
+		entry.tags = tags;		
+		return entry;
 	}
 
 }

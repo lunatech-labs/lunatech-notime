@@ -7,13 +7,16 @@ import models.HourEntry;
 
 import org.joda.time.DateTime;
 
-public class DayField {
+/**
+ * Datastructure for displaying a week with all entered hours
+ */
+public class WeekDay {
 	
 	public final DateTime date;
 	
 	public final List<HourEntry> entries;
 	
-	public DayField(DateTime date) {
+	public WeekDay(DateTime date) {
 		this.date = date;
 		entries = new LinkedList<HourEntry>();
 	}

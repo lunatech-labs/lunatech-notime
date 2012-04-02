@@ -23,7 +23,7 @@ import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
 import util.datastructures.TotalsAssignment;
 import util.datastructures.TotalsDay;
-import util.form.beans.hourentry.UnannotatedHourEntry;
+import util.form.beans.hourentry.UnvalidatedHourEntryBean;
 
 @Entity
 public class HourEntry {
@@ -51,19 +51,6 @@ public class HourEntry {
 	@ManyToMany
 	@JoinTable(name = "hourentry_tag", joinColumns = @JoinColumn(name = "hourentry_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
 	public List<Tag> tags;
-
-	public HourEntry() {
-		
-	}
-	
-	public HourEntry(UnannotatedHourEntry entry) {
-		id = entry.id;
-		assignment = entry.assignment;
-		date = entry.date;
-		hours = entry.hours;
-		minutes = entry.minutes;
-		tags = entry.tags;
-	}
 	
 	/**
 	 * Sets the tags and inserts this hour entry
