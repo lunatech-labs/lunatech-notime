@@ -1,4 +1,4 @@
-package util.datastructures;
+package util.form.beans.hourentry;
 
 import java.util.List;
 

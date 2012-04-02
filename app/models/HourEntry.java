@@ -14,12 +14,16 @@ import javax.persistence.ManyToOne;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+
+
+
 import play.data.format.Formats;
 import play.data.validation.Constraints.Max;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
 import util.datastructures.TotalsAssignment;
 import util.datastructures.TotalsDay;
+import util.form.beans.hourentry.UnannotatedHourEntry;
 
 @Entity
 public class HourEntry {
@@ -48,6 +52,19 @@ public class HourEntry {
 	@JoinTable(name = "hourentry_tag", joinColumns = @JoinColumn(name = "hourentry_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
 	public List<Tag> tags;
 
+	public HourEntry() {
+		
+	}
+	
+	public HourEntry(UnannotatedHourEntry entry) {
+		id = entry.id;
+		assignment = entry.assignment;
+		date = entry.date;
+		hours = entry.hours;
+		minutes = entry.minutes;
+		tags = entry.tags;
+	}
+	
 	/**
 	 * Sets the tags and inserts this hour entry
 	 * 
@@ -215,15 +232,14 @@ public class HourEntry {
 	 *            The date till which entries are to be searched for
 	 * @return A {@link TotalsAssignment} object
 	 */
-	public static TotalsAssignment getTotalForAssignmentBetween(
+	public static TotalsAssignment getTotalsForAssignmentBetween(
 			Long assignmentId, DateTime beginDate, DateTime endDate) {
 		return (TotalsAssignment) JPA
 				.em()
 				.createQuery(
 						"select new util.datastructures.TotalsAssignment(he.assignment, sum(he.hours), sum(he.minutes)) from HourEntry he "
 								+ "where he.assignment.id = :assignmentId "
-								+ "and he.date between :beginDate and :endDate "
-								+ "group by he.assignment")
+								+ "and he.date between :beginDate and :endDate")
 				.setParameter("assignmentId", assignmentId)
 				.setParameter("beginDate", beginDate)
 				.setParameter("endDate", endDate).getResultList().get(0);

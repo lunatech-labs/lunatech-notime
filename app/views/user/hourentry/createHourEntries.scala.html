@@ -1,9 +1,9 @@
-@(userId: Long, entriesForm: Form[util.datastructures.HourEntriesList], indices: List[Integer])
+@(userId: Long, entriesForm: Form[util.form.beans.hourentry.HourEntriesList], indices: List[Integer])
 
 @import helper._
 @import helper.twitterBootstrap._
 
-@entry(form: Form[util.datastructures.HourEntriesList], index: Integer, className: String = "entry") = {
+@entry(form: Form[util.form.beans.hourentry.HourEntriesList], index: Integer, className: String = "entry") = {
 	<div class="@className">
 		@select(form("hourEntries[" + index + "].assignment.id"), options(ProjectAssignment.optionsFor(userId)), '_label -> "Project")
 

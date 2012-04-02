@@ -18,7 +18,6 @@ public class CustomDataBinders {
 		Formatters.register(DateTime.class,
 				new Formatters.SimpleFormatter<DateTime>() {
 
-
 					@Override
 					public DateTime parse(String input, Locale l)
 							throws ParseException {

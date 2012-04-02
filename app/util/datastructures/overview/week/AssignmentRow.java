@@ -1,4 +1,4 @@
-package util.datastructures.weekoverview;
+package util.datastructures.overview.week;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,7 +30,7 @@ public class AssignmentRow {
 			indexDate = indexDate.plusDays(1);
 		}
 		
-		assignmentTotals = HourEntry.getTotalForAssignmentBetween(assignment.id, firstDateOfWeek, DateTimeUtil.lastDateOfWeek(firstDateOfWeek));
+		assignmentTotals = HourEntry.getTotalsForAssignmentBetween(assignment.id, firstDateOfWeek, DateTimeUtil.lastDateOfWeek(firstDateOfWeek));
 	}
 
 	public DayField getDayField(DateTime date) {

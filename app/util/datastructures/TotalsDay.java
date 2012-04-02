@@ -28,12 +28,14 @@ public class TotalsDay {
 	 * @param minutes
 	 *            The total minutes booked on this minutes
 	 */
-	public TotalsDay(DateTime date, long hours,
-			long minutes) {
+	public TotalsDay(DateTime date, Long hours,
+			Long minutes) {
 		this.date = date;
 		this.minutes = minutes;
 		this.hours = hours;
 		hoursMinutes = CalculationUtil.formatTotalHoursMinutes(hours,
 				minutes);
 	}
+
+	
 }

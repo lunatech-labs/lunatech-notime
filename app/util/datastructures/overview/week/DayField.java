@@ -1,4 +1,4 @@
-package util.datastructures.weekoverview;
+package util.datastructures.overview.week;
 
 import java.util.LinkedList;
 import java.util.List;
