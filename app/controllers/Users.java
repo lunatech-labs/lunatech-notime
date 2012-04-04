@@ -9,6 +9,7 @@ import play.mvc.Security;
 import views.html.admin.user.createUser;
 import views.html.admin.user.editUser;
 import views.html.admin.user.users;
+import views.html.user.assignments;
 
 @Security.Authenticated(Secured.class)
 public class Users extends Controller {
@@ -47,33 +48,38 @@ public class Users extends Controller {
 	}
 	
 	@Transactional(readOnly=true)
-	public static Result edit(Long id) {
-		Form<User> filledForm = form(User.class).fill(User.findById(id));
-		return ok(editUser.render(id, filledForm));
+	public static Result edit(Long userId) {
+		Form<User> filledForm = form(User.class).fill(User.findById(userId));
+		return ok(editUser.render(userId, filledForm));
 	}
 	
 	@Transactional
-	public static Result update(Long id) {
+	public static Result update(Long userId) {
 		Form<User> filledForm = form(User.class).bindFromRequest();
 				
 		if(filledForm.hasErrors())
-			return badRequest(editUser.render(id, filledForm));
+			return badRequest(editUser.render(userId, filledForm));
 
 		User userToBeUpdated = filledForm.get();
 		
-		if(User.hasDuplicity(id, userToBeUpdated)) {
-			flash("error", User.validateDuplicity(id, userToBeUpdated));
-			return badRequest(editUser.render(id, filledForm));
+		if(User.hasDuplicity(userId, userToBeUpdated)) {
+			flash("error", User.validateDuplicity(userId, userToBeUpdated));
+			return badRequest(editUser.render(userId, filledForm));
 		}
 
-		userToBeUpdated.update(id);
+		userToBeUpdated.update(userId);
 		return redirect(routes.Users.all());
 	}
 	
 	@Transactional
-	public static Result delete(Long id) {
-		User.findById(id).delete();
+	public static Result delete(Long userId) {
+		User.findById(userId).delete();
 		return redirect(routes.Users.all());
+	}
+	
+	@Transactional(readOnly=true)
+	public static Result assignmentsOverview(Long userId) {
+		return ok(assignments.render(userId, User.findById(userId).assignments));
 	}
 
 }

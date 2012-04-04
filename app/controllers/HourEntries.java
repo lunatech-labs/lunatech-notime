@@ -34,22 +34,6 @@ import com.google.common.collect.Collections2;
 public class HourEntries extends Controller {
 
 	@Transactional(readOnly = true)
-	public static Result tableOverview(Long userId) {
-		DateTime currentDate = new DateTime();
-		return ok(hourEntriesTable.render(userId, HourEntry
-				.getTotalsForUserPerAssignmentBetween(userId,
-						DateTimeUtil.firstDateOfMonth(currentDate),
-						DateTimeUtil.lastDateOfMonth(currentDate))));
-	}
-
-	@Transactional(readOnly = true)
-	public static Result calendarOverview(Long userId) {
-		DateTime currentDate = new DateTime();
-		CalendarMonth calendar = new CalendarMonth(currentDate, userId);
-		return ok(hourEntriesCalendar.render(userId, calendar));
-	}
-
-	@Transactional(readOnly = true)
 	public static Result add(Long userId) {
 		Form<HourEntry> newForm = form(HourEntry.class);
 		DateTime date = new DateTime();
@@ -202,4 +186,20 @@ public class HourEntries extends Controller {
 		return redirect(routes.HourEntries.addForDay(userId, entry.date));
 	}
 
+	@Transactional(readOnly = true)
+	public static Result tableOverview(Long userId) {
+		DateTime currentDate = new DateTime();
+		return ok(hourEntriesTable.render(userId, HourEntry
+				.getTotalsForUserPerAssignmentBetween(userId,
+						DateTimeUtil.firstDateOfMonth(currentDate),
+						DateTimeUtil.lastDateOfMonth(currentDate))));
+	}
+
+	@Transactional(readOnly = true)
+	public static Result calendarOverview(Long userId) {
+		DateTime currentDate = new DateTime();
+		CalendarMonth calendar = new CalendarMonth(currentDate, userId);
+		return ok(hourEntriesCalendar.render(userId, calendar));
+	}
+	
 }

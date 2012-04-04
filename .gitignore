@@ -9,3 +9,6 @@ tmp
 .settings/
 .DS_Store
 .cache
+*_.java
+bin
+.factorypath

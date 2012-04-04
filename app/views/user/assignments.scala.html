@@ -1,0 +1,24 @@
+@(userId: Long, assignments: List[ProjectAssignment])
+
+@import helper._
+
+@main("Projects you're assigned to") {
+	
+	@if(assignments.isEmpty) {
+	    <div class="alert-message warning">
+            You are not assigned to any projects!
+        </div>
+	} else {
+		<ul>
+			@for(assignment <- assignments) {
+		  		<li>
+		  			<span class="star"><a @if(assignment.starred){class="starred"} href="@routes.ProjectAssignments.toggleStarred(userId, assignment.id)"></a></span>
+		  			@assignment.project.name
+		  		</li>
+	  		}
+		</ul>
+	}
+	
+} {
+	@sidebar.userMenu(userId)
+}

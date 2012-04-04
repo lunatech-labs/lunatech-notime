@@ -42,6 +42,8 @@ public class ProjectAssignment {
 
 	@Column(scale = 2)
 	public BigDecimal hourlyRate = new BigDecimal(0);
+	
+	public boolean starred;
 
 	/**
 	 * Inserts this project assignment
@@ -67,7 +69,7 @@ public class ProjectAssignment {
 	}
 
 	/**
-	 * Sets the project, maximizes the time of the endDate and updates this
+	 * Sets the project because the form doesn't have a project field. Maximizes the time of the endDate and updates this
 	 * project assignment
 	 * 
 	 * @param assignmentId
@@ -78,6 +80,21 @@ public class ProjectAssignment {
 	public void update(Long assignmentId, Long projectId) {
 		this.id = assignmentId;
 		this.project = Project.findById(projectId);
+		this.endDate = DateTimeUtil.maximizeTimeOfDate(this.endDate);
+		JPA.em().merge(this);
+	}
+	
+	/**
+	 * Maximizes the time of the endDate and updates this
+	 * project assignment
+	 * 
+	 * @param assignmentId
+	 *            The id of the project assignment that is going to be updated
+	 * @param projectId
+	 *            The id of the related project
+	 */
+	public void update(Long assignmentId) {
+		this.id = assignmentId;
 		this.endDate = DateTimeUtil.maximizeTimeOfDate(this.endDate);
 		JPA.em().merge(this);
 	}
