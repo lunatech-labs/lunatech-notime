@@ -8,7 +8,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.OneToMany;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Root;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -92,13 +98,27 @@ public class User {
 	 *         is found, this user is returned
 	 */
 	public static User findByUsername(String username) {
-		List<User> users = JPA.em()
-				.createQuery("from User where username = :username")
-				.setParameter("username", username).getResultList();
-		if (users.isEmpty() || users.size() > 1)
+//		try {
+//			return (User) JPA.em()
+//					.createQuery("from User where username = :username")
+//					.setParameter("username", username).getSingleResult();
+//		} catch (NoResultException nre) {
+//			return null;
+//		} catch (NonUniqueResultException nure) {
+//			return null;
+//		}
+		
+		try {
+			CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+			CriteriaQuery<User> query = cb.createQuery(User.class);
+			Root<User> user = query.from(User.class);
+			query.where(cb.equal(user.get(User_.username), username));
+			return JPA.em().createQuery(query).getSingleResult();
+		} catch (NoResultException nre) {
 			return null;
-		else
-			return users.get(0);
+		} catch (NonUniqueResultException nure) {
+			return null;
+		}
 	}
 
 	/**
