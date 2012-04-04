@@ -17,7 +17,7 @@ object ApplicationBuild extends Build {
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
     		ebeanEnabled := false,
     		routesImport ++= Seq("util.routes.binders.CustomPathBinders._", "org.joda.time.DateTime"),
-    		javacOptions ++= Seq("-s", "app")
+    		javacOptions ++= Seq("-s", "metamodel")
     )
 
 }

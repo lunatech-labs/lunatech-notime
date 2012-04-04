@@ -98,16 +98,6 @@ public class User {
 	 *         is found, this user is returned
 	 */
 	public static User findByUsername(String username) {
-//		try {
-//			return (User) JPA.em()
-//					.createQuery("from User where username = :username")
-//					.setParameter("username", username).getSingleResult();
-//		} catch (NoResultException nre) {
-//			return null;
-//		} catch (NonUniqueResultException nure) {
-//			return null;
-//		}
-		
 		try {
 			CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 			CriteriaQuery<User> query = cb.createQuery(User.class);
