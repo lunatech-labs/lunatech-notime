@@ -15,7 +15,6 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import play.data.format.Formats;
-import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
 import util.DateTimeUtil;
 
@@ -42,7 +41,7 @@ public class ProjectAssignment {
 
 	@Column(scale = 2)
 	public BigDecimal hourlyRate = new BigDecimal(0);
-	
+
 	public boolean starred;
 
 	/**
@@ -69,8 +68,8 @@ public class ProjectAssignment {
 	}
 
 	/**
-	 * Sets the project because the form doesn't have a project field. Maximizes the time of the endDate and updates this
-	 * project assignment
+	 * Sets the project because the form doesn't have a project field. Maximizes
+	 * the time of the endDate and updates this project assignment
 	 * 
 	 * @param assignmentId
 	 *            The id of the project assignment that is going to be updated
@@ -83,10 +82,9 @@ public class ProjectAssignment {
 		this.endDate = DateTimeUtil.maximizeTimeOfDate(this.endDate);
 		JPA.em().merge(this);
 	}
-	
+
 	/**
-	 * Maximizes the time of the endDate and updates this
-	 * project assignment
+	 * Maximizes the time of the endDate and updates this project assignment
 	 * 
 	 * @param assignmentId
 	 *            The id of the project assignment that is going to be updated
@@ -131,6 +129,25 @@ public class ProjectAssignment {
 				.createQuery(
 						"from ProjectAssignment pa "
 								+ "where pa.user.id = :userId "
+								+ "order by pa.id desc")
+				.setParameter("userId", userId).getResultList();
+	}
+
+	/**
+	 * Find all starred project assignments for a user
+	 * 
+	 * @param userId
+	 *            The id of the user which starred project assignments are to be
+	 *            searched for
+	 * @return A List of project assignments
+	 */
+	public static List<ProjectAssignment> findAllStarredForUser(Long userId) {
+		return JPA
+				.em()
+				.createQuery(
+						"from ProjectAssignment pa "
+								+ "where pa.user.id = :userId "
+								+ "and pa.starred = true "
 								+ "order by pa.id desc")
 				.setParameter("userId", userId).getResultList();
 	}

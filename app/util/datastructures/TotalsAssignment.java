@@ -33,8 +33,8 @@ public class TotalsAssignment {
 	 * @param minutes
 	 *            The total minutes booked on this minutes
 	 */
-	public TotalsAssignment(ProjectAssignment assignment, long hours,
-			long minutes) {
+	public TotalsAssignment(ProjectAssignment assignment, Long hours,
+			Long minutes) {
 		this.assignment = assignment;
 		this.minutes = minutes;
 		this.hours = hours;

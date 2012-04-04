@@ -45,7 +45,7 @@ POST	/project/:id/assignment		controllers.ProjectAssignments.create(id: Long)
 GET		/project/:pId/assignment/:aId	controllers.ProjectAssignments.edit(pId: Long, aId: Long)
 POST	/project/:pId/assignment/:aId	controllers.ProjectAssignments.update(pId: Long, aId: Long)
 POST	/assignment/:id/delete 		controllers.ProjectAssignments.delete(id: Long)
-GET	/user/:uId/assignment/:aId/switchStarred	controllers.ProjectAssignments.toggleStarred(uId: Long, aId: Long)
+GET		/user/:uId/assignment/:aId/switchStarred	controllers.ProjectAssignments.toggleStarred(uId: Long, aId: Long)
 
 # HourEntries
 GET		/user/:id/hourentries/table	controllers.HourEntries.tableOverview(id: Long)

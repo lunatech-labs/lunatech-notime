@@ -10,12 +10,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.Query;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-
-
-
 
 import play.data.format.Formats;
 import play.data.validation.Constraints.Max;
@@ -51,7 +51,7 @@ public class HourEntry {
 	@ManyToMany
 	@JoinTable(name = "hourentry_tag", joinColumns = @JoinColumn(name = "hourentry_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
 	public List<Tag> tags;
-	
+
 	/**
 	 * Sets the tags and inserts this hour entry
 	 * 
@@ -180,7 +180,7 @@ public class HourEntry {
 				.setParameter("beginDate", beginDate)
 				.setParameter("endDate", endDate).getResultList();
 	}
-	
+
 	/**
 	 * Calculates the totals of the hour entries for a user, per day, between
 	 * two dates. Note that the amount of minutes can be more than 60
@@ -221,15 +221,25 @@ public class HourEntry {
 	 */
 	public static TotalsAssignment getTotalsForAssignmentBetween(
 			Long assignmentId, DateTime beginDate, DateTime endDate) {
-		return (TotalsAssignment) JPA
+		Query query = JPA
 				.em()
 				.createQuery(
 						"select new util.datastructures.TotalsAssignment(he.assignment, sum(he.hours), sum(he.minutes)) from HourEntry he "
 								+ "where he.assignment.id = :assignmentId "
-								+ "and he.date between :beginDate and :endDate")
+								+ "and he.date between :beginDate and :endDate "
+								+ "group by he.assignment.id")
 				.setParameter("assignmentId", assignmentId)
 				.setParameter("beginDate", beginDate)
-				.setParameter("endDate", endDate).getResultList().get(0);
+				.setParameter("endDate", endDate);
+		try {
+			return (TotalsAssignment) query.getSingleResult();
+		} catch (NoResultException nre) {
+			return new TotalsAssignment(
+					ProjectAssignment.findById(assignmentId), 0L, 0L);
+		} catch (NonUniqueResultException nure) {
+			return new TotalsAssignment(
+					ProjectAssignment.findById(assignmentId), 0L, 0L);
+		}
 	}
 
 	/**

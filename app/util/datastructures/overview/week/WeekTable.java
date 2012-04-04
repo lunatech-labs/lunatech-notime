@@ -4,6 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import models.HourEntry;
+import models.ProjectAssignment;
+import models.User;
 
 import org.joda.time.DateTime;
 
@@ -56,31 +58,35 @@ public class WeekTable {
 				beginDate, endDate);
 
 		for (HourEntry entry : entries) {
-			TableRow row = getOrCreateRow(entry);
+			TableRow row = getOrCreateRow(entry.assignment);
 			WeekDay day = row.getWeekDayForDate(entry.date);
 			day.entries.add(entry);
 		}
+		
+		for (ProjectAssignment assignment : ProjectAssignment.findAllStarredForUser(userId)) {
+			getOrCreateRow(assignment);
+		}
 	}
-
-	private TableRow getOrCreateRow(HourEntry entry) {
-		TableRow row = getRow(entry);
+	
+	private TableRow getOrCreateRow(ProjectAssignment assignment) {
+		TableRow row = getRow(assignment);
 		if (row == null) {
-			row = createRow(entry);
+			row = createRow(assignment);
 		}
 		return row;
 	}
-
-	private TableRow getRow(HourEntry entry) {
+	
+	private TableRow getRow(ProjectAssignment assignment) {
 		for (TableRow row : assignmentRows) {
-			if (row.assignment.equals(entry.assignment)) {
+			if (row.assignment.equals(assignment)) {
 				return row;
 			}
 		}
 		return null;
 	}
-
-	private TableRow createRow(HourEntry entry) {
-		TableRow row = new TableRow(entry.assignment, beginDate);
+	
+	private TableRow createRow(ProjectAssignment assignment) {
+		TableRow row = new TableRow(assignment, beginDate);
 		assignmentRows.add(row);
 		return row;
 	}
