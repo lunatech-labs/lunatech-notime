@@ -1,4 +1,4 @@
-package util.form.beans.hourentry;
+package formbeans;
 
 import java.util.List;
 

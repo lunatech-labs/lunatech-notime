@@ -16,11 +16,6 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import util.DateTimeUtil;
 import util.Transformers;
-import util.datastructures.TotalsDay;
-import util.datastructures.overview.calendar.CalendarMonth;
-import util.datastructures.overview.week.WeekTable;
-import util.form.beans.hourentry.MultipleHourEntriesBean;
-import util.form.beans.hourentry.UnvalidatedHourEntriesBean;
 import views.html.user.hourentry.createHourEntries;
 import views.html.user.hourentry.createHourEntriesForWeek;
 import views.html.user.hourentry.createHourEntry;
@@ -30,6 +25,12 @@ import views.html.user.hourentry.hourEntriesCalendar;
 import views.html.user.hourentry.hourEntriesTable;
 
 import com.google.common.collect.Collections2;
+
+import datastructures.TotalsDay;
+import datastructures.overview.calendar.CalendarMonth;
+import datastructures.overview.week.WeekTable;
+import formbeans.MultipleHourEntriesBean;
+import formbeans.UnvalidatedHourEntriesBean;
 
 public class HourEntries extends Controller {
 

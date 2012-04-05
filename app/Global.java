@@ -1,7 +1,7 @@
+import binders.form.CustomDataBinders;
 import play.Application;
 import play.GlobalSettings;
 import play.db.jpa.Transactional;
-import util.form.binders.CustomDataBinders;
 
 public class Global extends GlobalSettings {
 

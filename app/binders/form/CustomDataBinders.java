@@ -1,4 +1,4 @@
-package util.form.binders;
+package binders.form;
 
 import java.text.ParseException;
 import java.util.Locale;

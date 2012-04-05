@@ -1,4 +1,4 @@
-package util.datastructures.overview.week;
+package datastructures.overview.week;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -9,8 +9,9 @@ import models.User;
 
 import org.joda.time.DateTime;
 
+import datastructures.TotalsDay;
+
 import util.DateTimeUtil;
-import util.datastructures.TotalsDay;
 
 /**
  * Datastructure for displaying a week with all entered hours

@@ -1,4 +1,4 @@
-package util.datastructures;
+package datastructures;
 
 import models.User;
 

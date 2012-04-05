@@ -1,4 +1,4 @@
-package util.routes.binders
+package binders.routes
 
 import play.api.mvc.PathBindable
 import org.joda.time.DateTime

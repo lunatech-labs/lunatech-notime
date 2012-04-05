@@ -1,12 +1,12 @@
 package controllers;
 
+import datastructures.Login;
 import models.User;
 import play.Routes;
 import play.data.Form;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
-import util.datastructures.Login;
 import views.html.login;
 import views.html.admin.overview;
 

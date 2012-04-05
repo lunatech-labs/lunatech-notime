@@ -17,13 +17,14 @@ import javax.persistence.Query;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import datastructures.TotalsAssignment;
+import datastructures.TotalsDay;
+import formbeans.UnvalidatedHourEntryBean;
+
 import play.data.format.Formats;
 import play.data.validation.Constraints.Max;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
-import util.datastructures.TotalsAssignment;
-import util.datastructures.TotalsDay;
-import util.form.beans.hourentry.UnvalidatedHourEntryBean;
 
 @Entity
 public class HourEntry {
@@ -172,7 +173,7 @@ public class HourEntry {
 		return JPA
 				.em()
 				.createQuery(
-						"select new util.datastructures.TotalsAssignment(he.assignment, sum(he.hours), sum(he.minutes)) from HourEntry he "
+						"select new datastructures.TotalsAssignment(he.assignment, sum(he.hours), sum(he.minutes)) from HourEntry he "
 								+ "where he.assignment.user.id = :userId "
 								+ "and he.date between :beginDate and :endDate "
 								+ "group by he.assignment")
@@ -198,7 +199,7 @@ public class HourEntry {
 		return JPA
 				.em()
 				.createQuery(
-						"select new util.datastructures.TotalsDay(he.date, sum(he.hours), sum(he.minutes)) from HourEntry he "
+						"select new datastructures.TotalsDay(he.date, sum(he.hours), sum(he.minutes)) from HourEntry he "
 								+ "where he.assignment.user.id = :userId "
 								+ "and he.date between :beginDate and :endDate "
 								+ "group by he.date order by he.date asc")
@@ -224,7 +225,7 @@ public class HourEntry {
 		Query query = JPA
 				.em()
 				.createQuery(
-						"select new util.datastructures.TotalsAssignment(he.assignment, sum(he.hours), sum(he.minutes)) from HourEntry he "
+						"select new datastructures.TotalsAssignment(he.assignment, sum(he.hours), sum(he.minutes)) from HourEntry he "
 								+ "where he.assignment.id = :assignmentId "
 								+ "and he.date between :beginDate and :endDate "
 								+ "group by he.assignment.id")

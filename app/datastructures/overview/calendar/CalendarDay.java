@@ -1,4 +1,4 @@
-package util.datastructures.overview.calendar;
+package datastructures.overview.calendar;
 
 import java.util.Collections;
 import java.util.List;
