@@ -10,6 +10,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
@@ -124,13 +128,11 @@ public class ProjectAssignment {
 	 * @return A List of project assignments
 	 */
 	public static List<ProjectAssignment> findAllForUser(Long userId) {
-		return JPA
-				.em()
-				.createQuery(
-						"from ProjectAssignment pa "
-								+ "where pa.user.id = :userId "
-								+ "order by pa.id desc")
-				.setParameter("userId", userId).getResultList();
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<ProjectAssignment> query = cb
+				.createQuery(ProjectAssignment.class);
+		query.from(ProjectAssignment.class);
+		return JPA.em().createQuery(query).getResultList();
 	}
 
 	/**
@@ -142,14 +144,17 @@ public class ProjectAssignment {
 	 * @return A List of project assignments
 	 */
 	public static List<ProjectAssignment> findAllStarredForUser(Long userId) {
-		return JPA
-				.em()
-				.createQuery(
-						"from ProjectAssignment pa "
-								+ "where pa.user.id = :userId "
-								+ "and pa.starred = true "
-								+ "order by pa.id desc")
-				.setParameter("userId", userId).getResultList();
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<ProjectAssignment> query = cb
+				.createQuery(ProjectAssignment.class);
+		Root<ProjectAssignment> assignment = query
+				.from(ProjectAssignment.class);
+		Join<ProjectAssignment, User> user = assignment
+				.join(ProjectAssignment_.user);
+		query.where(cb.equal(user.get(User_.id), userId),
+				cb.equal(assignment.get(ProjectAssignment_.starred), true));
+		query.orderBy(cb.desc(user.get(User_.id)));
+		return JPA.em().createQuery(query).getResultList();
 	}
 
 	/**
@@ -163,15 +168,15 @@ public class ProjectAssignment {
 	 */
 	public static List<ProjectAssignment> findByUserAndProject(User user,
 			Project project) {
-		return JPA
-				.em()
-				.createQuery(
-						"from ProjectAssignment pa "
-								+ "where pa.user.id = :userId "
-								+ "and pa.project.id = :projectId "
-								+ "order by pa.id desc")
-				.setParameter("userId", user.id)
-				.setParameter("projectId", project.id).getResultList();
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<ProjectAssignment> query = cb
+				.createQuery(ProjectAssignment.class);
+		Root<ProjectAssignment> assignment = query
+				.from(ProjectAssignment.class);
+		query.where(cb.equal(assignment.get(ProjectAssignment_.user), user),
+				cb.equal(assignment.get(ProjectAssignment_.project), project));
+		query.orderBy(cb.desc(assignment.get(ProjectAssignment_.id)));
+		return JPA.em().createQuery(query).getResultList();
 	}
 
 	/**

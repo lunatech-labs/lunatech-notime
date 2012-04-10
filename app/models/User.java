@@ -13,7 +13,6 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.OneToMany;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.mindrot.jbcrypt.BCrypt;
@@ -117,7 +116,10 @@ public class User {
 	 * @return A List of user objects
 	 */
 	public static List<User> findAll() {
-		return JPA.em().createQuery("from User").getResultList();
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<User> query = cb.createQuery(User.class);
+		query.from(User.class);		
+		return JPA.em().createQuery(query).getResultList();
 	}
 
 	/**

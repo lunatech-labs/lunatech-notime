@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
@@ -78,7 +80,10 @@ public class Customer {
 	 * @return A List of customer objects
 	 */
 	public static List<Customer> findAll() {
-		return JPA.em().createQuery("from Customer").getResultList();
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<Customer> query = cb.createQuery(Customer.class);
+		query.from(Customer.class);
+		return JPA.em().createQuery(query).getResultList();
 	}
 
 	/**

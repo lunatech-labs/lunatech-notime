@@ -13,18 +13,20 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-
-import datastructures.TotalsAssignment;
-import datastructures.TotalsDay;
-import formbeans.UnvalidatedHourEntryBean;
 
 import play.data.format.Formats;
 import play.data.validation.Constraints.Max;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
+import datastructures.TotalsAssignment;
+import datastructures.TotalsDay;
 
 @Entity
 public class HourEntry {
@@ -112,7 +114,10 @@ public class HourEntry {
 	 * @return A List of hour entry objects
 	 */
 	public static List<HourEntry> findAll() {
-		return JPA.em().createQuery("from HourEntry").getResultList();
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<HourEntry> query = cb.createQuery(HourEntry.class);
+		query.from(HourEntry.class);
+		return JPA.em().createQuery(query).getResultList();
 	}
 
 	/**
@@ -123,13 +128,18 @@ public class HourEntry {
 	 * @return A List of hour entry objects
 	 */
 	public static List<HourEntry> findAllForUser(Long userId) {
-		return JPA
-				.em()
-				.createQuery(
-						"from HourEntry he "
-								+ "where he.assignment.user.id = :userId "
-								+ "order by he.date desc")
-				.setParameter("userId", userId).getResultList();
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<HourEntry> query = cb.createQuery(HourEntry.class);
+		Root<HourEntry> entry = query.from(HourEntry.class);
+
+		Join<HourEntry, ProjectAssignment> assignment = entry
+				.join(HourEntry_.assignment);
+		Join<ProjectAssignment, User> user = assignment
+				.join(ProjectAssignment_.user);
+
+		query.where(cb.equal(user.get(User_.id), userId));
+		query.orderBy(cb.desc(entry.get(HourEntry_.id)));
+		return JPA.em().createQuery(query).getResultList();
 	}
 
 	/**
@@ -145,15 +155,19 @@ public class HourEntry {
 	 */
 	public static List<HourEntry> findAllForUserBetween(Long userId,
 			DateTime beginDate, DateTime endDate) {
-		return JPA
-				.em()
-				.createQuery(
-						"from HourEntry he "
-								+ "where he.assignment.user.id = :userId "
-								+ "and he.date between :beginDate and :endDate")
-				.setParameter("userId", userId)
-				.setParameter("beginDate", beginDate)
-				.setParameter("endDate", endDate).getResultList();
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<HourEntry> query = cb.createQuery(HourEntry.class);
+		Root<HourEntry> entry = query.from(HourEntry.class);
+
+		Join<HourEntry, ProjectAssignment> assignment = entry
+				.join(HourEntry_.assignment);
+		Join<ProjectAssignment, User> user = assignment
+				.join(ProjectAssignment_.user);
+
+		query.where(cb.equal(user.get(User_.id), userId),
+				cb.between(entry.get(HourEntry_.date), beginDate, endDate));
+		query.orderBy(cb.desc(entry.get(HourEntry_.id)));
+		return JPA.em().createQuery(query).getResultList();
 	}
 
 	/**
@@ -170,16 +184,24 @@ public class HourEntry {
 	 */
 	public static List<TotalsAssignment> getTotalsForUserPerAssignmentBetween(
 			Long userId, DateTime beginDate, DateTime endDate) {
-		return JPA
-				.em()
-				.createQuery(
-						"select new datastructures.TotalsAssignment(he.assignment, sum(he.hours), sum(he.minutes)) from HourEntry he "
-								+ "where he.assignment.user.id = :userId "
-								+ "and he.date between :beginDate and :endDate "
-								+ "group by he.assignment")
-				.setParameter("userId", userId)
-				.setParameter("beginDate", beginDate)
-				.setParameter("endDate", endDate).getResultList();
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<TotalsAssignment> query = cb
+				.createQuery(TotalsAssignment.class);
+		Root<HourEntry> entry = query.from(HourEntry.class);
+		query.select(cb.construct(TotalsAssignment.class,
+				entry.get(HourEntry_.assignment),
+				cb.sumAsLong(entry.get(HourEntry_.hours)),
+				cb.sumAsLong(entry.get(HourEntry_.minutes))));
+
+		Join<HourEntry, ProjectAssignment> assignment = entry
+				.join(HourEntry_.assignment);
+		Join<ProjectAssignment, User> user = assignment
+				.join(ProjectAssignment_.user);
+
+		query.where(cb.equal(user.get(User_.id), userId),
+				cb.between(entry.get(HourEntry_.date), beginDate, endDate));
+		query.groupBy(entry.get(HourEntry_.assignment));
+		return JPA.em().createQuery(query).getResultList();
 	}
 
 	/**
@@ -196,16 +218,23 @@ public class HourEntry {
 	 */
 	public static List<TotalsDay> getTotalsForUserPerDayBetween(Long userId,
 			DateTime beginDate, DateTime endDate) {
-		return JPA
-				.em()
-				.createQuery(
-						"select new datastructures.TotalsDay(he.date, sum(he.hours), sum(he.minutes)) from HourEntry he "
-								+ "where he.assignment.user.id = :userId "
-								+ "and he.date between :beginDate and :endDate "
-								+ "group by he.date order by he.date asc")
-				.setParameter("userId", userId)
-				.setParameter("beginDate", beginDate)
-				.setParameter("endDate", endDate).getResultList();
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<TotalsDay> query = cb.createQuery(TotalsDay.class);
+		Root<HourEntry> entry = query.from(HourEntry.class);
+		query.select(cb.construct(TotalsDay.class, entry.get(HourEntry_.date),
+				cb.sumAsLong(entry.get(HourEntry_.hours)),
+				cb.sumAsLong(entry.get(HourEntry_.minutes))));
+
+		Join<HourEntry, ProjectAssignment> assignment = entry
+				.join(HourEntry_.assignment);
+		Join<ProjectAssignment, User> user = assignment
+				.join(ProjectAssignment_.user);
+
+		query.where(cb.equal(user.get(User_.id), userId),
+				cb.between(entry.get(HourEntry_.date), beginDate, endDate));
+		query.groupBy(entry.get(HourEntry_.date));
+		query.orderBy(cb.asc(entry.get(HourEntry_.date)));
+		return JPA.em().createQuery(query).getResultList();
 	}
 
 	/**
@@ -222,18 +251,26 @@ public class HourEntry {
 	 */
 	public static TotalsAssignment getTotalsForAssignmentBetween(
 			Long assignmentId, DateTime beginDate, DateTime endDate) {
-		Query query = JPA
-				.em()
-				.createQuery(
-						"select new datastructures.TotalsAssignment(he.assignment, sum(he.hours), sum(he.minutes)) from HourEntry he "
-								+ "where he.assignment.id = :assignmentId "
-								+ "and he.date between :beginDate and :endDate "
-								+ "group by he.assignment.id")
-				.setParameter("assignmentId", assignmentId)
-				.setParameter("beginDate", beginDate)
-				.setParameter("endDate", endDate);
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<TotalsAssignment> query = cb
+				.createQuery(TotalsAssignment.class);
+		Root<HourEntry> entry = query.from(HourEntry.class);
+		query.select(cb.construct(TotalsAssignment.class,
+				entry.get(HourEntry_.assignment),
+				cb.sumAsLong(entry.get(HourEntry_.hours)),
+				cb.sumAsLong(entry.get(HourEntry_.minutes))));
+
+		Join<HourEntry, ProjectAssignment> assignment = entry
+				.join(HourEntry_.assignment);
+
+		query.where(
+				cb.equal(assignment.get(ProjectAssignment_.id), assignmentId),
+				cb.between(entry.get(HourEntry_.date), beginDate, endDate));
+		query.groupBy(entry.get(HourEntry_.assignment));
+		Query typedQuery = JPA.em().createQuery(query);
+		
 		try {
-			return (TotalsAssignment) query.getSingleResult();
+			return (TotalsAssignment) typedQuery.getSingleResult();
 		} catch (NoResultException nre) {
 			return new TotalsAssignment(
 					ProjectAssignment.findById(assignmentId), 0L, 0L);

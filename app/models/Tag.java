@@ -6,6 +6,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
@@ -57,10 +62,11 @@ public class Tag {
 	 */
 	public static Tag findOrCreate(String tagString) {
 		tagString = tagString.trim();
-		if (findByTag(tagString).isEmpty())
+		Tag tag = findByTag(tagString);
+		if (tag == null)
 			return create(tagString);
 		else
-			return findByTag(tagString).get(0);
+			return tag;
 	}
 
 	/**
@@ -69,7 +75,10 @@ public class Tag {
 	 * @return A List of tag objects
 	 */
 	public static List<Tag> findAll() {
-		return JPA.em().createQuery("from Tag").getResultList();
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<Tag> query = cb.createQuery(Tag.class);
+		query.from(Tag.class);
+		return JPA.em().createQuery(query).getResultList();
 	}
 
 	/**
@@ -79,9 +88,18 @@ public class Tag {
 	 *            The value of the tag's tag
 	 * @return A tag object
 	 */
-	public static List<Tag> findByTag(String tag) {
-		return JPA.em().createQuery("from Tag t where t.tag = :tag")
-				.setParameter("tag", tag).getResultList();
+	public static Tag findByTag(String tag) {
+		try {
+			CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+			CriteriaQuery<Tag> query = cb.createQuery(Tag.class);
+			Root<Tag> tagRoot = query.from(Tag.class);
+			query.where(cb.equal(tagRoot.get(Tag_.tag), tag));
+			return JPA.em().createQuery(query).getSingleResult();
+		} catch (NoResultException nre) {
+			return null;
+		} catch (NonUniqueResultException nure) {
+			return null;
+		}
 	}
 
 	/**
@@ -92,8 +110,12 @@ public class Tag {
 	 * @return A List of tag objects
 	 */
 	public static List<String> findTagsWhichContain(String term) {
-		return JPA.em().createQuery("select tag from Tag where tag like :term")
-				.setParameter("term", "%" + term + "%").getResultList();
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<String> query = cb.createQuery(String.class);
+		Root<Tag> tag = query.from(Tag.class);
+		query.select(tag.get(Tag_.tag));
+		query.where(cb.like(cb.upper(tag.get(Tag_.tag)), "%" + term.toUpperCase() + "%"));
+		return JPA.em().createQuery(query).getResultList();
 	}
 
 }

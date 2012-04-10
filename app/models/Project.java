@@ -1,6 +1,5 @@
 package models;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,6 +9,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
@@ -107,7 +109,10 @@ public class Project {
 	 * @return A list of project objects
 	 */
 	public static List<Project> findAll() {
-		return JPA.em().createQuery("from Project").getResultList();
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<Project> query = cb.createQuery(Project.class);
+		query.from(Project.class);
+		return JPA.em().createQuery(query).getResultList();
 	}
 
 	/**
@@ -129,12 +134,11 @@ public class Project {
 	 * @return A list of project objects
 	 */
 	public static List<Project> findAllDefaultProjects() {
-		return JPA
-				.em()
-				.createQuery(
-						"from Project p "
-								+ "where p.defaultProject = :defaultProject")
-				.setParameter("defaultProject", true).getResultList();
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<Project> query = cb.createQuery(Project.class);
+		Root<Project> project = query.from(Project.class);
+		query.where(cb.equal(project.get(Project_.defaultProject), true));
+		return JPA.em().createQuery(query).getResultList();
 	}
 
 	/**
