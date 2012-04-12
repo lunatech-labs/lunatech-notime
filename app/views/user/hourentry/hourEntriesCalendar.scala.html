@@ -1,7 +1,7 @@
 @(userId: Long, calendar: datastructures.overview.calendar.CalendarMonth)
 
 @import helper._
-@import util.DateTimeUtil
+@import util.DateUtil
 
 @main("Entered hours") {
 	<table class="calendarOverview">
@@ -9,7 +9,7 @@
 			<tr class="week">
 				@for(day <- week.days) {
 					<td class="day">
-						<div class="dayNumber">@DateTimeUtil.formatDate(day.date, "E d-M")</div>
+						<div class="dayNumber">@DateUtil.formatDate(day.date, "E d-M")</div>
 						@for(entry <- day.getHourEntries) {
 							<div class="entry">
 								<a href="@routes.HourEntries.edit(userId, entry.id)">

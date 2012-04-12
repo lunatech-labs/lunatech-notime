@@ -5,17 +5,15 @@ import java.util.List;
 
 import models.HourEntry;
 
-import org.joda.time.DateTime;
-
-import util.DateTimeUtil;
+import org.joda.time.LocalDate;
 
 /**
  * Datastructure for displaying a calendar
  */
 public class CalendarDay {
 
-	public final DateTime date;
-	
+	public final LocalDate date;
+
 	public final Long userId;
 
 	private List<HourEntry> hourEntries;
@@ -27,17 +25,14 @@ public class CalendarDay {
 	 * @param date
 	 * @param userId
 	 */
-	public CalendarDay(DateTime date, Long userId) {
+	public CalendarDay(LocalDate date, Long userId) {
 		this.date = date;
 		this.userId = userId;
 	}
-	
+
 	public List<HourEntry> getHourEntries() {
-		hourEntries = HourEntry.findAllForUserBetween(userId,
-				DateTimeUtil.minimizeTimeOfDate(date),
-				DateTimeUtil.maximizeTimeOfDate(date));
+		hourEntries = HourEntry.findAllForUserForDay(userId, date);
 		return Collections.unmodifiableList(hourEntries);
 	}
-	
 
 }

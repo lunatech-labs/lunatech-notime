@@ -12,9 +12,9 @@ import java.util.TreeSet;
 import models.HourEntry;
 import models.ProjectAssignment;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
-import util.DateTimeUtil;
+import util.DateUtil;
 import util.Predicates;
 
 import com.google.common.collect.Collections2;
@@ -52,7 +52,7 @@ public class Week {
 		return hourEntries;
 	}
 
-	public List<DateTime> getDays() {
+	public List<LocalDate> getDays() {
 		return createDays();
 	}
 
@@ -83,7 +83,7 @@ public class Week {
 	 * @return A List of {@link WeekHourEntryBean}
 	 */
 	public List<WeekHourEntryBean> getHourEntries(
-			final ProjectAssignment assignment, final DateTime day) {
+			final ProjectAssignment assignment, final LocalDate day) {
 		final List<WeekHourEntryBean> hourEntries = new LinkedList<WeekHourEntryBean>();
 		Collection<WeekHourEntryBean> filtered = Collections2.filter(
 				this.hourEntries,
@@ -101,8 +101,8 @@ public class Week {
 	 *            The day for which the totals have to be calculated
 	 * @return A {@link TotalsDay} with the totals
 	 */
-	public TotalsDay getDayTotals(final Long userId, final DateTime day) {
-		return HourEntry.findTotalsForDayBetween(userId, day);
+	public TotalsDay getDayTotals(final Long userId, final LocalDate day) {
+		return HourEntry.findTotalsForUserForDay(userId, day);
 	}
 
 	/**
@@ -113,12 +113,11 @@ public class Week {
 	 * @return A {@link TotalsAssignment} with the totals
 	 */
 	public TotalsAssignment getAssignmentTotals(final Long assignmentId) {
-		final DateTime date = getDateThisWeek();
-		final DateTime firstDateThisWeek = DateTimeUtil.firstDateOfWeek(date);
-		final DateTime lastDateThisWeek = DateTimeUtil.lastDateOfWeek(date);
+		final LocalDate date = getDateThisWeek();
+		final LocalDate firstDateThisWeek = DateUtil.firstDateOfWeek(date);
+		final LocalDate lastDateThisWeek = DateUtil.lastDateOfWeek(date);
 		return HourEntry.findTotalsForAssignmentBetween(assignmentId,
-				firstDateThisWeek,
-				DateTimeUtil.lastDateOfWeek(lastDateThisWeek));
+				firstDateThisWeek, lastDateThisWeek);
 	}
 
 	public Map<WeekHourEntryBean, List<String>> getErrors() {
@@ -141,36 +140,36 @@ public class Week {
 		this.weekOfWeekyear = weekOfWeekyear;
 	}
 
-	private DateTime getDateThisWeek() {
-		return new DateTime().withWeekyear(weekyear).withWeekOfWeekyear(
+	private LocalDate getDateThisWeek() {
+		return new LocalDate().withWeekyear(weekyear).withWeekOfWeekyear(
 				weekOfWeekyear);
 	}
 
-	private DateTime getDatePreviousWeek() {
+	private LocalDate getDatePreviousWeek() {
 		return getDateThisWeek().minusWeeks(1);
 	}
 
 	public int getWeekyearPreviousWeek() {
-		final DateTime date = getDatePreviousWeek();
+		final LocalDate date = getDatePreviousWeek();
 		return date.getWeekyear();
 	}
 
 	public int getWeekOfWeekyearPreviousWeek() {
-		final DateTime date = getDatePreviousWeek();
+		final LocalDate date = getDatePreviousWeek();
 		return date.getWeekOfWeekyear();
 	}
 
-	private DateTime getDateNextWeek() {
+	private LocalDate getDateNextWeek() {
 		return getDateThisWeek().plusWeeks(1);
 	}
 
 	public int getWeekyearNextWeek() {
-		final DateTime date = getDateNextWeek();
+		final LocalDate date = getDateNextWeek();
 		return date.getWeekyear();
 	}
 
 	public int getWeekOfWeekyearNextWeek() {
-		final DateTime date = getDateNextWeek();
+		final LocalDate date = getDateNextWeek();
 		return date.getWeekOfWeekyear();
 	}
 
@@ -182,9 +181,9 @@ public class Week {
 	 *            A date in the represented week
 	 */
 	private void fillHourEntries(final Long userId) {
-		final DateTime date = getDateThisWeek();
-		final DateTime firstDateThisWeek = DateTimeUtil.firstDateOfWeek(date);
-		final DateTime lastDateThisWeek = DateTimeUtil.lastDateOfWeek(date);
+		final LocalDate date = getDateThisWeek();
+		final LocalDate firstDateThisWeek = DateUtil.firstDateOfWeek(date);
+		final LocalDate lastDateThisWeek = DateUtil.lastDateOfWeek(date);
 		List<HourEntry> hourEntryModels = HourEntry.findAllForUserBetween(
 				userId, firstDateThisWeek, lastDateThisWeek);
 		for (HourEntry entry : hourEntryModels) {
@@ -198,14 +197,14 @@ public class Week {
 	 * @param date
 	 *            A date in the represented week
 	 */
-	public List<DateTime> createDays() {
-		final List<DateTime> days = new LinkedList<DateTime>();
+	public List<LocalDate> createDays() {
+		final List<LocalDate> days = new LinkedList<LocalDate>();
 
-		final DateTime date = getDateThisWeek();
-		final DateTime firstDateThisWeek = DateTimeUtil.firstDateOfWeek(date);
-		final DateTime firstDateNextWeek = firstDateThisWeek.plusDays(7);
+		final LocalDate date = getDateThisWeek();
+		final LocalDate firstDateThisWeek = DateUtil.firstDateOfWeek(date);
+		final LocalDate firstDateNextWeek = firstDateThisWeek.plusDays(7);
 
-		DateTime indexDate = firstDateThisWeek;
+		LocalDate indexDate = firstDateThisWeek;
 		while (indexDate.isBefore(firstDateNextWeek)) {
 			days.add(indexDate);
 			indexDate = indexDate.plusDays(1);

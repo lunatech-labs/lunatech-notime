@@ -7,9 +7,9 @@ import models.HourEntry;
 import models.ProjectAssignment;
 import models.Tag;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
-import util.DateTimeUtil;
+import util.DateUtil;
 
 public class WeekHourEntryBean {
 
@@ -17,7 +17,7 @@ public class WeekHourEntryBean {
 
 	public ProjectAssignment assignment;
 
-	public DateTime date;
+	public LocalDate date;
 
 	public Integer hours;
 
@@ -100,7 +100,7 @@ public class WeekHourEntryBean {
 		if (!ProjectAssignment.isDateInAssignmentRange(date, assignment.id)) {
 			errors.add("Invalid input, you are assigned to "
 					+ assignment.project.code + " untill "
-					+ DateTimeUtil.formatDate(assignment.endDate, "E d-M"));
+					+ DateUtil.formatDate(assignment.endDate, "E d-M"));
 			valid = false;
 			return false;
 		}

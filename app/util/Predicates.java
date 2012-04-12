@@ -2,7 +2,7 @@ package util;
 
 import models.ProjectAssignment;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.google.common.base.Predicate;
 
@@ -22,7 +22,7 @@ public class Predicates {
 	 * @return A {@link Predicate}
 	 */
 	public static Predicate<WeekHourEntryBean> equalAssignmentAndDay(
-			final ProjectAssignment assignment, final DateTime day) {
+			final ProjectAssignment assignment, final LocalDate day) {
 		return new EqualAssignmentAndDay(assignment, day);
 	}
 
@@ -33,17 +33,17 @@ public class Predicates {
 	public static class EqualAssignmentAndDay implements
 			Predicate<WeekHourEntryBean> {
 		private final ProjectAssignment assignment;
-		private final DateTime day;
+		private final LocalDate day;
 
 		private EqualAssignmentAndDay(final ProjectAssignment assignment,
-				final DateTime day) {
+				final LocalDate day) {
 			this.assignment = assignment;
 			this.day = day;
 		}
 
 		public boolean apply(final WeekHourEntryBean entry) {
 			return entry.assignment == assignment
-					&& DateTimeUtil.isSameDate(entry.date, day);
+					&& DateUtil.isSameDate(entry.date, day);
 		}
 	}
 

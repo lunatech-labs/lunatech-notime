@@ -3,30 +3,30 @@ package binders.form;
 import java.text.ParseException;
 import java.util.Locale;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import play.data.format.Formatters;
-import util.DateTimeUtil;
+import util.DateUtil;
 
 public class CustomDataBinders {
 
 	public void register() {
-		registerDateTimeFormatter();
+		registerLocalDateFormatter();
 	}
 
-	private void registerDateTimeFormatter() {
-		Formatters.register(DateTime.class,
-				new Formatters.SimpleFormatter<DateTime>() {
+	private void registerLocalDateFormatter() {
+		Formatters.register(LocalDate.class,
+				new Formatters.SimpleFormatter<LocalDate>() {
 
 					@Override
-					public DateTime parse(String input, Locale l)
+					public LocalDate parse(String input, Locale l)
 							throws ParseException {
-						return DateTimeUtil.parseDate(input);
+						return DateUtil.parseDate(input);
 					}
 
 					@Override
-					public String print(DateTime input, Locale l) {
-						return DateTimeUtil.formatDate(input);
+					public String print(LocalDate input, Locale l) {
+						return DateUtil.formatDate(input);
 					}
 
 				});

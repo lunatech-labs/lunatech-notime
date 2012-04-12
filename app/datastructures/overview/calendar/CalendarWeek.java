@@ -3,9 +3,9 @@ package datastructures.overview.calendar;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
-import util.DateTimeUtil;
+import util.DateUtil;
 
 /**
  * Datastructure for displaying a calendar
@@ -27,19 +27,19 @@ public class CalendarWeek {
 	 * @param userId
 	 * @return
 	 */
-	public static List<CalendarWeek> createWeeks(DateTime firstDateOfMonth,
+	public static List<CalendarWeek> createWeeks(LocalDate firstDateOfMonth,
 			Long userId) {
-		DateTime lastDateOfMonth = DateTimeUtil
+		LocalDate lastDateOfMonth = DateUtil
 				.lastDateOfMonth(firstDateOfMonth);
-		DateTime firstDateOfWeek = DateTimeUtil
+		LocalDate firstDateOfWeek = DateUtil
 				.firstDateOfWeek(firstDateOfMonth);
-		DateTime currentDate = firstDateOfWeek;
+		LocalDate currentDate = firstDateOfWeek;
 
 		List<CalendarWeek> weeks = new LinkedList<CalendarWeek>();
 
 		while (currentDate.getMonthOfYear() <= lastDateOfMonth.getMonthOfYear()) {
 			CalendarWeek week = new CalendarWeek();
-			DateTime lastDateOfWeek = DateTimeUtil.lastDateOfWeek(currentDate);
+			LocalDate lastDateOfWeek = DateUtil.lastDateOfWeek(currentDate);
 
 			while (currentDate.getWeekOfWeekyear() == lastDateOfWeek
 					.getWeekOfWeekyear()) {

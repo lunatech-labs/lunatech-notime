@@ -1,6 +1,6 @@
 package datastructures;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import util.CalculationUtil;
 
@@ -9,7 +9,7 @@ import util.CalculationUtil;
  */
 public class TotalsDay {
 
-	public DateTime date;
+	public LocalDate date;
 
 	public long hours;
 
@@ -28,7 +28,7 @@ public class TotalsDay {
 	 * @param minutes
 	 *            The total minutes booked on this minutes
 	 */
-	public TotalsDay(DateTime date, Long hours,
+	public TotalsDay(LocalDate date, Long hours,
 			Long minutes) {
 		this.date = date;
 		this.minutes = minutes;

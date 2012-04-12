@@ -16,11 +16,10 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
-import play.data.format.Formats;
 import play.db.jpa.JPA;
-import util.DateTimeUtil;
+import util.DateUtil;
 
 @Entity
 public class ProjectAssignment implements Comparable<ProjectAssignment> {
@@ -35,13 +34,11 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	@ManyToOne
 	public User user;
 
-	@Formats.DateTime(pattern = "dd-MM-yy")
-	@Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
-	public DateTime startDate;
+	@Type(type = "org.joda.time.contrib.hibernate.PersistentLocalDate")
+	public LocalDate startDate;
 
-	@Formats.DateTime(pattern = "dd-MM-yy")
-	@Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
-	public DateTime endDate;
+	@Type(type = "org.joda.time.contrib.hibernate.PersistentLocalDate")
+	public LocalDate endDate;
 
 	@Column(scale = 2)
 	public BigDecimal hourlyRate = new BigDecimal(0);
@@ -59,7 +56,7 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	}
 
 	/**
-	 * Sets the project, maximizes the time of the endDate and inserts this
+	 * Sets the project and inserts this
 	 * project assignment
 	 * 
 	 * @param projectId
@@ -67,13 +64,11 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	 */
 	public void saveAndMaximizeTime(Long projectId) {
 		this.project = Project.findById(projectId);
-		this.endDate = DateTimeUtil.maximizeTimeOfDate(this.endDate);
 		JPA.em().persist(this);
 	}
 
 	/**
-	 * Sets the project because the form doesn't have a project field. Maximizes
-	 * the time of the endDate and updates this project assignment
+	 * Sets the project because the form doesn't have a project field and updates this project assignment
 	 * 
 	 * @param assignmentId
 	 *            The id of the project assignment that is going to be updated
@@ -83,12 +78,11 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	public void update(Long assignmentId, Long projectId) {
 		this.id = assignmentId;
 		this.project = Project.findById(projectId);
-		this.endDate = DateTimeUtil.maximizeTimeOfDate(this.endDate);
 		JPA.em().merge(this);
 	}
 
 	/**
-	 * Maximizes the time of the endDate and updates this project assignment
+	 * Updates this project assignment
 	 * 
 	 * @param assignmentId
 	 *            The id of the project assignment that is going to be updated
@@ -97,7 +91,6 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	 */
 	public void update(Long assignmentId) {
 		this.id = assignmentId;
-		this.endDate = DateTimeUtil.maximizeTimeOfDate(this.endDate);
 		JPA.em().merge(this);
 	}
 
@@ -189,7 +182,7 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 		assignments.put("", "");
 
 		for (ProjectAssignment assignment : findAllForUser(userId)) {
-			if (ProjectAssignment.isDateInAssignmentRange(new DateTime(),
+			if (ProjectAssignment.isDateInAssignmentRange(new LocalDate(),
 					assignment.id))
 				assignments.put(assignment.id.toString(),
 						assignment.project.name.toString());
@@ -251,18 +244,18 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	}
 
 	public static String validateDates(ProjectAssignment assignment) {
-		if (assignment.startDate.toLocalDate().compareTo(
-				assignment.endDate.toLocalDate()) > 0)
+		if (assignment.startDate.compareTo(
+				assignment.endDate) > 0)
 			return "Start date is after the End date";
 		else
 			return new String();
 	}
 
-	public static boolean isDateInAssignmentRange(DateTime date,
+	public static boolean isDateInAssignmentRange(LocalDate date,
 			Long assignmentId) {
 		ProjectAssignment assignment = ProjectAssignment.findById(assignmentId);
-		return DateTimeUtil.between(date, assignment.startDate,
-				assignment.endDate);
+		return DateUtil.between(date, assignment.startDate,
+				assignment.endDate.plusDays(1));
 	}
 
 	@Override

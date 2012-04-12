@@ -2,9 +2,9 @@ package datastructures.overview.calendar;
 
 import java.util.List;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
-import util.DateTimeUtil;
+import util.DateUtil;
 
 /**
  * Datastructure for displaying a calendar 
@@ -20,8 +20,8 @@ public class CalendarMonth {
 	 *            A certain date in the month for which the data structure is
 	 *            created
 	 */
-	public CalendarMonth(DateTime date, Long userId) {
-		weeks = CalendarWeek.createWeeks(DateTimeUtil.firstDateOfMonth(date),
+	public CalendarMonth(LocalDate date, Long userId) {
+		weeks = CalendarWeek.createWeeks(DateUtil.firstDateOfMonth(date),
 				userId);
 	}
 }

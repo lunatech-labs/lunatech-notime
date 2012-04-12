@@ -8,13 +8,13 @@ import java.util.Set;
 
 import models.HourEntry;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import play.data.Form;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
-import util.DateTimeUtil;
+import util.DateUtil;
 import util.Transformers;
 import views.html.user.hourentry.createHourEntries;
 import views.html.user.hourentry.createHourEntriesForWeek;
@@ -36,10 +36,8 @@ public class HourEntries extends Controller {
 	@Transactional(readOnly = true)
 	public static Result add(Long userId) {
 		Form<HourEntry> newForm = form(HourEntry.class);
-		DateTime date = new DateTime();
-		List<HourEntry> entries = HourEntry.findAllForUserBetween(userId,
-				DateTimeUtil.minimizeTimeOfDate(date),
-				DateTimeUtil.maximizeTimeOfDate(date));
+		List<HourEntry> entries = HourEntry.findAllForUserForDay(userId,
+				new LocalDate());
 		return ok(createHourEntry.render(userId, newForm, entries));
 	}
 
@@ -47,10 +45,8 @@ public class HourEntries extends Controller {
 	public static Result create(Long userId) {
 		Form<HourEntry> filledForm = form(HourEntry.class).bindFromRequest();
 
-		DateTime date = new DateTime();
-		List<HourEntry> entries = HourEntry.findAllForUserBetween(userId,
-				DateTimeUtil.minimizeTimeOfDate(date),
-				DateTimeUtil.maximizeTimeOfDate(date));
+		List<HourEntry> entries = HourEntry.findAllForUserForDay(userId,
+				new LocalDate());
 
 		if (filledForm.hasErrors())
 			return badRequest(createHourEntry.render(userId, filledForm,
@@ -63,37 +59,25 @@ public class HourEntries extends Controller {
 	}
 
 	@Transactional(readOnly = true)
-	public static Result addForDay(Long userId, DateTime date) {
+	public static Result addForDay(Long userId, LocalDate date) {
 		HourEntry defaultValues = new HourEntry();
 		defaultValues.hours = 0;
 		defaultValues.minutes = 0;
 		Form<HourEntry> newForm = form(HourEntry.class).fill(defaultValues);
 
-		DateTime beginOfDay = DateTimeUtil.minimizeTimeOfDate(date);
-		DateTime endOfDay = DateTimeUtil.maximizeTimeOfDate(date);
-		List<HourEntry> entries = HourEntry.findAllForUserBetween(userId,
-				beginOfDay, endOfDay);
-		List<TotalsDay> totalsPerDay = HourEntry.findTotalsForUserPerDayBetween(
-				userId, beginOfDay, endOfDay);
-		TotalsDay totalsToday = totalsPerDay.isEmpty() ? new TotalsDay(date,
-				0L, 0L) : totalsPerDay.get(0);
+		List<HourEntry> entries = HourEntry.findAllForUserForDay(userId, date);
+		TotalsDay totalsToday = HourEntry.findTotalsForUserForDay(userId, date);
 
 		return ok(createHourEntryForDay.render(userId, newForm, date, entries,
 				totalsToday));
 	}
 
 	@Transactional
-	public static Result createForDay(Long userId, DateTime date) {
+	public static Result createForDay(Long userId, LocalDate date) {
 		Form<HourEntry> filledForm = form(HourEntry.class).bindFromRequest();
 
-		DateTime beginOfDay = DateTimeUtil.minimizeTimeOfDate(date);
-		DateTime endOfDay = DateTimeUtil.maximizeTimeOfDate(date);
-		List<HourEntry> entries = HourEntry.findAllForUserBetween(userId,
-				beginOfDay, endOfDay);
-		List<TotalsDay> totalsPerDay = HourEntry.findTotalsForUserPerDayBetween(
-				userId, beginOfDay, endOfDay);
-		TotalsDay totalsToday = totalsPerDay.isEmpty() ? new TotalsDay(date,
-				0L, 0L) : totalsPerDay.get(0);
+		List<HourEntry> entries = HourEntry.findAllForUserForDay(userId, date);
+		TotalsDay totalsToday = HourEntry.findTotalsForUserForDay(userId, date);
 
 		if (filledForm.hasErrors())
 			return badRequest(createHourEntryForDay.render(userId, filledForm,
@@ -193,16 +177,16 @@ public class HourEntries extends Controller {
 
 	@Transactional(readOnly = true)
 	public static Result tableOverview(Long userId) {
-		DateTime currentDate = new DateTime();
+		LocalDate currentDate = new LocalDate();
 		return ok(hourEntriesTable.render(userId, HourEntry
 				.findTotalsForUserPerAssignmentBetween(userId,
-						DateTimeUtil.firstDateOfMonth(currentDate),
-						DateTimeUtil.lastDateOfMonth(currentDate))));
+						DateUtil.firstDateOfMonth(currentDate),
+						DateUtil.lastDateOfMonth(currentDate))));
 	}
 
 	@Transactional(readOnly = true)
 	public static Result calendarOverview(Long userId) {
-		DateTime currentDate = new DateTime();
+		LocalDate currentDate = new LocalDate();
 		CalendarMonth calendar = new CalendarMonth(currentDate, userId);
 		return ok(hourEntriesCalendar.render(userId, calendar));
 	}

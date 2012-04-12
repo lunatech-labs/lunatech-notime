@@ -18,22 +18,22 @@ insert into project (id, name, code, description, type, customer_id, customercon
 insert into project (id, name, code, description, type, customer_id, customercontact, projectmanager_id, defaultproject) values (3, 'Appie', 'APP', '', 0, 3, '', 4, 0);
 insert into project (id, name, code, description, type, customer_id, customercontact, projectmanager_id, defaultproject) values (4, 'LOSS Timesheet', 'LOSS', '', 0, 1, '', 2, 0);
 
-insert into projectassignment (id, project_id, user_id, startdate, enddate, hourlyrate, starred) values (1, 1, 1, '2012-02-01 00:00:00.0', '2012-05-30 23:59:59.999', '35.50', 0);
-insert into projectassignment (id, project_id, user_id, startdate, enddate, hourlyrate, starred) values (2, 1, 3, '2012-02-01 00:00:00.0', '2012-05-30 23:59:59.999', '47.50', 0);
-insert into projectassignment (id, project_id, user_id, startdate, enddate, hourlyrate, starred) values (3, 1, 4, '2012-02-01 00:00:00.0', '2012-05-30 23:59:59.999', '56.45', 0);
-insert into projectassignment (id, project_id, user_id, startdate, enddate, hourlyrate, starred) values (4, 3, 1, '2012-02-01 00:00:00.0', '2012-05-30 23:59:59.999', '54.50', 0);
+insert into projectassignment (id, project_id, user_id, startdate, enddate, hourlyrate, starred) values (1, 1, 1, '2012-02-01', '2012-05-30', '35.50', 0);
+insert into projectassignment (id, project_id, user_id, startdate, enddate, hourlyrate, starred) values (2, 1, 3, '2012-02-01', '2012-05-30', '47.50', 0);
+insert into projectassignment (id, project_id, user_id, startdate, enddate, hourlyrate, starred) values (3, 1, 4, '2012-02-01', '2012-05-30', '56.45', 0);
+insert into projectassignment (id, project_id, user_id, startdate, enddate, hourlyrate, starred) values (4, 3, 1, '2012-02-01', '2012-05-30', '54.50', 0);
 
-insert into hourentry (id, assignment_id, date, hours, minutes) values (1, 1, '2012-04-09 00:00:00.0', 7, 40);
-insert into hourentry (id, assignment_id, date, hours, minutes) values (2, 1, '2012-04-10 00:00:00.0', 8, 0);
-insert into hourentry (id, assignment_id, date, hours, minutes) values (3, 1, '2012-04-11 00:00:00.0', 0, 0);
-insert into hourentry (id, assignment_id, date, hours, minutes) values (4, 1, '2012-04-12 00:00:00.0', 5, 30);
-insert into hourentry (id, assignment_id, date, hours, minutes) values (5, 1, '2012-04-13 00:00:00.0', 8, 0);
-insert into hourentry (id, assignment_id, date, hours, minutes) values (6, 1, '2012-04-14 00:00:00.0', 0, 0);
-insert into hourentry (id, assignment_id, date, hours, minutes) values (7, 1, '2012-04-15 00:00:00.0', 0, 0);
-insert into hourentry (id, assignment_id, date, hours, minutes) values (8, 4, '2012-04-09 00:00:00.0', 0, 40);
-insert into hourentry (id, assignment_id, date, hours, minutes) values (9, 2, '2012-04-11 00:00:00.0', 3, 50);
-insert into hourentry (id, assignment_id, date, hours, minutes) values (10, 3, '2012-04-12 00:00:00.0', 8, 30);
-insert into hourentry (id, assignment_id, date, hours, minutes) values (11, 4, '2012-04-12 00:00:00.0', 2, 10);
+insert into hourentry (id, assignment_id, date, hours, minutes) values (1, 1, '2012-04-09', 7, 40);
+insert into hourentry (id, assignment_id, date, hours, minutes) values (2, 1, '2012-04-10', 8, 0);
+insert into hourentry (id, assignment_id, date, hours, minutes) values (3, 1, '2012-04-11', 0, 0);
+insert into hourentry (id, assignment_id, date, hours, minutes) values (4, 1, '2012-04-12', 5, 30);
+insert into hourentry (id, assignment_id, date, hours, minutes) values (5, 1, '2012-04-13', 8, 0);
+insert into hourentry (id, assignment_id, date, hours, minutes) values (6, 1, '2012-04-14', 0, 0);
+insert into hourentry (id, assignment_id, date, hours, minutes) values (7, 1, '2012-04-15', 0, 0);
+insert into hourentry (id, assignment_id, date, hours, minutes) values (8, 4, '2012-04-09', 0, 40);
+insert into hourentry (id, assignment_id, date, hours, minutes) values (9, 2, '2012-04-11', 3, 50);
+insert into hourentry (id, assignment_id, date, hours, minutes) values (10, 3, '2012-04-12', 8, 30);
+insert into hourentry (id, assignment_id, date, hours, minutes) values (11, 4, '2012-04-12', 2, 10);
 
 
 # --- !Downs

@@ -1,14 +1,14 @@
-@(userId: Long, entryForm: Form[HourEntry], date: org.joda.time.DateTime, entries: List[HourEntry], totals: datastructures.TotalsDay)
+@(userId: Long, entryForm: Form[HourEntry], date: org.joda.time.LocalDate, entries: List[HourEntry], totals: datastructures.TotalsDay)
 
 @import helper._
 
 @implicitFieldConstructor = @{ FieldConstructor(template.customInput.render) } 
 
 @import util.CalculationUtil
-@import util.DateTimeUtil
+@import util.DateUtil
 
 
-@main("Enter hours for " + DateTimeUtil.formatDate(date)) {
+@main("Enter hours for " + DateUtil.formatDate(date)) {
 	
 	@if(entryForm.hasGlobalErrors()) {
     	<div class="alert-message error">
@@ -20,7 +20,7 @@
 		<div class="entry">
 			<div class="hidden-date">
 				<div class="input">
-					<input id="date" type="hidden" name="date" value="@DateTimeUtil.formatDate(date)">
+					<input id="date" type="hidden" name="date" value="@DateUtil.formatDate(date)">
 				</div>
 			</div>
 			
