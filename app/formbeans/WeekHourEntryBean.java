@@ -160,7 +160,12 @@ public class WeekHourEntryBean {
 	}
 
 	public HourEntry toHourEntry() {
-		HourEntry entry = new HourEntry();
+		HourEntry entry;
+		if (id == null) {
+			entry = new HourEntry();
+		} else {
+			entry = HourEntry.findById(id);
+		}
 		entry.id = id;
 		entry.assignment = assignment;
 		entry.date = date;
