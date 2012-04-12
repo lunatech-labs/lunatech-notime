@@ -27,8 +27,9 @@
 					<input type="text" class="autocomplete" name="tagsString" value="@HourEntry.findById(entryId).enteredTagsString" data-url="@routes.Tags.find">
 				</div>
 			</div>
-	
-	
+
+			@checkbox(entryForm("billable"), '_label -> "Billable")
+
 			<input class="btn btn-primary" type="submit" value="Submit">
 			<a class="btn" href="@routes.Users.read(userId)">Cancel</a>	
 		</div>

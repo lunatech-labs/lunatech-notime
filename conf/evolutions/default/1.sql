@@ -23,17 +23,17 @@ insert into projectassignment (id, project_id, user_id, startdate, enddate, hour
 insert into projectassignment (id, project_id, user_id, startdate, enddate, hourlyrate, starred) values (3, 1, 4, '2012-02-01', '2012-05-30', '56.45', 0);
 insert into projectassignment (id, project_id, user_id, startdate, enddate, hourlyrate, starred) values (4, 3, 1, '2012-02-01', '2012-05-30', '54.50', 0);
 
-insert into hourentry (id, assignment_id, date, hours, minutes) values (1, 1, '2012-04-09', 7, 40);
-insert into hourentry (id, assignment_id, date, hours, minutes) values (2, 1, '2012-04-10', 8, 0);
-insert into hourentry (id, assignment_id, date, hours, minutes) values (3, 1, '2012-04-11', 0, 0);
-insert into hourentry (id, assignment_id, date, hours, minutes) values (4, 1, '2012-04-12', 5, 30);
-insert into hourentry (id, assignment_id, date, hours, minutes) values (5, 1, '2012-04-13', 8, 0);
-insert into hourentry (id, assignment_id, date, hours, minutes) values (6, 1, '2012-04-14', 0, 0);
-insert into hourentry (id, assignment_id, date, hours, minutes) values (7, 1, '2012-04-15', 0, 0);
-insert into hourentry (id, assignment_id, date, hours, minutes) values (8, 4, '2012-04-09', 0, 40);
-insert into hourentry (id, assignment_id, date, hours, minutes) values (9, 2, '2012-04-11', 3, 50);
-insert into hourentry (id, assignment_id, date, hours, minutes) values (10, 3, '2012-04-12', 8, 30);
-insert into hourentry (id, assignment_id, date, hours, minutes) values (11, 4, '2012-04-12', 2, 10);
+insert into hourentry (id, assignment_id, date, hours, minutes, billable) values (1, 1, '2012-04-09', 7, 40, 1);
+insert into hourentry (id, assignment_id, date, hours, minutes, billable) values (2, 1, '2012-04-10', 8, 0, 1);
+insert into hourentry (id, assignment_id, date, hours, minutes, billable) values (3, 1, '2012-04-11', 0, 10, 1);
+insert into hourentry (id, assignment_id, date, hours, minutes, billable) values (4, 1, '2012-04-12', 5, 30, 1);
+insert into hourentry (id, assignment_id, date, hours, minutes, billable) values (5, 1, '2012-04-13', 8, 0, 1);
+insert into hourentry (id, assignment_id, date, hours, minutes, billable) values (6, 1, '2012-04-14', 1, 0, 1);
+insert into hourentry (id, assignment_id, date, hours, minutes, billable) values (7, 1, '2012-04-15', 1, 0, 1);
+insert into hourentry (id, assignment_id, date, hours, minutes, billable) values (8, 4, '2012-04-09', 0, 40, 1);
+insert into hourentry (id, assignment_id, date, hours, minutes, billable) values (9, 2, '2012-04-11', 3, 50, 1);
+insert into hourentry (id, assignment_id, date, hours, minutes, billable) values (10, 3, '2012-04-12', 8, 30, 1);
+insert into hourentry (id, assignment_id, date, hours, minutes, billable) values (11, 4, '2012-04-12', 2, 10, 1);
 
 
 # --- !Downs

@@ -53,6 +53,8 @@ public class HourEntry {
 	@JoinTable(name = "hourentry_tag", joinColumns = @JoinColumn(name = "hourentry_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
 	public List<Tag> tags;
 
+	public boolean billable;
+
 	/**
 	 * Sets the tags and inserts this hour entry
 	 * 
@@ -66,6 +68,7 @@ public class HourEntry {
 			for (int i = 0; i < tags.length; i++)
 				this.tags.add(Tag.findOrCreate(tags[i]));
 		}
+		billable = true;
 		JPA.em().persist(this);
 	}
 
