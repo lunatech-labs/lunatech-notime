@@ -43,10 +43,12 @@ public class HourEntry {
 	public LocalDate date;
 
 	@Required
+	@Min(0)
 	@Max(23)
 	public Integer hours;
 
 	@Required
+	@Min(0)
 	@Max(59)
 	public Integer minutes;
 

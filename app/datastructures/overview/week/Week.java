@@ -238,8 +238,8 @@ public class Week {
 					.listIterator();
 			while (iterator.hasNext()) {
 				WeekHourEntryBean entry = (WeekHourEntryBean) iterator.next();
-				// 2. Check if hours or minutes have a value higher than 0
-				if ((entry.hasMoreThan0Hours() || entry.hasMoreThan0Minutes())) {
+				// 2. Check if hours or minutes is not 0
+				if ((entry.hasNot0Hours() || entry.hasNot0Minutes())) {
 					entry.setHoursAndMinutesFromNullToZero();
 					// 3. Check if the new entry is valid or not
 					if (!entry.isValid()) {
@@ -271,9 +271,9 @@ public class Week {
 				WeekHourEntryBean entry = (WeekHourEntryBean) iterator.next();
 				// Check if id is null
 				if (entry.id == null) {
-					// Check if hours or minutes have a value higher than 0
-					if (entry.hasMoreThan0Hours()
-							|| entry.hasMoreThan0Minutes()) {
+					// Check if hours or minutes is not 0
+					if (entry.hasNot0Hours()
+							|| entry.hasNot0Minutes()) {
 						entry.setHoursAndMinutesFromNullToZero();
 						// Validate entry
 						if (entry.isValid()) {
@@ -283,9 +283,9 @@ public class Week {
 						iterator.remove();
 					}
 				} else {
-					// Check if hours or minutes have a value higher than 0
-					if (entry.hasMoreThan0Hours()
-							|| entry.hasMoreThan0Minutes()) {
+					// Check if hours or minutes is not 0
+					if (entry.hasNot0Hours()
+							|| entry.hasNot0Minutes()) {
 						entry.setHoursAndMinutesFromNullToZero();
 						// Validate entry
 						if (entry.isValid()) {

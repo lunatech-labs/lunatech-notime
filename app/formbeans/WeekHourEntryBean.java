@@ -107,12 +107,12 @@ public class WeekHourEntryBean {
 		return true;
 	}
 
-	public boolean hasMoreThan0Hours() {
-		return hours != null && hours > 0;
+	public boolean hasNot0Hours() {
+		return hours != null && hours != 0;
 	}
 
-	public boolean hasMoreThan0Minutes() {
-		return minutes != null && minutes > 0;
+	public boolean hasNot0Minutes() {
+		return minutes != null && minutes != 0;
 	}
 
 	public boolean hasHours() {
@@ -134,8 +134,8 @@ public class WeekHourEntryBean {
 	}
 
 	public boolean hasLessThan24Hours() {
-		if (!hasHours() || hours >= 24) {
-			errors.add("Hours can't be more than 23");
+		if (!hasHours() || hours < 0 || hours >= 24) {
+			errors.add("Hours can't be less than 0 or more than 23");
 			valid = false;
 			return false;
 		}
@@ -143,8 +143,8 @@ public class WeekHourEntryBean {
 	}
 
 	public boolean hasLessThan60Minutes() {
-		if (!hasMinutes() || minutes >= 60) {
-			errors.add("Minutes can't be more than 59");
+		if (!hasMinutes() || minutes < 0 || minutes >= 60) {
+			errors.add("Minutes can't be less than 0 or more than 59");
 			valid = false;
 			return false;
 		}
