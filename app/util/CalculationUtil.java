@@ -55,6 +55,7 @@ public class CalculationUtil {
 		BigDecimal hoursCasted = new BigDecimal(hours);
 		BigDecimal minutesToHours = new BigDecimal((double) minutes / 60);
 		BigDecimal totalTurnover = new BigDecimal(0);
+		hourlyRate = hourlyRate == null ? new BigDecimal(0) : hourlyRate;
 		totalTurnover = hourlyRate.multiply(hoursCasted);
 		totalTurnover = totalTurnover.add(hourlyRate.multiply(minutesToHours));
 		return totalTurnover.setScale(2, BigDecimal.ROUND_HALF_UP);

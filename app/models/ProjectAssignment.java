@@ -23,7 +23,7 @@ import play.db.jpa.JPA;
 import util.DateTimeUtil;
 
 @Entity
-public class ProjectAssignment {
+public class ProjectAssignment implements Comparable<ProjectAssignment> {
 
 	@Id
 	@GeneratedValue
@@ -264,4 +264,10 @@ public class ProjectAssignment {
 		return DateTimeUtil.between(date, assignment.startDate,
 				assignment.endDate);
 	}
+
+	@Override
+	public int compareTo(ProjectAssignment assignment) {
+		return this.id.compareTo(assignment.id);
+	}
+
 }

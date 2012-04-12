@@ -1,8 +1,6 @@
-@(userId: Long, weekOverview: datastructures.overview.week.WeekTable)
+@(userId: Long, week: datastructures.overview.week.Week)
 
 @import helper._
-@import helper.twitterBootstrap._
-@import scala.collection.immutable.List
 @import util.DateTimeUtil
 
 @script = {
@@ -10,65 +8,76 @@
 }
 
 @main("Enter hours per week", script = script) {
-	
-	@if(flash.containsKey("error")) {
-    	<div class="alert-message error">
-            <strong>Oops!</strong> @flash.get("error")
-        </div>
-    }
-        
-    @if(weekOverview.assignmentRows.isEmpty) {
-    	No entries
+
+	<a href="@routes.HourEntries.addForWeek(userId, week.getWeekyearPreviousWeek, week.getWeekOfWeekyearPreviousWeek)">Previous week</a>
+	<a class="next-week" href="@routes.HourEntries.addForWeek(userId, week.getWeekyearNextWeek, week.getWeekOfWeekyearNextWeek)">Next week</a>
+
+	@if(week.getHourEntries.isEmpty) {
+    	<p>No entries</p>
     } else {
-    	@form(routes.HourEntries.createForWeek(userId), 'id -> "entriesForm") {
-		    <table id="weekOverview">
-		    	<thead>
-			    	<tr>
-			    		<th></th>
-			    		@for(day <- weekOverview.assignmentRows.get(0).days) {
-			    			<th>@DateTimeUtil.formatDate(day.date, "E d-M")</th>
-			    		}
-			    	</tr>
-		    	</thead>
-		    	</tbody>
-				   	@for((assignment, assignmentIndex) <- weekOverview.assignmentRows.zipWithIndex) {
-				    	<tr class="assignment">
-				    		<td>@assignment.assignment.project.code</td>
-					    		@for((day, dayIndex) <- assignment.days.zipWithIndex) {
-					    			<td class="day">						    			
-						    				@for((entry, entryIndex) <- day.entries.zipWithIndex) {
-						    		   			<span class="entry">
-						    		   				<input name="hourEntries[x].id" type="hidden" value="@entry.id" />
-						    		   				<input name="hourEntries[x].assignment.id" type="hidden" value="@entry.assignment.id" />
-						    		   				<input name="hourEntries[x].date" type="hidden" value="@DateTimeUtil.formatDate(entry.date)" />
-						    		   				<input name="hourEntries[x].hours" type="text" value="@entry.hours" />:
-						    		   				<input name="hourEntries[x].minutes" type="text" value="@entry.minutes"/>
-						    		   			</span>
-						    		   		}
-											<span class="entry">
-						    					<input name="hourEntries[x].assignment.id" type="hidden" value="@assignment.assignment.id" />
-						    		   			<input name="hourEntries[x].date" type="hidden" value="@DateTimeUtil.formatDate(day.date)" />
-						    		   			<input name="hourEntries[x].hours" type="text" />:
-						    		   			<input name="hourEntries[x].minutes" type="text" />						    		   			
-						    		   		</span>	
-					    		   	</td>
-					    		}
-					    	<td>@assignment.assignmentTotals.hoursMinutes</td>
-				    	</tr>
-				    }
-				    <tr>
-				    	<td></td>
-				    	@for(dayTotals <- weekOverview.daysTotals) {
-				    		<td>@dayTotals.hoursMinutes</td>
-				    	}
-				    </tr>
-				    
-			    </tbody>
-		    </table>
-		    <input class="btn btn-primary" type="submit" value="Submit">
-		    
-		}
-	}
+    	@if(!week.getErrors.isEmpty) {
+    		<div class="alert-message error">
+    		@for(fieldErrors <- week.getErrors) {
+            	Your input on @if(fieldErrors._1.date != null) {@DateTimeUtil.formatDate(fieldErrors._1.date, "E d-M"),} @if(fieldErrors._1.assignment.project != null) {@fieldErrors._1.assignment.project.code} contained the following errors:    		
+    			<ul>
+    				@for(error <- fieldErrors._2) {
+    					<li>@error</li>
+    				}
+    			</ul>
+    		}
+    		</div>
+    	}
+
+    	@form(routes.HourEntries.createForWeek(userId, week.getWeekyear, week.getWeekOfWeekyear), 'id -> "entriesForm") {
+			<input name="weekyear" type="hidden" value="@week.getWeekyear">
+			<input name="week" type="hidden" value="@week.getWeekOfWeekyear)">
+			<table id="weekOverview">
+				<thead>
+					<tr>
+						<th></th>
+						@for(day <- week.getDays) {
+							<th><a href="@routes.HourEntries.createForDay(userId, day)">@DateTimeUtil.formatDate(day, "E d-M")</a></th>
+						}
+					</tr>
+				</thead>
+				<tbody>
+					@for(assignment <- week.getAssignments(userId).toList) {
+						<tr class="assignment">
+							<td>@assignment.project.code</td>
+							@for(day <- week.getDays) {
+								<td class="day">
+									@for(hourEntry <- week.getHourEntries(assignment, day)) {
+										<span class="entry @if(hourEntry.hasErrors) {error}">
+											<input name="hourEntries[x].id" type="hidden" value="@hourEntry.id" />
+								    		<input name="hourEntries[x].assignment.id" type="hidden" value="@hourEntry.assignment.id" />
+								    		<input name="hourEntries[x].date" type="hidden" value="@DateTimeUtil.formatDate(hourEntry.date)" />
+								    		<input name="hourEntries[x].hours" type="text" value="@hourEntry.hours" />:
+								    		<input name="hourEntries[x].minutes" type="text" value="@hourEntry.minutes"/>
+								    	</span>
+									}
+									<span class="entry">
+								    	<input name="hourEntries[x].assignment.id" type="hidden" value="@assignment.id" />
+								    	<input name="hourEntries[x].date" type="hidden" value="@DateTimeUtil.formatDate(day)" />
+								    	<input name="hourEntries[x].hours" type="text" />:
+								    	<input name="hourEntries[x].minutes" type="text" />
+								    </span>
+								</td>
+							}
+							<td>@week.getAssignmentTotals(assignment.id).hoursMinutes</td>
+						</tr>
+					}
+					<tr>
+						<td></td>
+						@for(day <- week.getDays) {
+							<td>@week.getDayTotals(userId, day).hoursMinutes</td>
+						}
+					</tr>
+				</tbody>
+	    	</table>
+	    	<input class="btn btn-primary" type="submit" value="Submit">
+    	}
+    }
+
 } {
 	@sidebar.userMenu(userId)
 }

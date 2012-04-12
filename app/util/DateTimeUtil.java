@@ -4,6 +4,7 @@ import java.text.ParseException;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
+import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -141,6 +142,21 @@ public class DateTimeUtil {
 	public static DateTime parseDate(String date) throws ParseException {
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("dd-MM-yyyy");
 		return fmt.parseDateTime(date);
+	}
+
+	/**
+	 * Checks if 2 DateTimes are on the same date, without the time portion
+	 *
+	 * @param firstDate
+	 *            A {@link DateTime}
+	 * @param secondDate
+	 *            A {@link DateTime}
+	 * @return true if the two dates are the same
+	 */
+	public static boolean isSameDate(DateTime firstDate, DateTime secondDate) {
+		LocalDate firstLocalDate = firstDate.toLocalDate();
+		LocalDate secondLocalDate = secondDate.toLocalDate();
+		return firstLocalDate.compareTo(secondLocalDate) == 0;
 	}
 
 }

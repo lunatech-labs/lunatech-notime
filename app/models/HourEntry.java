@@ -25,6 +25,7 @@ import play.data.format.Formats;
 import play.data.validation.Constraints.Max;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
+import util.DateTimeUtil;
 import datastructures.TotalsAssignment;
 import datastructures.TotalsDay;
 
@@ -100,12 +101,12 @@ public class HourEntry {
 	/**
 	 * Find a hour entry by id
 	 * 
-	 * @param userId
+	 * @param hourEntryId
 	 *            The id of the hour entry to be searched for
 	 * @return A hour entry
 	 */
-	public static HourEntry findById(Long userId) {
-		return JPA.em().find(HourEntry.class, userId);
+	public static HourEntry findById(Long hourEntryId) {
+		return JPA.em().find(HourEntry.class, hourEntryId);
 	}
 
 	/**
@@ -205,6 +206,48 @@ public class HourEntry {
 	}
 
 	/**
+	 * Calculates the totals of the hour entries for an assignment, between two
+	 * dates
+	 *
+	 * @param assignmentId
+	 *            The id of the assignment which entries are to be summed
+	 * @param beginDate
+	 *            The date from which entries are to be searched for
+	 * @param endDate
+	 *            The date till which entries are to be searched for
+	 * @return A {@link TotalsAssignment} object
+	 */
+	public static TotalsAssignment getTotalsForAssignmentBetween(
+			Long assignmentId, DateTime beginDate, DateTime endDate) {
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<TotalsAssignment> query = cb
+				.createQuery(TotalsAssignment.class);
+		Root<HourEntry> entry = query.from(HourEntry.class);
+		query.select(cb.construct(TotalsAssignment.class,
+				entry.get(HourEntry_.assignment),
+				cb.sumAsLong(entry.get(HourEntry_.hours)),
+				cb.sumAsLong(entry.get(HourEntry_.minutes))));
+
+		Join<HourEntry, ProjectAssignment> assignment = entry
+				.join(HourEntry_.assignment);
+
+		query.where(
+				cb.equal(assignment.get(ProjectAssignment_.id), assignmentId),
+				cb.between(entry.get(HourEntry_.date), beginDate, endDate));
+		query.groupBy(entry.get(HourEntry_.assignment));
+		Query typedQuery = JPA.em().createQuery(query);
+		try {
+			return (TotalsAssignment) typedQuery.getSingleResult();
+		} catch (NoResultException nre) {
+			return new TotalsAssignment(
+					ProjectAssignment.findById(assignmentId), 0L, 0L);
+		} catch (NonUniqueResultException nure) {
+			return new TotalsAssignment(
+					ProjectAssignment.findById(assignmentId), 0L, 0L);
+		}
+	}
+
+	/**
 	 * Calculates the totals of the hour entries for a user, per day, between
 	 * two dates. Note that the amount of minutes can be more than 60
 	 * 
@@ -238,45 +281,41 @@ public class HourEntry {
 	}
 
 	/**
-	 * Calculates the totals of the hour entries for an assignment, between two
-	 * dates
+	 * Calculates the totals of the hour entries for a user, for a day. Note
+	 * that the amount of minutes can be more than 60
 	 * 
-	 * @param assignmentId
-	 *            The id of the assignment which entries are to be summed
-	 * @param beginDate
-	 *            The date from which entries are to be searched for
-	 * @param endDate
-	 *            The date till which entries are to be searched for
-	 * @return A {@link TotalsAssignment} object
+	 * @param userId
+	 *            The id of the user which entries are to be summed
+	 * @param day
+	 *            The day for which the entries are to be summed
+	 * @return A {@link TotalsDay} with the totals
 	 */
-	public static TotalsAssignment getTotalsForAssignmentBetween(
-			Long assignmentId, DateTime beginDate, DateTime endDate) {
+	public static TotalsDay getTotalsForDayBetween(Long userId, DateTime day) {
+		DateTime beginDate = DateTimeUtil.minimizeTimeOfDate(day);
+		DateTime endDate = DateTimeUtil.maximizeTimeOfDate(day);
+
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
-		CriteriaQuery<TotalsAssignment> query = cb
-				.createQuery(TotalsAssignment.class);
+		CriteriaQuery<TotalsDay> query = cb.createQuery(TotalsDay.class);
 		Root<HourEntry> entry = query.from(HourEntry.class);
-		query.select(cb.construct(TotalsAssignment.class,
-				entry.get(HourEntry_.assignment),
+		query.select(cb.construct(TotalsDay.class, entry.get(HourEntry_.date),
 				cb.sumAsLong(entry.get(HourEntry_.hours)),
 				cb.sumAsLong(entry.get(HourEntry_.minutes))));
 
 		Join<HourEntry, ProjectAssignment> assignment = entry
 				.join(HourEntry_.assignment);
+		Join<ProjectAssignment, User> user = assignment
+				.join(ProjectAssignment_.user);
 
-		query.where(
-				cb.equal(assignment.get(ProjectAssignment_.id), assignmentId),
+		query.where(cb.equal(user.get(User_.id), userId),
 				cb.between(entry.get(HourEntry_.date), beginDate, endDate));
-		query.groupBy(entry.get(HourEntry_.assignment));
+		query.groupBy(entry.get(HourEntry_.date));
 		Query typedQuery = JPA.em().createQuery(query);
-		
 		try {
-			return (TotalsAssignment) typedQuery.getSingleResult();
+			return (TotalsDay) typedQuery.getSingleResult();
 		} catch (NoResultException nre) {
-			return new TotalsAssignment(
-					ProjectAssignment.findById(assignmentId), 0L, 0L);
+			return new TotalsDay(beginDate, 0L, 0L);
 		} catch (NonUniqueResultException nure) {
-			return new TotalsAssignment(
-					ProjectAssignment.findById(assignmentId), 0L, 0L);
+			return new TotalsDay(beginDate, 0L, 0L);
 		}
 	}
 

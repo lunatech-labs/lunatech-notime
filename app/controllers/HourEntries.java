@@ -28,9 +28,8 @@ import com.google.common.collect.Collections2;
 
 import datastructures.TotalsDay;
 import datastructures.overview.calendar.CalendarMonth;
-import datastructures.overview.week.WeekTable;
+import datastructures.overview.week.Week;
 import formbeans.MultipleHourEntriesBean;
-import formbeans.UnvalidatedHourEntriesBean;
 
 public class HourEntries extends Controller {
 
@@ -42,6 +41,25 @@ public class HourEntries extends Controller {
 				DateTimeUtil.minimizeTimeOfDate(date),
 				DateTimeUtil.maximizeTimeOfDate(date));
 		return ok(createHourEntry.render(userId, newForm, entries));
+	}
+
+	@Transactional
+	public static Result create(Long userId) {
+		Form<HourEntry> filledForm = form(HourEntry.class).bindFromRequest();
+
+		DateTime date = new DateTime();
+		List<HourEntry> entries = HourEntry.findAllForUserBetween(userId,
+				DateTimeUtil.minimizeTimeOfDate(date),
+				DateTimeUtil.maximizeTimeOfDate(date));
+
+		if (filledForm.hasErrors())
+			return badRequest(createHourEntry.render(userId, filledForm,
+					entries));
+
+		String tagsString = filledForm.field("tagsString").value();
+		filledForm.get().save(tagsString);
+		return redirect(routes.HourEntries.addForDay(userId,
+				filledForm.get().date));
 	}
 
 	@Transactional(readOnly = true)
@@ -62,44 +80,6 @@ public class HourEntries extends Controller {
 
 		return ok(createHourEntryForDay.render(userId, newForm, date, entries,
 				totalsToday));
-	}
-
-	@Transactional(readOnly = true)
-	public static Result addMultiple(Long userId) {
-		Form<MultipleHourEntriesBean> newForm = form(MultipleHourEntriesBean.class);
-		List<Integer> indices = new ArrayList<Integer>() {
-			{
-				add(0);
-			}
-		};
-		return ok(createHourEntries.render(userId, newForm, indices));
-	}
-
-	@Transactional(readOnly = true)
-	public static Result addForWeek(Long userId) {
-		WeekTable week = new WeekTable(new DateTime(),
-				userId);
-		return ok(createHourEntriesForWeek.render(userId, week));
-
-	}
-
-	@Transactional
-	public static Result create(Long userId) {
-		Form<HourEntry> filledForm = form(HourEntry.class).bindFromRequest();
-
-		DateTime date = new DateTime();
-		List<HourEntry> entries = HourEntry.findAllForUserBetween(userId,
-				DateTimeUtil.minimizeTimeOfDate(date),
-				DateTimeUtil.maximizeTimeOfDate(date));
-
-		if (filledForm.hasErrors())
-			return badRequest(createHourEntry.render(userId, filledForm,
-					entries));
-
-		String tagsString = filledForm.field("tagsString").value();
-		filledForm.get().save(tagsString);
-		return redirect(routes.HourEntries.addForDay(userId,
-				filledForm.get().date));
 	}
 
 	@Transactional
@@ -124,10 +104,21 @@ public class HourEntries extends Controller {
 		return redirect(routes.HourEntries.addForDay(userId, date));
 	}
 
+	@Transactional(readOnly = true)
+	public static Result addMultiple(Long userId) {
+		Form<MultipleHourEntriesBean> newForm = form(MultipleHourEntriesBean.class);
+		List<Integer> indices = new ArrayList<Integer>() {
+			{
+				add(0);
+			}
+		};
+		return ok(createHourEntries.render(userId, newForm, indices));
+	}
+
 	@Transactional
 	public static Result createMultiple(Long userId) {
-		Form<MultipleHourEntriesBean> filledForm = form(MultipleHourEntriesBean.class)
-				.bindFromRequest();
+		Form<MultipleHourEntriesBean> filledForm = form(
+				MultipleHourEntriesBean.class).bindFromRequest();
 
 		if (filledForm.hasErrors()) {
 			// Get the indices of the submitted form-inputs
@@ -152,12 +143,25 @@ public class HourEntries extends Controller {
 		return redirect(routes.HourEntries.calendarOverview(userId));
 	}
 
-	@Transactional
-	public static Result createForWeek(Long userId) {
-		Form<UnvalidatedHourEntriesBean> filledForm = form(UnvalidatedHourEntriesBean.class)
-				.bindFromRequest();
-		filledForm.get().validateAndProces();
-		return redirect(routes.HourEntries.addForWeek(userId));
+	@Transactional(readOnly = true)
+	public static Result addForWeek(Long userId, int weekyear,
+			int weekOfWeekyear) {
+		Week week = new Week(userId, weekyear, weekOfWeekyear);
+		return ok(createHourEntriesForWeek.render(userId, week));
+	}
+
+	@Transactional()
+	public static Result createForWeek(Long userId, int weekyear,
+			int weekOfWeekyear) {
+		Form<Week> filledForm = form(Week.class).bindFromRequest();
+		Week week = filledForm.get();
+
+		if (!week.isValid()) {
+			return badRequest(createHourEntriesForWeek.render(userId, week));
+		}
+
+		week.process(userId);
+		return ok(createHourEntriesForWeek.render(userId, week));
 	}
 
 	@Transactional(readOnly = true)
@@ -202,5 +206,5 @@ public class HourEntries extends Controller {
 		CalendarMonth calendar = new CalendarMonth(currentDate, userId);
 		return ok(hourEntriesCalendar.render(userId, calendar));
 	}
-	
+
 }
