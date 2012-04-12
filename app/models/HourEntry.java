@@ -57,7 +57,6 @@ public class HourEntry {
 	public boolean billable;
 
 	@Min(0)
-	@Max(100)
 	public Integer rate;
 
 	/**
