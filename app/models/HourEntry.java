@@ -17,6 +17,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
+import javax.validation.constraints.Min;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
@@ -55,6 +56,10 @@ public class HourEntry {
 
 	public boolean billable;
 
+	@Min(0)
+	@Max(100)
+	public Integer rate;
+
 	/**
 	 * Sets the tags and inserts this hour entry
 	 * 
@@ -69,6 +74,7 @@ public class HourEntry {
 				this.tags.add(Tag.findOrCreate(tags[i]));
 		}
 		billable = true;
+		rate = 100;
 		JPA.em().persist(this);
 	}
 
