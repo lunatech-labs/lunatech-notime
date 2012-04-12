@@ -56,8 +56,7 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	}
 
 	/**
-	 * Sets the project and inserts this
-	 * project assignment
+	 * Sets the project and inserts this project assignment
 	 * 
 	 * @param projectId
 	 *            The id of the related project
@@ -68,7 +67,8 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	}
 
 	/**
-	 * Sets the project because the form doesn't have a project field and updates this project assignment
+	 * Sets the project because the form doesn't have a project field and
+	 * updates this project assignment
 	 * 
 	 * @param assignmentId
 	 *            The id of the project assignment that is going to be updated
@@ -124,7 +124,13 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 		CriteriaQuery<ProjectAssignment> query = cb
 				.createQuery(ProjectAssignment.class);
-		query.from(ProjectAssignment.class);
+		Root<ProjectAssignment> assignment = query
+				.from(ProjectAssignment.class);
+
+		Join<ProjectAssignment, User> user = assignment
+				.join(ProjectAssignment_.user);
+
+		query.where(cb.equal(user.get(User_.id), userId));
 		return JPA.em().createQuery(query).getResultList();
 	}
 
@@ -142,8 +148,10 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 				.createQuery(ProjectAssignment.class);
 		Root<ProjectAssignment> assignment = query
 				.from(ProjectAssignment.class);
+
 		Join<ProjectAssignment, User> user = assignment
 				.join(ProjectAssignment_.user);
+
 		query.where(cb.equal(user.get(User_.id), userId),
 				cb.equal(assignment.get(ProjectAssignment_.starred), true));
 		query.orderBy(cb.desc(user.get(User_.id)));
@@ -244,8 +252,7 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	}
 
 	public static String validateDates(ProjectAssignment assignment) {
-		if (assignment.startDate.compareTo(
-				assignment.endDate) > 0)
+		if (assignment.startDate.compareTo(assignment.endDate) > 0)
 			return "Start date is after the End date";
 		else
 			return new String();
