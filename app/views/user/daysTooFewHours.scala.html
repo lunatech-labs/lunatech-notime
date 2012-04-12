@@ -1,0 +1,29 @@
+@(userId: Long, totals: List[datastructures.TotalsDay])
+
+@import util.DateTimeUtil
+
+@main("Days with too few hours entered") {
+	
+	@if(totals.isEmpty) {
+	    <div class="alert-message warning">
+            You have entered enough hours on all days!
+        </div>
+	} else {
+		<input type="checkbox" id="hide-days-too-few-hours"><label id="label-hide-days-too-few-hours">Show/Hide weekends</label>
+	
+		<table id="days-too-few-hours">
+			@for(total <- totals) {
+		  		<tr>
+		  			<td class="day" data-daynumber="@total.date.getDayOfWeek"><a href="@routes.HourEntries.addForDay(userId, total.date)">@DateTimeUtil.formatDate(total.date, "E d-M")</a></td><td>@total.hoursMinutes</td>
+		  		</tr>
+	  		}
+		</table>
+	}
+	
+	 <script>
+	 	
+	 </script>
+	
+} {
+	@sidebar.userMenu(userId)
+}

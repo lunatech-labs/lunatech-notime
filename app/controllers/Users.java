@@ -1,5 +1,6 @@
 package controllers;
 
+import models.HourEntry;
 import models.User;
 import play.data.Form;
 import play.db.jpa.Transactional;
@@ -10,6 +11,7 @@ import views.html.admin.user.createUser;
 import views.html.admin.user.editUser;
 import views.html.admin.user.users;
 import views.html.user.assignments;
+import views.html.user.daysTooFewHours;
 
 @Security.Authenticated(Secured.class)
 public class Users extends Controller {
@@ -80,6 +82,11 @@ public class Users extends Controller {
 	@Transactional(readOnly=true)
 	public static Result assignmentsOverview(Long userId) {
 		return ok(assignments.render(userId, User.findById(userId).assignments));
+	}
+
+	@Transactional(readOnly = true)
+	public static Result daysTooFewHours(Long userId) {
+		return ok(daysTooFewHours.render(userId, HourEntry.findWithTooFewHoursForUser(userId)));
 	}
 
 }

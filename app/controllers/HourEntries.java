@@ -73,7 +73,7 @@ public class HourEntries extends Controller {
 		DateTime endOfDay = DateTimeUtil.maximizeTimeOfDate(date);
 		List<HourEntry> entries = HourEntry.findAllForUserBetween(userId,
 				beginOfDay, endOfDay);
-		List<TotalsDay> totalsPerDay = HourEntry.getTotalsForUserPerDayBetween(
+		List<TotalsDay> totalsPerDay = HourEntry.findTotalsForUserPerDayBetween(
 				userId, beginOfDay, endOfDay);
 		TotalsDay totalsToday = totalsPerDay.isEmpty() ? new TotalsDay(date,
 				0L, 0L) : totalsPerDay.get(0);
@@ -90,7 +90,7 @@ public class HourEntries extends Controller {
 		DateTime endOfDay = DateTimeUtil.maximizeTimeOfDate(date);
 		List<HourEntry> entries = HourEntry.findAllForUserBetween(userId,
 				beginOfDay, endOfDay);
-		List<TotalsDay> totalsPerDay = HourEntry.getTotalsForUserPerDayBetween(
+		List<TotalsDay> totalsPerDay = HourEntry.findTotalsForUserPerDayBetween(
 				userId, beginOfDay, endOfDay);
 		TotalsDay totalsToday = totalsPerDay.isEmpty() ? new TotalsDay(date,
 				0L, 0L) : totalsPerDay.get(0);
@@ -195,7 +195,7 @@ public class HourEntries extends Controller {
 	public static Result tableOverview(Long userId) {
 		DateTime currentDate = new DateTime();
 		return ok(hourEntriesTable.render(userId, HourEntry
-				.getTotalsForUserPerAssignmentBetween(userId,
+				.findTotalsForUserPerAssignmentBetween(userId,
 						DateTimeUtil.firstDateOfMonth(currentDate),
 						DateTimeUtil.lastDateOfMonth(currentDate))));
 	}

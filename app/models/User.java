@@ -15,6 +15,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
 import org.mindrot.jbcrypt.BCrypt;
 
 import play.data.validation.Constraints.Email;
@@ -46,12 +48,16 @@ public class User {
 	@OneToMany(mappedBy = "user")
 	public List<ProjectAssignment> assignments;
 
+	@Type(type = "org.joda.time.contrib.hibernate.PersistentLocalDate")
+	public LocalDate createdOn;
+
 	/**
 	 * Encrypts the user's password and inserts this new user. The user will
 	 * also be assigned to all default projects.
 	 */
 	public void save() {
 		password = User.encryptPassword(password);
+		createdOn = new LocalDate();
 		JPA.em().persist(this);
 		ProjectAssignment.assignAllDefaultProjectsTo(this);
 	}

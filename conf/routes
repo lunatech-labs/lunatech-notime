@@ -22,6 +22,7 @@ POST	/user/:id					controllers.Users.update(id: Long)
 POST	/user/:id/delete			controllers.Users.delete(id: Long)
 GET		/user/:id/home				controllers.Users.read(id: Long)
 GET		/user/:id/assignments		controllers.Users.assignmentsOverview(id: Long)
+GET		/user/:id/days-with-too-few-hours	controllers.Users.daysTooFewHours(id: Long)
 
 # Customers
 GET		/customers					controllers.Customers.all()

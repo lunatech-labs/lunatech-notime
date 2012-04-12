@@ -102,7 +102,7 @@ public class Week {
 	 * @return A {@link TotalsDay} with the totals
 	 */
 	public TotalsDay getDayTotals(final Long userId, final DateTime day) {
-		return HourEntry.getTotalsForDayBetween(userId, day);
+		return HourEntry.findTotalsForDayBetween(userId, day);
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class Week {
 		final DateTime date = getDateThisWeek();
 		final DateTime firstDateThisWeek = DateTimeUtil.firstDateOfWeek(date);
 		final DateTime lastDateThisWeek = DateTimeUtil.lastDateOfWeek(date);
-		return HourEntry.getTotalsForAssignmentBetween(assignmentId,
+		return HourEntry.findTotalsForAssignmentBetween(assignmentId,
 				firstDateThisWeek,
 				DateTimeUtil.lastDateOfWeek(lastDateThisWeek));
 	}

@@ -76,5 +76,16 @@ require(["jquery-1.7.1.min"], function() {
 				}
 			});	
 		});
+		
+		$ ( "#hide-days-too-few-hours" ).change( function() {
+			$( "#days-too-few-hours tr td.day" ).each( function() {
+				var $input = $(this);
+				var daynumber = $input.data('daynumber');
+				if (daynumber == 6 || daynumber == 7) {
+					$input.parent().toggle();
+				}	   
+			});
+		});
+		
 	});
 });
