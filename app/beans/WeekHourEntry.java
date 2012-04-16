@@ -1,4 +1,4 @@
-package formbeans;
+package beans;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,7 +11,10 @@ import org.joda.time.LocalDate;
 
 import util.DateUtil;
 
-public class WeekHourEntryBean {
+/**
+ * Used to bind the submitted hourentries form the weekoverview.
+ */
+public class WeekHourEntry {
 
 	public Long id;
 
@@ -29,11 +32,11 @@ public class WeekHourEntryBean {
 
 	private boolean valid;
 
-	public WeekHourEntryBean() {
+	public WeekHourEntry() {
 		errors = new LinkedList<String>();
 	}
 
-	public WeekHourEntryBean(HourEntry entry) {
+	public WeekHourEntry(HourEntry entry) {
 		id = entry.id;
 		assignment = entry.assignment;
 		date = entry.date;

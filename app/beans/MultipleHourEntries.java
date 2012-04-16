@@ -1,4 +1,4 @@
-package formbeans;
+package beans;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import models.HourEntry;
 /**
  * Datastructure for binding a list of {@link HourEntry} objects
  */
-public class MultipleHourEntriesBean {
+public class MultipleHourEntries {
 
 	@Valid
 	public List<HourEntry> hourEntries;

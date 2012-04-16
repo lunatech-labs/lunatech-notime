@@ -24,12 +24,13 @@ import views.html.user.hourentry.editHourEntry;
 import views.html.user.hourentry.hourEntriesCalendar;
 import views.html.user.hourentry.hourEntriesTable;
 
+import beans.MultipleHourEntries;
+
 import com.google.common.collect.Collections2;
 
 import datastructures.TotalsDay;
 import datastructures.overview.calendar.CalendarMonth;
 import datastructures.overview.week.Week;
-import formbeans.MultipleHourEntriesBean;
 
 public class HourEntries extends Controller {
 
@@ -90,7 +91,7 @@ public class HourEntries extends Controller {
 
 	@Transactional(readOnly = true)
 	public static Result addMultiple(Long userId) {
-		Form<MultipleHourEntriesBean> newForm = form(MultipleHourEntriesBean.class);
+		Form<MultipleHourEntries> newForm = form(MultipleHourEntries.class);
 		List<Integer> indices = new ArrayList<Integer>() {
 			{
 				add(0);
@@ -101,8 +102,8 @@ public class HourEntries extends Controller {
 
 	@Transactional
 	public static Result createMultiple(Long userId) {
-		Form<MultipleHourEntriesBean> filledForm = form(
-				MultipleHourEntriesBean.class).bindFromRequest();
+		Form<MultipleHourEntries> filledForm = form(
+				MultipleHourEntries.class).bindFromRequest();
 
 		if (filledForm.hasErrors()) {
 			// Get the indices of the submitted form-inputs
@@ -117,7 +118,7 @@ public class HourEntries extends Controller {
 					new ArrayList<Integer>(uniqueIndices)));
 		}
 
-		MultipleHourEntriesBean entries = filledForm.get();
+		MultipleHourEntries entries = filledForm.get();
 		for (int i = 0; i < entries.hourEntries.size(); i++) {
 			String tagsString = filledForm.field(
 					"hourEntries[" + i + "].tagsString").value();

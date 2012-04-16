@@ -17,38 +17,39 @@ import org.joda.time.LocalDate;
 import util.DateUtil;
 import util.Predicates;
 
+import beans.WeekHourEntry;
+
 import com.google.common.collect.Collections2;
 
 import datastructures.TotalsAssignment;
 import datastructures.TotalsDay;
-import formbeans.WeekHourEntryBean;
 
 public class Week {
 
-	private final List<WeekHourEntryBean> hourEntries;
+	private final List<WeekHourEntry> hourEntries;
 
 	private int weekyear;
 
 	private int weekOfWeekyear;
 
-	private final Map<WeekHourEntryBean, List<String>> errors;
+	private final Map<WeekHourEntry, List<String>> errors;
 
 	private boolean valid;
 
 	public Week() {
-		hourEntries = new LinkedList<WeekHourEntryBean>();
-		errors = new HashMap<WeekHourEntryBean, List<String>>();
+		hourEntries = new LinkedList<WeekHourEntry>();
+		errors = new HashMap<WeekHourEntry, List<String>>();
 	}
 
 	public Week(final Long userId, final int weekyear, final int weekOfWeekyear) {
-		hourEntries = new LinkedList<WeekHourEntryBean>();
+		hourEntries = new LinkedList<WeekHourEntry>();
 		this.weekyear = weekyear;
 		this.weekOfWeekyear = weekOfWeekyear;
 		fillHourEntries(userId);
-		errors = new HashMap<WeekHourEntryBean, List<String>>();
+		errors = new HashMap<WeekHourEntry, List<String>>();
 	}
 
-	public List<WeekHourEntryBean> getHourEntries() {
+	public List<WeekHourEntry> getHourEntries() {
 		return hourEntries;
 	}
 
@@ -63,7 +64,7 @@ public class Week {
 	 */
 	public Set<ProjectAssignment> getAssignments(final Long userId) {
 		Set<ProjectAssignment> assignments = new TreeSet<ProjectAssignment>();
-		for (WeekHourEntryBean hourEntry : hourEntries) {
+		for (WeekHourEntry hourEntry : hourEntries) {
 			assignments.add(hourEntry.assignment);
 		}
 		for (ProjectAssignment assignment : ProjectAssignment
@@ -80,12 +81,12 @@ public class Week {
 	 *            The assignment which entries are returned
 	 * @param day
 	 *            The day which entries are returned
-	 * @return A List of {@link WeekHourEntryBean}
+	 * @return A List of {@link WeekHourEntry}
 	 */
-	public List<WeekHourEntryBean> getHourEntries(
+	public List<WeekHourEntry> getHourEntries(
 			final ProjectAssignment assignment, final LocalDate day) {
-		final List<WeekHourEntryBean> hourEntries = new LinkedList<WeekHourEntryBean>();
-		Collection<WeekHourEntryBean> filtered = Collections2.filter(
+		final List<WeekHourEntry> hourEntries = new LinkedList<WeekHourEntry>();
+		Collection<WeekHourEntry> filtered = Collections2.filter(
 				this.hourEntries,
 				Predicates.equalAssignmentAndDay(assignment, day));
 		hourEntries.addAll(filtered);
@@ -120,7 +121,7 @@ public class Week {
 				firstDateThisWeek, lastDateThisWeek);
 	}
 
-	public Map<WeekHourEntryBean, List<String>> getErrors() {
+	public Map<WeekHourEntry, List<String>> getErrors() {
 		return errors;
 	}
 
@@ -174,7 +175,7 @@ public class Week {
 	}
 
 	/**
-	 * Retrieves all {@link WeekHourEntryBean} for the represented week from the
+	 * Retrieves all {@link WeekHourEntry} for the represented week from the
 	 * database
 	 * 
 	 * @param date
@@ -187,7 +188,7 @@ public class Week {
 		List<HourEntry> hourEntryModels = HourEntry.findAllForUserBetween(
 				userId, firstDateThisWeek, lastDateThisWeek);
 		for (HourEntry entry : hourEntryModels) {
-			hourEntries.add(new WeekHourEntryBean(entry));
+			hourEntries.add(new WeekHourEntry(entry));
 		}
 	}
 
@@ -234,10 +235,10 @@ public class Week {
 		valid = true;
 		// 1. Check if anything is binded
 		if (hourEntries != null) {
-			ListIterator<WeekHourEntryBean> iterator = hourEntries
+			ListIterator<WeekHourEntry> iterator = hourEntries
 					.listIterator();
 			while (iterator.hasNext()) {
-				WeekHourEntryBean entry = (WeekHourEntryBean) iterator.next();
+				WeekHourEntry entry = (WeekHourEntry) iterator.next();
 				// 2. Check if hours or minutes is not 0
 				if ((entry.hasNot0Hours() || entry.hasNot0Minutes())) {
 					entry.setHoursAndMinutesFromNullToZero();
@@ -265,10 +266,10 @@ public class Week {
 	 */
 	public void process(Long userId) {
 		if (valid) {
-			ListIterator<WeekHourEntryBean> iterator = hourEntries
+			ListIterator<WeekHourEntry> iterator = hourEntries
 					.listIterator();
 			while (iterator.hasNext()) {
-				WeekHourEntryBean entry = (WeekHourEntryBean) iterator.next();
+				WeekHourEntry entry = (WeekHourEntry) iterator.next();
 				// Check if id is null
 				if (entry.id == null) {
 					// Check if hours or minutes is not 0
