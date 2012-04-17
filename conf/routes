@@ -64,7 +64,10 @@ GET		/user/:id/hourentries/table	controllers.HourEntries.tableOverview(id: Long)
 GET		/user/:id/hourentries/calendar	controllers.HourEntries.calendarOverview(id: Long)
 
 # Tags
-GET		/tag						controllers.Tags.find()
+GET		/tags						controllers.Tags.find()
+
+# Reports
+GET		/report/overview-per-week		controllers.Reports.overviewPerWeek()
 
 # Javascript routing
 GET     /assets/javascripts/routes	controllers.Application.javascriptRoutes()

@@ -6,7 +6,7 @@ require(["jquery-1.7.1.min"], function() {
 		$( ".date,input[name*='date'],input[name*='Date']" ).each(function() { 
 			var $elem = $(this);
 			require(["jquery-ui-1.8.18.custom.min"], function() {
-				$elem.datepicker({ dateFormat: 'dd-mm-yy' }); 
+				$elem.datepicker({ firstDay: 1, dateFormat: 'dd-mm-yy' });
 			});
 		});
 		
@@ -14,7 +14,7 @@ require(["jquery-1.7.1.min"], function() {
 		$( "#date-picker" ).each(function() { 
 			var $elem = $(this);
 			require(["jquery-ui-1.8.18.custom.min"], function() {
-				$elem.datepicker({ dateFormat: 'dd-mm-yy',
+				$elem.datepicker({ firstDay: 1, dateFormat: 'dd-mm-yy',
 					onSelect: function(date) {
 			            location.href = jsRoutes.controllers.HourEntries.addForDay("1", date).url;
 			        }

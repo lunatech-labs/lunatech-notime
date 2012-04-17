@@ -1,7 +1,9 @@
 package models;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -104,7 +106,7 @@ public class Project {
 	}
 
 	/**
-	 * Find all projects
+	 * Finds all projects
 	 * 
 	 * @return A list of project objects
 	 */
@@ -116,11 +118,11 @@ public class Project {
 	}
 
 	/**
-	 * Find all project except one project
+	 * Finds all project except one project
 	 * 
 	 * @param projectId
 	 *            The id of the project that needs to be filtered
-	 * @return A List of project objects
+	 * @return A List of {@link Project}s
 	 */
 	public static List<Project> findAllExcept(Long projectId) {
 		List<Project> projects = findAll();
@@ -129,15 +131,30 @@ public class Project {
 	}
 
 	/**
-	 * Find all default projects
+	 * Finds all default projects
 	 * 
-	 * @return A list of project objects
+	 * @return A List of {@link Project}s
 	 */
 	public static List<Project> findAllDefaultProjects() {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 		CriteriaQuery<Project> query = cb.createQuery(Project.class);
 		Root<Project> project = query.from(Project.class);
 		query.where(cb.equal(project.get(Project_.defaultProject), true));
+		return JPA.em().createQuery(query).getResultList();
+	}
+
+	/**
+	 * Finds all project for a customer
+	 * 
+	 * @param customer
+	 *            The customer of the project that needs to be searched for
+	 * @return A List of {@link Project}s
+	 */
+	public static List<Project> findAllForCustomer(Customer customer) {
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<Project> query = cb.createQuery(Project.class);
+		Root<Project> project = query.from(Project.class);
+		query.where(cb.equal(project.get(Project_.customer), customer));
 		return JPA.em().createQuery(query).getResultList();
 	}
 
@@ -150,6 +167,20 @@ public class Project {
 		List<String> options = new LinkedList<String>();
 		for (Type t : Type.values()) {
 			options.add(t.name());
+		}
+		return options;
+	}
+
+	/**
+	 * All existing projects
+	 * 
+	 * @return A Map with as key the project's id and as value the project's
+	 *         name
+	 */
+	public static Map<String, String> options() {
+		LinkedHashMap<String, String> options = new LinkedHashMap<String, String>();
+		for (Project p : findAll()) {
+			options.put(p.id.toString(), p.name);
 		}
 		return options;
 	}

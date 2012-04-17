@@ -1,0 +1,141 @@
+@(optionsForm: Form[beans.ReportOptions], report: datastructures.reports.Report)
+
+@import helper._
+@import helper.twitterBootstrap._
+@import utils.DateUtil
+
+@script = {
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/report-options.js")"></script>
+}
+
+@customerField(field: Field, className: String = "customer") = {
+    @input(field, '_label -> "Customer", '_class -> className) { (id, name, value, _) =>
+        <select id="@id" name="@name">
+        @Customer.options.map { v =>
+            <option value="@v._1" @(if(value == Some(v._1)) "selected" else "")>@v._2</option>
+        }
+    	</select>
+        <a class="removeCustomer btn btn-danger">Remove</a>
+    }
+}
+
+@projectField(field: Field, className: String = "project") = {
+    @input(field, '_label -> "Project", '_class -> className) { (id, name, value, _) =>
+        <select id="@id" name="@name">
+        @Project.options.map { v =>
+            <option value="@v._1" @(if(value == Some(v._1)) "selected" else "")>@v._2</option>
+        }
+    	</select>
+        <a class="removeProject btn btn-danger">Remove</a>
+    }
+}
+
+@main("Report: Overview per week", script = script) {
+
+	@form(routes.Reports.overviewPerWeek(), 'id -> "options-form") {
+
+		@inputDate(optionsForm("beginDate"), '_label -> "Begin date")
+
+		@inputDate(optionsForm("endDate"), '_label -> "End date")
+
+		<div class="customers">
+
+			@repeat(optionsForm("customers"), min = 0) { customer =>
+				@customerField(optionsForm(customer.name + ".id"))
+			}
+            
+			@**
+			* Keep an hidden block that will be used as template for Javascript copy code
+			**@
+			@customerField(
+				optionsForm("customers[x].id"),
+				className = "customer-template"
+			)
+
+			<div class="clearfix">
+                <div class="input">
+                    <a class="addCustomer btn">Add a customer</a>
+                </div>
+            </div>
+            
+		</div>
+
+		<div class="projects">
+
+			@repeat(optionsForm("projects"), min = 0) { project =>
+				@projectField(optionsForm(project.name + ".id"))
+			}
+            
+			@**
+			* Keep an hidden block that will be used as template for Javascript copy code
+			**@
+			@projectField(
+				optionsForm("projects[x].id"),
+				className = "project-template"
+			)
+
+			<div class="clearfix">
+                <div class="input">
+                    <a class="addProject btn">Add a project</a>
+                </div>
+            </div>
+            
+		</div>
+
+		<input class="btn btn-primary" type="submit" value="Submit">
+
+	}
+	
+	@if(!optionsForm.data.isEmpty) {
+		@if(report.getCustomers.isEmpty) {
+		    <div class="alert-message warning">
+	            No information available
+	        </div>
+		} else {
+			<div class="report">
+			@for(customer <- report.getCustomers) {
+				<div class="customer">Customer: <b>@customer.name</b> [@customer.code]</div>
+				@for(project <- report.getProjects(customer)) {
+					<div class="project">Project: <b>@project.name</b> [@project.code]</div>
+					@for(weekNumber <- DateUtil.getWeekNumbers(optionsForm.get.beginDate, optionsForm.get.endDate)) {
+						<div class="week">Week: @weekNumber</div>
+						@if(report.getHourEntries(project, weekNumber).isEmpty) {
+							<div class="no-entries"><i>No hours entered in week @weekNumber on project @project.name.</i></div>
+						} else {
+							<table class="entries-table">
+								<thead>
+									<tr>
+										<th>Date</th>
+										<th>Hours</th>
+										<th>Tags</th>
+										<th>Employee</th>
+									</tr>
+								</thead>
+								<tbody>
+								@for(entry <- report.getHourEntries(project, weekNumber)) {
+									<tr>
+										<td>@entry.date</td>
+										<td>@{entry.hours}h @{entry.minutes}m</td>
+										<td>@entry.enteredTagsString</td>
+										<td>@entry.assignment.user.fullname</td>
+									</tr>
+								}
+								
+								</tbody>
+								<tfoot>
+									<tr>
+										<td></td><td><b>@report.getTotalHours(project, weekNumber)</b></td><td></td><td></td>
+									</tr>
+								</tfoot>
+							</table>
+						}
+					}
+				}
+			}
+			</div>
+		}
+	}
+
+} {
+	@sidebar.adminMenu()
+}

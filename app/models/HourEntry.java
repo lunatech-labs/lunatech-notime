@@ -2,6 +2,7 @@ package models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -179,7 +180,7 @@ public class HourEntry {
 	}
 
 	/**
-	 * Find all hour entries for a user between for a day
+	 * Find all hour entries for a user for a day
 	 * 
 	 * @param userId
 	 *            The id of the user which entries are to be searched for
@@ -201,6 +202,31 @@ public class HourEntry {
 		query.where(cb.equal(user.get(User_.id), userId),
 				cb.equal(entry.get(HourEntry_.date), day));
 		query.orderBy(cb.desc(entry.get(HourEntry_.id)));
+		return JPA.em().createQuery(query).getResultList();
+	}
+
+	/**
+	 * Find all hour entries for projects between two dates
+	 * 
+	 * @param projects
+	 *            The projects which entries are to be searched for
+	 * @param beginDate
+	 *            The date from which entries are to be searched for
+	 * @param endDate
+	 *            The date till which entries are to be searched for
+	 * @return A List of {@link HourEntry}s
+	 */
+	public static List<HourEntry> findAllForProjectsBetween(
+			Set<Project> projects, LocalDate beginDate, LocalDate endDate) {
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<HourEntry> query = cb.createQuery(HourEntry.class);
+		Root<HourEntry> entry = query.from(HourEntry.class);
+
+		Join<HourEntry, ProjectAssignment> assignment = entry
+				.join(HourEntry_.assignment);
+
+		query.where(cb.between(entry.get(HourEntry_.date), beginDate, endDate),
+				assignment.get(ProjectAssignment_.project).in(projects));
 		return JPA.em().createQuery(query).getResultList();
 	}
 
@@ -270,7 +296,7 @@ public class HourEntry {
 	/**
 	 * Calculates the totals of the hour entries for an assignment, between two
 	 * dates
-	 *
+	 * 
 	 * @param assignmentId
 	 *            The id of the assignment which entries are to be summed
 	 * @param beginDate

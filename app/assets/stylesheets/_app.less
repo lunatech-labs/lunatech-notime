@@ -266,9 +266,54 @@
 		float: none;
 		margin-left: 5px;
 	}
-    
+
+	.report {
+		border: 1px solid @grey2;
+		margin-right: 13px;
+	}
+
+	.report .customer {
+		margin: 15px 0 5px 5px;
+	}
+
+	.report .project {
+		margin: 0 0 5px 15px;
+	}
+   
+    .report .week {
+    	margin: 15px 0 0 30px;
+	}
+
+	.report .no-entries {
+		margin-left: 40px;
+	}
+
+	.report .entries-table {
+		margin-left: 40px;
+	}
+
+	.report .entries-table tr td {
+	   	background-color: @grey1;
+    	border: 1px solid @light-color;
+    	vertical-align: middle;
+    	.rounded-corners();
+	}
+
+	.report .entries-table tfoot tr td {
+		background-color: @grey2;
+	}
+
+	#options-form .customers .customer-template, #options-form .projects .project-template  {
+		display: none;
+	}
+
+	#options-form .customers, #options-form .projects {
+		border: 1px solid @grey1;
+		padding-top: 18px;
+		margin: 5px 13px 0 0;
+	}
+
     // SIDEBAR
     .sidebar ul li {
     	list-style-type: none;
-    }    
-        
+    }
