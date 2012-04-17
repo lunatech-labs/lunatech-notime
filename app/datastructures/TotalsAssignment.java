@@ -2,7 +2,7 @@ package datastructures;
 
 import java.math.BigDecimal;
 
-import util.CalculationUtil;
+import utils.CalculationUtil;
 
 import models.ProjectAssignment;
 

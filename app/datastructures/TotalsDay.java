@@ -2,7 +2,7 @@ package datastructures;
 
 import org.joda.time.LocalDate;
 
-import util.CalculationUtil;
+import utils.CalculationUtil;
 
 /**
  * Datastructure for displaying the totals for a day

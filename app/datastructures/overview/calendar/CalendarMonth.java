@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.joda.time.LocalDate;
 
-import util.DateUtil;
+import utils.DateUtil;
 
 /**
  * Datastructure for displaying a calendar 

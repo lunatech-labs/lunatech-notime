@@ -1,4 +1,4 @@
-package util;
+package utils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -6,6 +6,11 @@ import java.util.regex.Pattern;
 import com.google.common.base.Function;
 
 public class Transformers {
+	
+	// Suppress default constructor for noninstantiability
+	private Transformers() {
+		
+	}
 
 	/**
 	 * Function to get an int, between square brackets, out of a String.

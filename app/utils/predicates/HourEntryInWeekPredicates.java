@@ -1,38 +1,37 @@
-package util;
+package utils.predicates;
 
 import models.ProjectAssignment;
 
 import org.joda.time.LocalDate;
 
-import beans.WeekHourEntry;
+import utils.DateUtil;
+import beans.HourEntryInWeek;
 
 import com.google.common.base.Predicate;
 
-
-public class Predicates {
+public class HourEntryInWeekPredicates {
 
 	/**
 	 * A predicate that checks if the assignment and the date of a
-	 * {@link WeekHourEntry} is equal to the given assignment and date
+	 * {@link HourEntryInWeek} are equal to the given assignment and date
 	 * 
 	 * @param assignment
-	 *            Assignment to which the {@link WeekHourEntry} must be
-	 *            equal to
+	 *            Assignment to which the {@link HourEntryInWeek}'s assignment must be equal to
 	 * @param day
-	 *            Day to which the {@link WeekHourEntry} must be equal to
+	 *            Day to which the {@link HourEntryInWeek}'s date must be equal to
 	 * @return A {@link Predicate}
 	 */
-	public static Predicate<WeekHourEntry> equalAssignmentAndDay(
+	public static Predicate<HourEntryInWeek> equalAssignmentAndDay(
 			final ProjectAssignment assignment, final LocalDate day) {
 		return new EqualAssignmentAndDay(assignment, day);
 	}
 
 	/**
-	 * Checks if the assignment and the date of a {@link WeekHourEntry} is
-	 * equal to the given assignment and date
+	 * Checks if the assignment and the date of a {@link HourEntryInWeek} is equal
+	 * to the given assignment and date
 	 */
-	public static class EqualAssignmentAndDay implements
-			Predicate<WeekHourEntry> {
+	private static class EqualAssignmentAndDay implements
+			Predicate<HourEntryInWeek> {
 		private final ProjectAssignment assignment;
 		private final LocalDate day;
 
@@ -42,7 +41,7 @@ public class Predicates {
 			this.day = day;
 		}
 
-		public boolean apply(final WeekHourEntry entry) {
+		public boolean apply(final HourEntryInWeek entry) {
 			return entry.assignment == assignment
 					&& DateUtil.isSameDate(entry.date, day);
 		}

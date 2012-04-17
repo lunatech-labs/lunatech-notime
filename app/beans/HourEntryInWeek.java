@@ -9,12 +9,12 @@ import models.Tag;
 
 import org.joda.time.LocalDate;
 
-import util.DateUtil;
+import utils.DateUtil;
 
 /**
  * Used to bind the submitted hourentries form the weekoverview.
  */
-public class WeekHourEntry {
+public class HourEntryInWeek {
 
 	public Long id;
 
@@ -32,11 +32,11 @@ public class WeekHourEntry {
 
 	private boolean valid;
 
-	public WeekHourEntry() {
+	public HourEntryInWeek() {
 		errors = new LinkedList<String>();
 	}
 
-	public WeekHourEntry(HourEntry entry) {
+	public HourEntryInWeek(HourEntry entry) {
 		id = entry.id;
 		assignment = entry.assignment;
 		date = entry.date;

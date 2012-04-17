@@ -14,10 +14,10 @@ import models.ProjectAssignment;
 
 import org.joda.time.LocalDate;
 
-import util.DateUtil;
-import util.Predicates;
+import utils.DateUtil;
+import utils.predicates.HourEntryInWeekPredicates;
 
-import beans.WeekHourEntry;
+import beans.HourEntryInWeek;
 
 import com.google.common.collect.Collections2;
 
@@ -26,30 +26,30 @@ import datastructures.TotalsDay;
 
 public class Week {
 
-	private final List<WeekHourEntry> hourEntries;
+	private final List<HourEntryInWeek> hourEntries;
 
 	private int weekyear;
 
 	private int weekOfWeekyear;
 
-	private final Map<WeekHourEntry, List<String>> errors;
+	private final Map<HourEntryInWeek, List<String>> errors;
 
 	private boolean valid;
 
 	public Week() {
-		hourEntries = new LinkedList<WeekHourEntry>();
-		errors = new HashMap<WeekHourEntry, List<String>>();
+		hourEntries = new LinkedList<HourEntryInWeek>();
+		errors = new HashMap<HourEntryInWeek, List<String>>();
 	}
 
 	public Week(final Long userId, final int weekyear, final int weekOfWeekyear) {
-		hourEntries = new LinkedList<WeekHourEntry>();
+		hourEntries = new LinkedList<HourEntryInWeek>();
 		this.weekyear = weekyear;
 		this.weekOfWeekyear = weekOfWeekyear;
 		fillHourEntries(userId);
-		errors = new HashMap<WeekHourEntry, List<String>>();
+		errors = new HashMap<HourEntryInWeek, List<String>>();
 	}
 
-	public List<WeekHourEntry> getHourEntries() {
+	public List<HourEntryInWeek> getHourEntries() {
 		return hourEntries;
 	}
 
@@ -64,7 +64,7 @@ public class Week {
 	 */
 	public Set<ProjectAssignment> getAssignments(final Long userId) {
 		Set<ProjectAssignment> assignments = new TreeSet<ProjectAssignment>();
-		for (WeekHourEntry hourEntry : hourEntries) {
+		for (HourEntryInWeek hourEntry : hourEntries) {
 			assignments.add(hourEntry.assignment);
 		}
 		for (ProjectAssignment assignment : ProjectAssignment
@@ -81,14 +81,14 @@ public class Week {
 	 *            The assignment which entries are returned
 	 * @param day
 	 *            The day which entries are returned
-	 * @return A List of {@link WeekHourEntry}
+	 * @return A List of {@link HourEntryInWeek}
 	 */
-	public List<WeekHourEntry> getHourEntries(
+	public List<HourEntryInWeek> getHourEntries(
 			final ProjectAssignment assignment, final LocalDate day) {
-		final List<WeekHourEntry> hourEntries = new LinkedList<WeekHourEntry>();
-		Collection<WeekHourEntry> filtered = Collections2.filter(
+		final List<HourEntryInWeek> hourEntries = new LinkedList<HourEntryInWeek>();
+		Collection<HourEntryInWeek> filtered = Collections2.filter(
 				this.hourEntries,
-				Predicates.equalAssignmentAndDay(assignment, day));
+				HourEntryInWeekPredicates.equalAssignmentAndDay(assignment, day));
 		hourEntries.addAll(filtered);
 		return hourEntries;
 	}
@@ -121,7 +121,7 @@ public class Week {
 				firstDateThisWeek, lastDateThisWeek);
 	}
 
-	public Map<WeekHourEntry, List<String>> getErrors() {
+	public Map<HourEntryInWeek, List<String>> getErrors() {
 		return errors;
 	}
 
@@ -175,7 +175,7 @@ public class Week {
 	}
 
 	/**
-	 * Retrieves all {@link WeekHourEntry} for the represented week from the
+	 * Retrieves all {@link HourEntryInWeek} for the represented week from the
 	 * database
 	 * 
 	 * @param date
@@ -188,7 +188,7 @@ public class Week {
 		List<HourEntry> hourEntryModels = HourEntry.findAllForUserBetween(
 				userId, firstDateThisWeek, lastDateThisWeek);
 		for (HourEntry entry : hourEntryModels) {
-			hourEntries.add(new WeekHourEntry(entry));
+			hourEntries.add(new HourEntryInWeek(entry));
 		}
 	}
 
@@ -235,10 +235,10 @@ public class Week {
 		valid = true;
 		// 1. Check if anything is binded
 		if (hourEntries != null) {
-			ListIterator<WeekHourEntry> iterator = hourEntries
+			ListIterator<HourEntryInWeek> iterator = hourEntries
 					.listIterator();
 			while (iterator.hasNext()) {
-				WeekHourEntry entry = (WeekHourEntry) iterator.next();
+				HourEntryInWeek entry = (HourEntryInWeek) iterator.next();
 				// 2. Check if hours or minutes is not 0
 				if ((entry.hasNot0Hours() || entry.hasNot0Minutes())) {
 					entry.setHoursAndMinutesFromNullToZero();
@@ -266,10 +266,10 @@ public class Week {
 	 */
 	public void process(Long userId) {
 		if (valid) {
-			ListIterator<WeekHourEntry> iterator = hourEntries
+			ListIterator<HourEntryInWeek> iterator = hourEntries
 					.listIterator();
 			while (iterator.hasNext()) {
-				WeekHourEntry entry = (WeekHourEntry) iterator.next();
+				HourEntryInWeek entry = (HourEntryInWeek) iterator.next();
 				// Check if id is null
 				if (entry.id == null) {
 					// Check if hours or minutes is not 0

@@ -1,8 +1,13 @@
-package util;
+package utils;
 
 import java.math.BigDecimal;
 
 public class CalculationUtil {
+	
+	// Suppress default constructor for noninstantiability
+	private CalculationUtil() {
+		
+	}
 
 	/**
 	 * Because the hours and minutes are saved apart, minutes can become more

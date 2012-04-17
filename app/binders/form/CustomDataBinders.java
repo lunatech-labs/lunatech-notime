@@ -6,7 +6,7 @@ import java.util.Locale;
 import org.joda.time.LocalDate;
 
 import play.data.format.Formatters;
-import util.DateUtil;
+import utils.DateUtil;
 
 public class CustomDataBinders {
 

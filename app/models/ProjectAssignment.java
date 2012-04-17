@@ -19,7 +19,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import play.db.jpa.JPA;
-import util.DateUtil;
+import utils.DateUtil;
 
 @Entity
 public class ProjectAssignment implements Comparable<ProjectAssignment> {

@@ -1,12 +1,19 @@
-package util;
+package utils;
 
 import java.text.ParseException;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 public class DateUtil {
+
+	// Suppress default constructor for noninstantiability
+	private DateUtil() {
+
+	}
 
 	/**
 	 * Checks if a date is in a range
@@ -20,7 +27,7 @@ public class DateUtil {
 	 * @return A boolean which is true if the date is in the range
 	 */
 	public static boolean between(LocalDate dateToCheck, LocalDate beginDate,
-			LocalDate endDate) {		
+			LocalDate endDate) {
 		return dateToCheck.isAfter(beginDate) && dateToCheck.isBefore(endDate);
 	}
 
@@ -119,7 +126,7 @@ public class DateUtil {
 
 	/**
 	 * Checks if 2 LocalDates are on the same date, without the time portion
-	 *
+	 * 
 	 * @param firstDate
 	 *            A {@link LocalDate}
 	 * @param secondDate
@@ -128,6 +135,26 @@ public class DateUtil {
 	 */
 	public static boolean isSameDate(LocalDate firstDate, LocalDate secondDate) {
 		return firstDate.compareTo(secondDate) == 0;
+	}
+
+	/**
+	 * Get the weeknumbers between 2 dates
+	 * 
+	 * @param beginDate
+	 *            The date of the first week
+	 * @param endDate
+	 *            The date of the last week (this weeknumber is also included)
+	 * @return A List of Integers of the weeknumbers
+	 */
+	public static List<Integer> getWeekNumbers(final LocalDate beginDate,
+			final LocalDate endDate) {
+		final List<Integer> weekNumbers = new LinkedList<Integer>();
+		LocalDate indexDate = firstDateOfWeek(beginDate);
+		while (indexDate.isBefore(lastDateOfWeek(endDate))) {
+			weekNumbers.add(indexDate.getWeekOfWeekyear());
+			indexDate = indexDate.plusWeeks(1);
+		}
+		return weekNumbers;
 	}
 
 }
