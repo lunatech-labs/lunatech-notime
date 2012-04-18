@@ -15,14 +15,14 @@
 					<a href="@routes.Customers.edit(customer.id)">@customer.name</a>
 				
 					@form(routes.Customers.delete(customer.id)) {
-						<input type="submit" value="Delete">
+						<input class="btn btn-delete" type="submit" value="Delete">
 					}	
 				</li>
 			}
 		</ul>
 	}
 	
-	<a href="@routes.Customers.add()" class="button add">Add Customer</a>
+	<a href="@routes.Customers.add()" class="btn btn-primary">Add Customer</a>
 
 } {
 	@sidebar.adminMenu()

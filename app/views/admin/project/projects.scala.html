@@ -13,9 +13,9 @@
 			@for(project <- projects) {
 		  		<li>
 		  			<a href="@routes.Projects.edit(project.id)">@project.name</a>	  				  			
-		  			<a href="@routes.ProjectAssignments.create(project.id)">Add project member</a>
+		  			<a class="btn" href="@routes.ProjectAssignments.create(project.id)">Add project member</a>
 		  			@form(routes.Projects.delete(project.id)) {
-		  				<input type="submit" value="Delete project">
+		  				<input class="btn btn-danger" type="submit" value="Delete project">
 		  			}
 		  			
 		  			@if(project.assignments.isEmpty) {
@@ -29,7 +29,7 @@
 		  							<a href="@routes.ProjectAssignments.edit(project.id, assignment.id)">@assignment.user.fullname</a> 
 		  							
 		  							@form(routes.ProjectAssignments.delete(assignment.id)) {
-		  								<input type="submit" value="Delete">
+		  								<input class="btn btn-danger" type="submit" value="Delete">
 		  							}
 		  						</li>
 		  					}
@@ -40,7 +40,7 @@
 		</ul>
 	}
 	
-	<a href="@routes.Projects.add()" class="button add">Add Project</a>
+	<a href="@routes.Projects.add()" class="btn btn-primary">Add Project</a>
 
 } {
 	@sidebar.adminMenu()
