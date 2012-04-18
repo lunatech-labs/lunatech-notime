@@ -118,6 +118,21 @@ public class Project {
 	}
 
 	/**
+	 * Finds all project for a customer
+	 * 
+	 * @param customer
+	 *            The customer of the project that needs to be searched for
+	 * @return A List of {@link Project}s
+	 */
+	public static List<Project> findAll(Customer customer) {
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<Project> query = cb.createQuery(Project.class);
+		Root<Project> project = query.from(Project.class);
+		query.where(cb.equal(project.get(Project_.customer), customer));
+		return JPA.em().createQuery(query).getResultList();
+	}
+
+	/**
 	 * Finds all project except one project
 	 * 
 	 * @param projectId
@@ -140,21 +155,6 @@ public class Project {
 		CriteriaQuery<Project> query = cb.createQuery(Project.class);
 		Root<Project> project = query.from(Project.class);
 		query.where(cb.equal(project.get(Project_.defaultProject), true));
-		return JPA.em().createQuery(query).getResultList();
-	}
-
-	/**
-	 * Finds all project for a customer
-	 * 
-	 * @param customer
-	 *            The customer of the project that needs to be searched for
-	 * @return A List of {@link Project}s
-	 */
-	public static List<Project> findAllForCustomer(Customer customer) {
-		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
-		CriteriaQuery<Project> query = cb.createQuery(Project.class);
-		Root<Project> project = query.from(Project.class);
-		query.where(cb.equal(project.get(Project_.customer), customer));
 		return JPA.em().createQuery(query).getResultList();
 	}
 

@@ -30,9 +30,9 @@
     }
 }
 
-@main("Report: Overview per week", script = script) {
+@main("Report: Entries per week", script) {
 
-	@form(routes.Reports.overviewPerWeek(), 'id -> "options-form") {
+	@form(routes.Reports.entriesPerWeek(), 'id -> "options-form") {
 
 		@inputDate(optionsForm("beginDate"), '_label -> "Begin date")
 
@@ -88,51 +88,56 @@
 	
 	@if(!optionsForm.data.isEmpty) {
 		@if(report.getCustomers.isEmpty) {
-		    <div class="alert-message warning">
-	            No information available
-	        </div>
+		<div class="alert-message warning">
+	    	No information available
+	    </div>
 		} else {
-			<div class="report">
+		<div class="report">
 			@for(customer <- report.getCustomers) {
-				<div class="customer">Customer: <b>@customer.name</b> [@customer.code]</div>
+			<div class="customer">
+				Customer: <b>@customer.name</b> [@customer.code]
 				@for(project <- report.getProjects(customer)) {
-					<div class="project">Project: <b>@project.name</b> [@project.code]</div>
+				<div class="project">
+					Project: <b>@project.name</b> [@project.code]
 					@for(weekNumber <- DateUtil.getWeekNumbers(optionsForm.get.beginDate, optionsForm.get.endDate)) {
-						<div class="week">Week: @weekNumber</div>
+					<div class="week">
+						Week: @weekNumber
 						@if(report.getHourEntries(project, weekNumber).isEmpty) {
-							<div class="no-entries"><i>No hours entered in week @weekNumber on project @project.name.</i></div>
+						<div class="no-entries"><i>No hours entered in week @weekNumber on project @project.name.</i></div>
 						} else {
-							<table class="entries-table">
-								<thead>
-									<tr>
-										<th>Date</th>
-										<th>Hours</th>
-										<th>Tags</th>
-										<th>Employee</th>
-									</tr>
-								</thead>
-								<tbody>
-								@for(entry <- report.getHourEntries(project, weekNumber)) {
-									<tr>
-										<td>@entry.date</td>
-										<td>@{entry.hours}h @{entry.minutes}m</td>
-										<td>@entry.enteredTagsString</td>
-										<td>@entry.assignment.user.fullname</td>
-									</tr>
-								}
-								
-								</tbody>
-								<tfoot>
-									<tr>
-										<td></td><td><b>@report.getTotalHours(project, weekNumber)</b></td><td></td><td></td>
-									</tr>
-								</tfoot>
-							</table>
+						<table class="entries-table">
+							<thead>
+								<tr>
+									<th>Date</th>
+									<th>Hours</th>
+									<th>Tags</th>
+									<th>Employee</th>
+								</tr>
+							</thead>
+							<tbody>
+							@for(entry <- report.getHourEntries(project, weekNumber)) {
+								<tr>
+									<td>@entry.date</td>
+									<td>@{entry.hours}h @{entry.minutes}m</td>
+									<td>@entry.enteredTagsString</td>
+									<td>@entry.assignment.user.fullname</td>
+								</tr>
+							}
+							</tbody>
+							<tfoot>
+								<tr>
+									<td></td><td><b>@report.getTotalHours(project, weekNumber)</b></td><td></td><td></td>
+								</tr>
+							</tfoot>
+						</table>
 						}
+					</div>
 					}
+				</div>
 				}
-			}
 			</div>
+			}
+		</div>
 		}
 	}
 

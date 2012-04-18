@@ -6,6 +6,7 @@ import java.util.Set;
 
 import models.Customer;
 import models.Project;
+import models.User;
 
 import org.joda.time.LocalDate;
 
@@ -17,6 +18,8 @@ public class ReportOptions {
 
 	public List<Project> projects;
 
+	public List<User> users;
+
 	@Required
 	public LocalDate beginDate;
 
@@ -24,7 +27,7 @@ public class ReportOptions {
 	public LocalDate endDate;
 
 	/**
-	 * Finds all projects. So selects all the projects from the selected
+	 * Finds all projects. Gets all the projects from the selected
 	 * customers and add the selected projects
 	 * 
 	 * @return A Set of {@link Project}s
@@ -33,12 +36,31 @@ public class ReportOptions {
 		final Set<Project> projects = new HashSet<Project>();
 		if (customers != null && !customers.isEmpty()) {
 			for (Customer customer : customers) {
-				projects.addAll(Project.findAllForCustomer(customer));
+				projects.addAll(Project.findAll(customer));
 			}
 		}
 		if (this.projects != null) {
 			projects.addAll(this.projects);
 		}
 		return projects;
+	}
+
+	/**
+	 * Finds all users. Gets all the users from the selected projects and adds
+	 * the selected users
+	 * 
+	 * @return A Set of {@link User}s
+	 */
+	public Set<User> getAllUsers() {
+		final Set<User> users = new HashSet<User>();
+		if (projects != null && !projects.isEmpty()) {
+			for (Project project : projects) {
+				users.addAll(User.findAll(project));
+			}
+		}
+		if (this.users != null) {
+			users.addAll(this.users);
+		}
+		return users;
 	}
 }

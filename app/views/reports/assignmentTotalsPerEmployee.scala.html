@@ -1,0 +1,131 @@
+@(optionsForm: Form[beans.ReportOptions], report: datastructures.reports.Report)
+
+@import helper._
+@import helper.twitterBootstrap._
+
+@script = {
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/report-options.js")"></script>
+}
+
+@userField(field: Field, className: String = "user") = {
+    @input(field, '_label -> "User", '_class -> className) { (id, name, value, _) =>
+        <select id="@id" name="@name">
+        @User.options.map { v =>
+            <option value="@v._1" @(if(value == Some(v._1)) "selected" else "")>@v._2</option>
+        }
+    	</select>
+        <a class="removeUser btn btn-danger">Remove</a>
+    }
+}
+
+@projectField(field: Field, className: String = "project") = {
+    @input(field, '_label -> "Project", '_class -> className) { (id, name, value, _) =>
+        <select id="@id" name="@name">
+        @Project.options.map { v =>
+            <option value="@v._1" @(if(value == Some(v._1)) "selected" else "")>@v._2</option>
+        }
+    	</select>
+        <a class="removeProject btn btn-danger">Remove</a>
+    }
+}
+
+@main("Report: Assignment totals per employee", script) {
+
+	@form(routes.Reports.assignmentTotalsPerUser(), 'id -> "options-form") {
+
+		@inputDate(optionsForm("beginDate"), '_label -> "Begin date")
+
+		@inputDate(optionsForm("endDate"), '_label -> "End date")
+
+		<div class="users">
+
+			@repeat(optionsForm("users"), min = 0) { user =>
+				@userField(optionsForm(user.name + ".id"))
+			}
+            
+			@**
+			* Keep an hidden block that will be used as template for Javascript copy code
+			**@
+			@userField(
+				optionsForm("users[x].id"),
+				className = "user-template"
+			)
+
+			<div class="clearfix">
+                <div class="input">
+                    <a class="addUser btn">Add a user</a>
+                </div>
+            </div>
+            
+		</div>
+
+		<div class="projects">
+
+			@repeat(optionsForm("projects"), min = 0) { project =>
+				@projectField(optionsForm(project.name + ".id"))
+			}
+            
+			@**
+			* Keep an hidden block that will be used as template for Javascript copy code
+			**@
+			@projectField(
+				optionsForm("projects[x].id"),
+				className = "project-template"
+			)
+
+			<div class="clearfix">
+                <div class="input">
+                    <a class="addProject btn">Add a project</a>
+                </div>
+            </div>
+            
+		</div>
+
+		<input class="btn btn-primary" type="submit" value="Submit">
+
+	}
+	@if(!optionsForm.data.isEmpty) {
+		@if(report.getUsers.isEmpty) {
+		    <div class="alert-message warning">
+			    No information available
+		    </div>
+		} else {
+		<div class="report">
+			@for(user <- report.getUsers) {
+			<div class="employee">
+				Employee: <b>@user.fullname</b>
+				<table class="entries-table">
+					<thead>
+						<tr>
+							<th>Customer</th>
+							<th>Project</th>
+							<th>Project Code</th>
+							<th>Rate</th>
+							<th>Hours</th>
+							<th>Turnover</th>
+						</tr>
+					</thead>
+					<tbody>
+					@for(assignmentTotals <- report.getAssignmentsTotals(user)) {	
+						<tr>
+							<td>@assignmentTotals.assignment.project.customer.name</td>
+							<td>@assignmentTotals.assignment.project.name</td>
+							<td>@assignmentTotals.assignment.project.code</td>
+							<td>@assignmentTotals.assignment.hourlyRate</td>
+							<td>@assignmentTotals.hoursMinutes</td>
+							<td>@assignmentTotals.turnover</td>
+						</tr>
+					}
+					</tbody>
+					<tfoot>
+						<tr>
+							<td></td><td></td><td></td><td></td><td>@report.getTotalHours(user, new org.joda.time.LocalDate(2012, 1, 17), new org.joda.time.LocalDate(2012, 5, 17))</td><td>@report.getTotalTurnover(user, new org.joda.time.LocalDate(2012, 1, 17), new org.joda.time.LocalDate(2012, 5, 17))</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>			
+			}
+		</div>
+		}
+	}
+} { @sidebar.adminMenu() }

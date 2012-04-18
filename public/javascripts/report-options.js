@@ -28,9 +28,23 @@ require(["jquery-1.7.1.min"], function() {
 	        renumberProjects(projects)
 	    })
 
+	    $('.removeUser').live('click', function(e) {
+	    	var users = $(this).parents('.users')
+	        $(this).parents('.user').remove()
+	        renumberUsers(users)
+	    })
+
+	    $('.addUser').live('click', function(e) {
+	        var users = $(this).parents('.users')
+	        var template = $('.user-template', users)
+	        template.before('<div class="clearfix user">' + template.html() + '</div>')
+	        renumberUsers(users)
+	    })
+
 	    $('#options-form').submit(function() {
 	        $('.customer-template').remove()
 	        $('.project-template').remove()
+	        $('.user-template').remove()
 	    })
 
 	    var renumberCustomers = function(customers) {
@@ -45,6 +59,12 @@ require(["jquery-1.7.1.min"], function() {
 	    	})
 	    }
 		
+		var renumberUsers = function(users) {
+	        $('.user select', users).each(function(i) {
+	        	$(this).attr('name', $(this).attr('name').replace(/users\[.+\]/g, 'users[' + i + ']'))
+	    	})
+	    }
+
 	});
 
 });

@@ -111,7 +111,7 @@ public class HourEntry {
 	 * 
 	 * @param hourEntryId
 	 *            The id of the hour entry to be searched for
-	 * @return A hour entry
+	 * @return A {@link HourEntry}
 	 */
 	public static HourEntry findById(Long hourEntryId) {
 		return JPA.em().find(HourEntry.class, hourEntryId);
@@ -120,7 +120,7 @@ public class HourEntry {
 	/**
 	 * Find all hour entries
 	 * 
-	 * @return A List of hour entry objects
+	 * @return A List of {@link HourEntry}s
 	 */
 	public static List<HourEntry> findAll() {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
@@ -134,7 +134,7 @@ public class HourEntry {
 	 * 
 	 * @param userId
 	 *            The id of the user which entries are to be searched for
-	 * @return A List of hour entry objects
+	 * @return A List of {@link HourEntry}s
 	 */
 	public static List<HourEntry> findAllForUser(Long userId) {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
@@ -160,7 +160,7 @@ public class HourEntry {
 	 *            The date from which entries are to be searched for
 	 * @param endDate
 	 *            The date till which entries are to be searched for
-	 * @return A List of hour entry objects
+	 * @return A List of {@link HourEntry}s
 	 */
 	public static List<HourEntry> findAllForUserBetween(Long userId,
 			LocalDate beginDate, LocalDate endDate) {
@@ -180,13 +180,39 @@ public class HourEntry {
 	}
 
 	/**
+	 * Find all hour entries for users between two dates
+	 * 
+	 * @param users
+	 *            The users which entries are to be searched for
+	 * @param beginDate
+	 *            The date from which entries are to be searched for
+	 * @param endDate
+	 *            The date till which entries are to be searched for
+	 * @return A List of {@link HourEntry}s
+	 */
+	public static List<HourEntry> findAllForUsersBetween(Set<User> users,
+			LocalDate beginDate, LocalDate endDate) {
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<HourEntry> query = cb.createQuery(HourEntry.class);
+		Root<HourEntry> entry = query.from(HourEntry.class);
+
+		Join<HourEntry, ProjectAssignment> assignment = entry
+				.join(HourEntry_.assignment);
+
+		query.where(cb.between(entry.get(HourEntry_.date), beginDate, endDate),
+				assignment.get(ProjectAssignment_.user).in(users));
+		query.orderBy(cb.desc(entry.get(HourEntry_.id)));
+		return JPA.em().createQuery(query).getResultList();
+	}
+
+	/**
 	 * Find all hour entries for a user for a day
 	 * 
 	 * @param userId
 	 *            The id of the user which entries are to be searched for
 	 * @param day
 	 *            The date on which entries are to be searched for
-	 * @return A List of hour entry objects
+	 * @return A List of {@link HourEntry}s
 	 */
 	public static List<HourEntry> findAllForUserForDay(Long userId,
 			LocalDate day) {
@@ -236,7 +262,7 @@ public class HourEntry {
 	 * 
 	 * @param userId
 	 *            The id of the user which entries are to be searched for
-	 * @return A List of hour entry objects
+	 * @return A List of {@link HourEntry}s
 	 */
 	public static List<TotalsDay> findWithTooFewHoursForUser(Long userId) {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();

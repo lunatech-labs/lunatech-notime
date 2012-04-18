@@ -13,6 +13,7 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.OneToMany;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.annotations.Type;
@@ -119,12 +120,31 @@ public class User {
 	/**
 	 * Find all users
 	 * 
-	 * @return A List of user objects
+	 * @return A List of {@link User}s
 	 */
 	public static List<User> findAll() {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 		CriteriaQuery<User> query = cb.createQuery(User.class);
-		query.from(User.class);		
+		query.from(User.class);
+		return JPA.em().createQuery(query).getResultList();
+	}
+
+	/**
+	 * Find all users on a project
+	 * 
+	 * @param project
+	 *            The project which the users must be assigned to
+	 * @return A List of {@link User}s
+	 */
+	public static List<User> findAll(Project project) {
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<User> query = cb.createQuery(User.class);
+		Root<User> user = query.from(User.class);
+
+		Join<User, ProjectAssignment> assignment = user.join(User_.assignments);
+
+		query.where(cb.equal(assignment.get(ProjectAssignment_.project),
+				project));
 		return JPA.em().createQuery(query).getResultList();
 	}
 
