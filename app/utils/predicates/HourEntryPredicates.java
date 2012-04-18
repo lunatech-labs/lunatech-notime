@@ -1,9 +1,5 @@
 package utils.predicates;
 
-import org.joda.time.LocalDate;
-
-import utils.DateUtil;
-
 import models.HourEntry;
 import models.Project;
 import models.User;
@@ -37,6 +33,35 @@ public class HourEntryPredicates {
 
 		public boolean apply(final HourEntry entry) {
 			return entry.assignment.user == user;
+		}
+	}
+
+	/**
+	 * A predicate that checks if the week number of a {@link HourEntry} is
+	 * equal to the provided week number
+	 * 
+	 * @param weekNumber
+	 *            Week number to which the {@link HourEntry}'s week number must
+	 *            be equal to
+	 * @return A {@link Predicate}
+	 */
+	public static Predicate<HourEntry> equalWeekNumber(final int weekNumber) {
+		return new EqualWeekNumber(weekNumber);
+	}
+
+	/**
+	 * A predicate that checks if the week number of a {@link HourEntry} is
+	 * equal to the provided week number
+	 */
+	private static class EqualWeekNumber implements Predicate<HourEntry> {
+		private final int weekNumber;
+
+		private EqualWeekNumber(final int weekNumber) {
+			this.weekNumber = weekNumber;
+		}
+
+		public boolean apply(final HourEntry entry) {
+			return entry.date.getWeekOfWeekyear() == weekNumber;
 		}
 	}
 

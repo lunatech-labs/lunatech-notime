@@ -40,6 +40,31 @@ public class Report {
 	}
 
 	/**
+	 * Get a report for the entries per customer, per project, per week
+	 * 
+	 * @param projects
+	 *            The projects for which the report must be created
+	 * @param beginDate
+	 *            The date form which the report is created
+	 * @param endDate
+	 *            The date till which the report is created (the entries on
+	 *            endDate will also be included)
+	 * @return A {@link Report}
+	 */
+	public static Report getReportEntriesPerCustomerPerProjectPerWeek(
+			final Set<Project> projects, final LocalDate beginDate,
+			final LocalDate endDate) {
+		List<HourEntry> hourEntries = Collections.emptyList();
+		if (projects.isEmpty()) {
+			hourEntries = new LinkedList<HourEntry>();
+		} else {
+			hourEntries = HourEntry.findAllForProjectsBetween(projects,
+					beginDate, endDate);
+		}
+		return new Report(hourEntries);
+	}
+
+	/**
 	 * Get a report for the entries per week
 	 * 
 	 * @param projects
@@ -51,7 +76,7 @@ public class Report {
 	 *            endDate will also be included)
 	 * @return A {@link Report}
 	 */
-	public static Report getReportEntriesPerCustomerPerProjectPerWeek(final Set<Project> projects,
+	public static Report getReportEntriesPerWeek(final Set<Project> projects,
 			final LocalDate beginDate, final LocalDate endDate) {
 		List<HourEntry> hourEntries = Collections.emptyList();
 		if (projects.isEmpty()) {
@@ -163,6 +188,22 @@ public class Report {
 	}
 
 	/**
+	 * Get all {@link HourEntry}s where the weekNumber is equal to the provided
+	 * weekNumber
+	 * 
+	 * @param weekNumber
+	 *            The week number to which the entry's week number must be equal
+	 *            to
+	 * @return List of {@link HourEntry}s
+	 */
+	public List<HourEntry> getHourEntries(final int weekNumber) {
+		final Collection<HourEntry> filtered = Collections2.filter(
+				this.hourEntries,
+				HourEntryPredicates.equalWeekNumber(weekNumber));
+		return new LinkedList<HourEntry>(filtered);
+	}
+
+	/**
 	 * Get all {@link HourEntry}s where the project and weekNumber are equal to
 	 * the provided project and weekNumber
 	 * 
@@ -207,6 +248,23 @@ public class Report {
 		}
 
 		return new LinkedList<TotalsAssignment>(totalsPerAssignment.values());
+	}
+
+	/**
+	 * Get the total hours and minutes for a week
+	 * 
+	 * @param weekNumber
+	 *            The week number which totals must be calculated
+	 * @return A String with the total hours and minutes in the format 4h 25m
+	 */
+	public String getTotalHours(final int weekNumber) {
+		int hours = 0;
+		int minutes = 0;
+		for (HourEntry entry : getHourEntries(weekNumber)) {
+			hours += entry.hours;
+			minutes += entry.minutes;
+		}
+		return CalculationUtil.formatTotalHoursMinutes(hours, minutes);
 	}
 
 	/**
