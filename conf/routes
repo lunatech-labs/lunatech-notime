@@ -67,7 +67,7 @@ GET		/user/:id/hourentries/calendar	controllers.HourEntries.calendarOverview(id:
 GET		/tags						controllers.Tags.find()
 
 # Reports
-GET		/report/entries-per-week			controllers.Reports.entriesPerWeek()
+GET		/report/entries-per-week			controllers.Reports.entriesPerCustomerPerProjectPerWeek()
 GET		/report/assignment-totals-per-user	controllers.Reports.assignmentTotalsPerUser()
 
 # Javascript routing

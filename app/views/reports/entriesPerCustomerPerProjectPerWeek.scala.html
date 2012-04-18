@@ -32,7 +32,7 @@
 
 @main("Report: Entries per week", script) {
 
-	@form(routes.Reports.entriesPerWeek(), 'id -> "options-form") {
+	@form(routes.Reports.entriesPerCustomerPerProjectPerWeek(), 'id -> "options-form") {
 
 		@inputDate(optionsForm("beginDate"), '_label -> "Begin date")
 

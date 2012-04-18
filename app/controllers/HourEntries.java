@@ -1,10 +1,6 @@
 package controllers;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import models.HourEntry;
 
@@ -15,7 +11,6 @@ import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
 import utils.DateUtil;
-import utils.Transformers;
 import views.html.user.hourentry.createHourEntries;
 import views.html.user.hourentry.createHourEntriesForWeek;
 import views.html.user.hourentry.createHourEntry;
@@ -23,11 +18,7 @@ import views.html.user.hourentry.createHourEntryForDay;
 import views.html.user.hourentry.editHourEntry;
 import views.html.user.hourentry.hourEntriesCalendar;
 import views.html.user.hourentry.hourEntriesTable;
-
 import beans.MultipleHourEntries;
-
-import com.google.common.collect.Collections2;
-
 import datastructures.TotalsDay;
 import datastructures.overview.calendar.CalendarMonth;
 import datastructures.overview.week.Week;

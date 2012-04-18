@@ -51,7 +51,7 @@ public class Report {
 	 *            endDate will also be included)
 	 * @return A {@link Report}
 	 */
-	public static Report getReportEntriesPerWeek(final Set<Project> projects,
+	public static Report getReportEntriesPerCustomerPerProjectPerWeek(final Set<Project> projects,
 			final LocalDate beginDate, final LocalDate endDate) {
 		List<HourEntry> hourEntries = Collections.emptyList();
 		if (projects.isEmpty()) {
