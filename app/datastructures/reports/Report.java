@@ -78,8 +78,13 @@ public class Report {
 	public static Report getReportAssignmentTotalsPerUser(
 			final Set<User> users, final LocalDate beginDate,
 			final LocalDate endDate) {
-		final List<HourEntry> hourEntries = HourEntry.findAllForUsersBetween(
-				users, beginDate, endDate);
+		List<HourEntry> hourEntries = Collections.emptyList();
+		if (users.isEmpty()) {
+			hourEntries = new LinkedList<HourEntry>();
+		} else {
+			hourEntries = HourEntry.findAllForUsersBetween(users, beginDate,
+					endDate);
+		}
 		return new Report(hourEntries);
 	}
 
@@ -177,27 +182,6 @@ public class Report {
 	}
 
 	/**
-	 * Get all {@link HourEntry}s where the user is to the provided user and the
-	 * entry's date is between the provided dates.
-	 * 
-	 * @param user
-	 *            The user to which the entry's user must be equal to
-	 * @param beginDate
-	 *            The date from which entries are filtered
-	 * @param endDate
-	 *            The date till which entries are filtered (the entries where
-	 *            date is equal to endDate will be added)
-	 * @return List of {@link HourEntry}s
-	 */
-	public List<HourEntry> getHourEntries(final User user,
-			final LocalDate beginDate, final LocalDate endDate) {
-		final Collection<HourEntry> filtered = Collections2.filter(
-				this.hourEntries, HourEntryPredicates.equalUserAndBetweenDates(
-						user, beginDate, endDate.plusDays(1)));
-		return new LinkedList<HourEntry>(filtered);
-	}
-
-	/**
 	 * Get all {@link TotalsAssignment}s where the {@link HourEntry}'s user is
 	 * equal to the provided user
 	 * 
@@ -245,23 +229,16 @@ public class Report {
 	}
 
 	/**
-	 * Get the total hours and minutes for a user in a date range
+	 * Get the total hours and minutes for a user in this report
 	 * 
 	 * @param user
 	 *            The user which totals must be calculated
-	 * @param beginDate
-	 *            The date from which the totals must be calculated
-	 * @param endDate
-	 *            The date till which the totals must be calculated (entries
-	 *            where date is equal to endDate will also be included in the
-	 *            calculation)
 	 * @return A String with the total hours and minutes in the format 4h 25m
 	 */
-	public String getTotalHours(final User user, final LocalDate beginDate,
-			final LocalDate endDate) {
+	public String getTotalHours(final User user) {
 		int hours = 0;
 		int minutes = 0;
-		for (HourEntry entry : getHourEntries(user, beginDate, endDate)) {
+		for (HourEntry entry : getHourEntries(user)) {
 			hours += entry.hours;
 			minutes += entry.minutes;
 		}
@@ -269,20 +246,13 @@ public class Report {
 	}
 
 	/**
-	 * Get the total turnover for a user in a date range
+	 * Get the total turnover for a user in this report
 	 * 
 	 * @param user
 	 *            The user which total must be calculated
-	 * @param beginDate
-	 *            The date from which the total must be calculated
-	 * @param endDate
-	 *            The date till which the total must be calculated (entries
-	 *            where date is equal to endDate will also be included in the
-	 *            calculation)
 	 * @return A {@link BigDecimal} with the total turnover
 	 */
-	public BigDecimal getTotalTurnover(final User user,
-			final LocalDate beginDate, final LocalDate endDate) {
+	public BigDecimal getTotalTurnover(final User user) {
 		BigDecimal totalTurnover = BigDecimal.ZERO;
 		for (TotalsAssignment totals : getAssignmentsTotals(user)) {
 			totalTurnover = totalTurnover.add(totals.turnover);
