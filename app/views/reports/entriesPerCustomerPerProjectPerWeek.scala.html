@@ -101,7 +101,7 @@
 					Project: <b>@project.name</b> [@project.code]
 					@for(weekNumber <- DateUtil.getWeekNumbers(optionsForm.get.beginDate, optionsForm.get.endDate)) {
 					<div class="week">
-						Week: @weekNumber
+						Week: <b>@weekNumber</b>
 						@if(report.getHourEntries(project, weekNumber).isEmpty) {
 						<div class="no-entries"><i>No hours entered in week @weekNumber on project @project.name.</i></div>
 						} else {
@@ -111,13 +111,13 @@
 									<th>Date</th>
 									<th>Hours</th>
 									<th>Tags</th>
-									<th>Employee</th>
+									<th>User</th>
 								</tr>
 							</thead>
 							<tbody>
 							@for(entry <- report.getHourEntries(project, weekNumber)) {
 								<tr>
-									<td>@entry.date</td>
+									<td>@DateUtil.formatDate(entry.date)</td>
 									<td>@{entry.hours}h @{entry.minutes}m</td>
 									<td>@entry.enteredTagsString</td>
 									<td>@entry.assignment.user.fullname</td>
@@ -126,7 +126,9 @@
 							</tbody>
 							<tfoot>
 								<tr>
-									<td></td><td><b>@report.getTotalHours(project, weekNumber)</b></td><td></td><td></td>
+									<td></td>
+									<td><b>@report.getTotalHours(project, weekNumber)</b></td>
+									<td colspan="2"></td>
 								</tr>
 							</tfoot>
 						</table>
