@@ -1,22 +1,22 @@
-@(userId: Long, entriesForm: Form[beans.MultipleHourEntries], indices: List[Integer])
+@(userId: Long, entriesForm: Form[beans.MultipleHourEntries])
 
 @import helper._
 @import helper.twitterBootstrap._
 
-@entry(form: Form[beans.MultipleHourEntries], index: Integer, className: String = "entry") = {
+@entryField(form: Form[beans.MultipleHourEntries], field: Field, className: String = "entry") = {
 	<div class="@className">
-		@select(form("hourEntries[" + index + "].assignment.id"), options(ProjectAssignment.optionsFor(userId)), '_label -> "Project")
+		@select(form(field.name + ".assignment.id"), options(ProjectAssignment.optionsFor(userId)), '_label -> "Project")
 
-		@inputDate(form("hourEntries[" + index + "].date"), '_label -> "Date")
+		@inputDate(form(field.name + ".date"), '_label -> "Date")
 		
-		@inputText(form("hourEntries[" + index + "].hours"), '_label -> "Hours")
+		@inputText(form(field.name + ".hours"), '_label -> "Hours")
 		
-		@inputText(form("hourEntries[" + index + "].minutes"), '_label -> "Minutes")
+		@inputText(form(field.name + ".minutes"), '_label -> "Minutes")
 		
 		<div class="clearfix" id="tags_string_field">
 			<label for="tags_string">Tags</label>
 			<div class="input">
-				<input type="text" class="autocomplete" name="hourEntries[@index].tagsString" value="@entriesForm.data.get("hourEntries[" + index + "].tagsString")" data-url="@routes.Tags.find">
+				<input type="text" class="autocomplete" name="@form(field.name + ".tagsString").name" value="@form(field.name + ".tagsString").value" data-url="@routes.Tags.find">
 				<span class="help-block">Please use the same tags for the same type of work. So do not use 'test' and 'testing'</span>
 			</div>
 		</div>
@@ -41,11 +41,12 @@
     @form(routes.HourEntries.createMultiple(userId), 'id -> "entriesForm") {   
     
     	<div class="entries">
-    	    @for(index <- indices) {
-    	    	@entry(entriesForm, index)
-    	    }
-
-			@entry(entriesForm, -1, "entry_template")
+    	    
+    	    @repeat(entriesForm("hourEntries"), min = 1) { entry =>
+				@entryField(entriesForm, entry)
+			}
+    	    
+			@entryField(entriesForm, entriesForm("hourEntries[x]"), "entry_template")
 	    	    
     	    <div class="input">
     	    	<a class="addEntry btn">Add another entry</a>
