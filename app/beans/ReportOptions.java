@@ -27,20 +27,25 @@ public class ReportOptions {
 	public LocalDate endDate;
 
 	/**
-	 * Finds all projects. Gets all the projects from the selected
-	 * customers and add the selected projects
+	 * Finds all projects. Gets all the projects from the selected customers and
+	 * add the selected projects. If there are no customers and projects
+	 * selected, all projects will be returned.
 	 * 
 	 * @return A Set of {@link Project}s
 	 */
 	public Set<Project> getAllProjects() {
 		final Set<Project> projects = new HashSet<Project>();
-		if (customers != null && !customers.isEmpty()) {
-			for (Customer customer : customers) {
-				projects.addAll(Project.findAll(customer));
+		if (customers == null && this.projects == null) {
+			projects.addAll(Project.findAll());
+		} else {
+			if (customers != null && !customers.isEmpty()) {
+				for (Customer customer : customers) {
+					projects.addAll(Project.findAll(customer));
+				}
 			}
-		}
-		if (this.projects != null) {
-			projects.addAll(this.projects);
+			if (this.projects != null) {
+				projects.addAll(this.projects);
+			}
 		}
 		return projects;
 	}
