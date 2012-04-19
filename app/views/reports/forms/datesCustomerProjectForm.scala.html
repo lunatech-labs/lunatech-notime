@@ -1,0 +1,80 @@
+@(optionsForm: Form[beans.ReportOptions], action: play.api.mvc.Call)
+
+@import helper._
+@import helper.twitterBootstrap._
+
+@customerField(field: Field, className: String = "customer") = {
+    @input(field, '_label -> "Customer", '_class -> className) { (id, name, value, _) =>
+        <select id="@id" name="@name">
+        @Customer.options.map { v =>
+            <option value="@v._1" @(if(value == Some(v._1)) "selected" else "")>@v._2</option>
+        }
+    	</select>
+        <a class="removeCustomer btn btn-danger">Remove</a>
+    }
+}
+
+@projectField(field: Field, className: String = "project") = {
+    @input(field, '_label -> "Project", '_class -> className) { (id, name, value, _) =>
+        <select id="@id" name="@name">
+        @Project.options.map { v =>
+            <option value="@v._1" @(if(value == Some(v._1)) "selected" else "")>@v._2</option>
+        }
+    	</select>
+        <a class="removeProject btn btn-danger">Remove</a>
+    }
+}
+
+@form(action, 'id -> "options-form") {
+
+	@inputDate(optionsForm("beginDate"), '_label -> "Begin date")
+
+	@inputDate(optionsForm("endDate"), '_label -> "End date")
+
+	<div class="customers">
+
+		@repeat(optionsForm("customers"), min = 0) { customer =>
+			@customerField(optionsForm(customer.name + ".id"))
+		}
+           
+		@**
+		* Keep an hidden block that will be used as template for Javascript copy code
+		**@
+		@customerField(
+			optionsForm("customers[x].id"),
+			className = "customer-template"
+		)
+
+		<div class="clearfix">
+               <div class="input">
+                   <a class="addCustomer btn">Add a customer</a>
+               </div>
+           </div>
+           
+	</div>
+
+	<div class="projects">
+
+		@repeat(optionsForm("projects"), min = 0) { project =>
+			@projectField(optionsForm(project.name + ".id"))
+		}
+           
+		@**
+		* Keep an hidden block that will be used as template for Javascript copy code
+		**@
+		@projectField(
+			optionsForm("projects[x].id"),
+			className = "project-template"
+		)
+
+		<div class="clearfix">
+               <div class="input">
+                   <a class="addProject btn">Add a project</a>
+               </div>
+           </div>
+           
+	</div>
+
+	<input class="btn btn-primary" type="submit" value="Submit">
+
+}
