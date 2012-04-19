@@ -29,7 +29,7 @@
     }
 }
 
-@main("Report: Assignment totals per employee", script) {
+@main("Report: Assignment totals per user", script) {
 
 	@form(routes.Reports.assignmentTotalsPerUser(), 'id -> "options-form") {
 
@@ -85,14 +85,14 @@
 
 	}
 	@if(!optionsForm.data.isEmpty) {
-		@if(report.getUsers.isEmpty) {
+		@if(report.getHourEntries.isEmpty) {
 		    <div class="alert-message warning">
 			    No information available
 		    </div>
 		} else {
 		<div class="report">
 			@for(user <- report.getUsers) {
-			<div class="employee">
+			<div class="user">
 				User: <b>@user.fullname</b>
 				<table class="entries-table">
 					<thead>

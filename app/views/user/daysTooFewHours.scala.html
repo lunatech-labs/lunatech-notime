@@ -12,11 +12,19 @@
 		<input type="checkbox" id="hide-days-too-few-hours"><label id="label-hide-days-too-few-hours">Show/Hide weekends</label>
 	
 		<table id="days-too-few-hours">
-			@for(total <- totals) {
+			<thead>
+				<tr>
+					<th>Date</th>
+					<th>Entered hours</th>
+				</tr>
+			</thead>
+			<tbody>
+				@for(total <- totals) {
 		  		<tr>
 		  			<td class="day" data-daynumber="@total.date.getDayOfWeek"><a href="@routes.HourEntries.addForDay(userId, total.date)">@DateUtil.formatDate(total.date, "E d-M")</a></td><td>@total.hoursMinutes</td>
 		  		</tr>
-	  		}
+	  			}
+			</tbody>
 		</table>
 	}
 	
