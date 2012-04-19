@@ -35,7 +35,7 @@
 						@for(day <- DateUtil.getDays(optionsForm.get.beginDate, optionsForm.get.endDate)) {
 						<td>@report.getTotalHours(project, day)</td>
 						}
-						<td>@report.getTotalHours(project)</td>
+						<td class="total">@report.getTotalHours(project)</td>
 					</tr>
 					}
 				</tbody>
@@ -45,7 +45,7 @@
 						@for(day <- DateUtil.getDays(optionsForm.get.beginDate, optionsForm.get.endDate)) {
 						<td>@report.getTotalHours(day)</td>
 						}
-						<td>@report.getTotalHours</td>
+						<td class="total">@report.getTotalHours</td>
 					</tr>
 				</tfoot>
 			</table>

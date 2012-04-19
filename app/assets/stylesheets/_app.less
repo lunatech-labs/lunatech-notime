@@ -183,6 +183,14 @@
     #weekOverview .entry.error input {
     	color: @red2;
     }
+    
+    #weekOverview tfoot tr td, #weekOverview tbody tr td.total {
+    	background-color: @grey2;
+    }
+    
+    #weekOverview tfoot tr td.total {
+    	background-color: @grey3;
+    }
 
     .entry {
     	margin-bottom: 5px;
@@ -301,8 +309,12 @@
     	.rounded-corners();
 	}
 
-	.report .entries-table tfoot tr td {
+	.report .entries-table tfoot tr td, .report .entries-table tbody tr td.total {
 		background-color: @grey2;
+	}
+	
+	.report .entries-table tfoot tr td.total {
+		background-color: @grey3;
 	}
 
 	#options-form .customers, #options-form .projects, #options-form .users {
