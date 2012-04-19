@@ -54,27 +54,25 @@ public class Report {
 	public static Report getReportEntriesPerCustomerPerProjectPerWeek(
 			final Set<Project> projects, final LocalDate beginDate,
 			final LocalDate endDate) {
-		List<HourEntry> hourEntries = Collections.emptyList();
-		if (projects.isEmpty()) {
-			hourEntries = new LinkedList<HourEntry>();
-		} else {
-			hourEntries = HourEntry.findAllForProjectsBetween(projects,
-					beginDate, endDate);
-		}
-		return new Report(hourEntries);
+		return createReportForProjectsBetween(projects, beginDate, endDate);
 	}
 
+	/**
+	 * Get a report for the entries per user, per week
+	 * 
+	 * @param projects
+	 *            The projects for which the report must be created
+	 * @param beginDate
+	 *            The date form which the report is created
+	 * @param endDate
+	 *            The date till which the report is created (the entries on
+	 *            endDate will also be included)
+	 * @return A {@link Report}
+	 */
 	public static Report getReportEntriesPerUserPerWeek(
 			final Set<Project> projects, final LocalDate beginDate,
 			final LocalDate endDate) {
-		List<HourEntry> hourEntries = Collections.emptyList();
-		if (projects.isEmpty()) {
-			hourEntries = new LinkedList<HourEntry>();
-		} else {
-			hourEntries = HourEntry.findAllForProjectsBetween(projects,
-					beginDate, endDate);
-		}
-		return new Report(hourEntries);
+		return createReportForProjectsBetween(projects, beginDate, endDate);
 	}
 
 	/**
@@ -91,14 +89,25 @@ public class Report {
 	 */
 	public static Report getReportEntriesPerWeek(final Set<Project> projects,
 			final LocalDate beginDate, final LocalDate endDate) {
-		List<HourEntry> hourEntries = Collections.emptyList();
-		if (projects.isEmpty()) {
-			hourEntries = new LinkedList<HourEntry>();
-		} else {
-			hourEntries = HourEntry.findAllForProjectsBetween(projects,
-					beginDate, endDate);
-		}
-		return new Report(hourEntries);
+		return createReportForProjectsBetween(projects, beginDate, endDate);
+	}
+
+	/**
+	 * Get a report for a table per project, per day
+	 * 
+	 * @param projects
+	 *            The projects for which the report must be created
+	 * @param beginDate
+	 *            The date form which the report is created
+	 * @param endDate
+	 *            The date till which the report is created (the entries on
+	 *            endDate will also be included)
+	 * @return A {@link Report}
+	 */
+	public static Report getReportEntriesTablePerProjectPerDay(
+			final Set<Project> projects, final LocalDate beginDate,
+			final LocalDate endDate) {
+		return createReportForProjectsBetween(projects, beginDate, endDate);
 	}
 
 	/**
@@ -122,6 +131,31 @@ public class Report {
 		} else {
 			hourEntries = HourEntry.findAllForUsersBetween(users, beginDate,
 					endDate);
+		}
+		return new Report(hourEntries);
+	}
+
+	/**
+	 * Creates a report for a set of projects between 2 dates.
+	 * 
+	 * @param projects
+	 *            The projects for which the report must be created
+	 * @param beginDate
+	 *            The date form which the report is created
+	 * @param endDate
+	 *            The date till which the report is created (the entries on
+	 *            endDate will also be included)
+	 * @return A {@link Report}
+	 */
+	private static Report createReportForProjectsBetween(
+			final Set<Project> projects, final LocalDate beginDate,
+			final LocalDate endDate) {
+		List<HourEntry> hourEntries = Collections.emptyList();
+		if (projects.isEmpty()) {
+			hourEntries = new LinkedList<HourEntry>();
+		} else {
+			hourEntries = HourEntry.findAllForProjectsBetween(projects,
+					beginDate, endDate);
 		}
 		return new Report(hourEntries);
 	}
@@ -188,7 +222,7 @@ public class Report {
 	}
 
 	/**
-	 * Get all {@link HourEntry}s where the user is equal to the provided user
+	 * Get all {@link HourEntry}s where its user is equal to the provided user
 	 * 
 	 * @param user
 	 *            The user to which the entry's user must be equal to
@@ -201,7 +235,21 @@ public class Report {
 	}
 
 	/**
-	 * Get all {@link HourEntry}s where the weekNumber is equal to the provided
+	 * Get all {@link HourEntry}s where its project is equal to the provided
+	 * project
+	 * 
+	 * @param user
+	 *            The user to which the entry's user must be equal to
+	 * @return List of {@link HourEntry}s
+	 */
+	public List<HourEntry> getHourEntries(final Project project) {
+		final Collection<HourEntry> filtered = Collections2.filter(
+				this.hourEntries, HourEntryPredicates.equalProject(project));
+		return new LinkedList<HourEntry>(filtered);
+	}
+
+	/**
+	 * Get all {@link HourEntry}s where its weekNumber is equal to the provided
 	 * weekNumber
 	 * 
 	 * @param weekNumber
@@ -217,7 +265,20 @@ public class Report {
 	}
 
 	/**
-	 * Get all {@link HourEntry}s where the project and weekNumber are equal to
+	 * Get all {@link HourEntry}s where its date is equal to the provided day
+	 * 
+	 * @param day
+	 *            The day to which the entry's date must be equal to
+	 * @return List of {@link HourEntry}s
+	 */
+	public List<HourEntry> getHourEntries(final LocalDate day) {
+		final Collection<HourEntry> filtered = Collections2.filter(
+				this.hourEntries, HourEntryPredicates.equalDay(day));
+		return new LinkedList<HourEntry>(filtered);
+	}
+
+	/**
+	 * Get all {@link HourEntry}s where its project and weekNumber are equal to
 	 * the provided project and weekNumber
 	 * 
 	 * @param project
@@ -235,8 +296,16 @@ public class Report {
 		return new LinkedList<HourEntry>(filtered);
 	}
 
+	public List<HourEntry> getHourEntries(final Project project,
+			final LocalDate day) {
+		final Collection<HourEntry> filtered = Collections2.filter(
+				this.hourEntries,
+				HourEntryPredicates.equalProjectAndDay(project, day));
+		return new LinkedList<HourEntry>(filtered);
+	}
+
 	/**
-	 * Get all {@link HourEntry}s where the user and weekNumber are equal to the
+	 * Get all {@link HourEntry}s where its user and weekNumber are equal to the
 	 * provided user and weekNumber
 	 * 
 	 * @param user
@@ -282,6 +351,21 @@ public class Report {
 	}
 
 	/**
+	 * Get the total hours and minutes
+	 * 
+	 * @return A String with the total hours and minutes in the format 4h 25m
+	 */
+	public String getTotalHours() {
+		int hours = 0;
+		int minutes = 0;
+		for (HourEntry entry : hourEntries) {
+			hours += entry.hours;
+			minutes += entry.minutes;
+		}
+		return CalculationUtil.formatTotalHoursMinutes(hours, minutes);
+	}
+
+	/**
 	 * Get the total hours and minutes for a week
 	 * 
 	 * @param weekNumber
@@ -292,6 +376,57 @@ public class Report {
 		int hours = 0;
 		int minutes = 0;
 		for (HourEntry entry : getHourEntries(weekNumber)) {
+			hours += entry.hours;
+			minutes += entry.minutes;
+		}
+		return CalculationUtil.formatTotalHoursMinutes(hours, minutes);
+	}
+
+	/**
+	 * Get the total hours and minutes for a user in this report
+	 * 
+	 * @param user
+	 *            The user which totals must be calculated
+	 * @return A String with the total hours and minutes in the format 4h 25m
+	 */
+	public String getTotalHours(final User user) {
+		int hours = 0;
+		int minutes = 0;
+		for (HourEntry entry : getHourEntries(user)) {
+			hours += entry.hours;
+			minutes += entry.minutes;
+		}
+		return CalculationUtil.formatTotalHoursMinutes(hours, minutes);
+	}
+
+	/**
+	 * Get the total hours and minutes for a project
+	 * 
+	 * @param project
+	 *            The project which totals must be calculated
+	 * @return A String with the total hours and minutes in the format 4h 25m
+	 */
+	public String getTotalHours(final Project project) {
+		int hours = 0;
+		int minutes = 0;
+		for (HourEntry entry : getHourEntries(project)) {
+			hours += entry.hours;
+			minutes += entry.minutes;
+		}
+		return CalculationUtil.formatTotalHoursMinutes(hours, minutes);
+	}
+
+	/**
+	 * Get the total hours and minutes for a day
+	 * 
+	 * @param day
+	 *            The day which totals must be calculated
+	 * @return A String with the total hours and minutes in the format 4h 25m
+	 */
+	public String getTotalHours(final LocalDate day) {
+		int hours = 0;
+		int minutes = 0;
+		for (HourEntry entry : getHourEntries(day)) {
 			hours += entry.hours;
 			minutes += entry.minutes;
 		}
@@ -337,16 +472,18 @@ public class Report {
 	}
 
 	/**
-	 * Get the total hours and minutes for a user in this report
+	 * Get the total hours and minutes for a project for a day
 	 * 
-	 * @param user
-	 *            The user which totals must be calculated
+	 * @param project
+	 *            The project which totals must be calculated
+	 * @param day
+	 *            The day which totals must be calculated
 	 * @return A String with the total hours and minutes in the format 4h 25m
 	 */
-	public String getTotalHours(final User user) {
+	public String getTotalHours(final Project project, final LocalDate day) {
 		int hours = 0;
 		int minutes = 0;
-		for (HourEntry entry : getHourEntries(user)) {
+		for (HourEntry entry : getHourEntries(project, day)) {
 			hours += entry.hours;
 			minutes += entry.minutes;
 		}

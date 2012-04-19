@@ -8,6 +8,7 @@ import views.html.reports.entriesPerCustomerPerProjectPerWeek;
 import views.html.reports.assignmentTotalsPerUser;
 import views.html.reports.entriesPerWeek;
 import views.html.reports.entriesPerUserPerWeek;
+import views.html.reports.entriesTablePerProjectPerDay;
 import beans.ReportOptions;
 import datastructures.reports.Report;
 
@@ -100,6 +101,29 @@ public class Reports extends Controller {
 			report = Report.getReportEntriesPerWeek(options.getAllProjects(),
 					options.beginDate, options.endDate);
 			return ok(entriesPerWeek.render(optionsForm, report));
+		}
+	}
+
+	@Transactional(readOnly = true)
+	public static Result entriesTablePerProjectPerDay() {
+		final Report report;
+		final Form<ReportOptions> optionsForm = form(ReportOptions.class)
+				.bindFromRequest();
+
+		if (optionsForm.data().isEmpty()) { // New form
+			final Form<ReportOptions> newForm = form(ReportOptions.class);
+			report = Report.getEmptyReport();
+			return ok(entriesTablePerProjectPerDay.render(newForm, report));
+		} else if (optionsForm.hasErrors()) { // Submitted form with errors
+			report = Report.getEmptyReport();
+			return badRequest(entriesTablePerProjectPerDay.render(optionsForm,
+					report));
+		} else { // Submitted form without errors
+			final ReportOptions options = optionsForm.get();
+			report = Report.getReportEntriesTablePerProjectPerDay(
+					options.getAllProjects(), options.beginDate,
+					options.endDate);
+			return ok(entriesTablePerProjectPerDay.render(optionsForm, report));
 		}
 	}
 

@@ -1,0 +1,58 @@
+@(optionsForm: Form[beans.ReportOptions], report: datastructures.reports.Report)
+
+@import utils.DateUtil
+@import reports.forms.datesCustomerProjectForm
+
+@script = {
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/report-options.js")"></script>
+}
+
+@main("Report: Table per project, per day", script) {
+
+	@datesCustomerProjectForm(optionsForm, routes.Reports.entriesTablePerProjectPerDay())
+	
+	@if(!optionsForm.data.isEmpty) {
+		@if(report.getHourEntries.isEmpty) {
+		<div class="alert-message warning">
+	    	No information available
+	    </div>
+		} else {
+		<div class="report">
+			<table class="entries-table entries-table-per-project-per-day">
+				<thead>
+					<tr>
+						<th>Project</th>
+						@for(day <- DateUtil.getDays(optionsForm.get.beginDate, optionsForm.get.endDate)) {
+						<th>@DateUtil.formatDate(day, "d-M")</th>
+						}
+						<th>Totals</th>
+					</tr>
+				</thead>
+				<tbody>
+					@for(project <- report.getProjects) {
+					<tr>
+						<td>@project.name</td>
+						@for(day <- DateUtil.getDays(optionsForm.get.beginDate, optionsForm.get.endDate)) {
+						<td>@report.getTotalHours(project, day)</td>
+						}
+						<td>@report.getTotalHours(project)</td>
+					</tr>
+					}
+				</tbody>
+				<tfoot>
+					<tr>
+						<td>Totals</td>
+						@for(day <- DateUtil.getDays(optionsForm.get.beginDate, optionsForm.get.endDate)) {
+						<td>@report.getTotalHours(day)</td>
+						}
+						<td>@report.getTotalHours</td>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+		}
+	}
+
+} {
+	@sidebar.adminMenu()
+}

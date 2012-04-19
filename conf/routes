@@ -67,10 +67,11 @@ GET		/user/:id/hourentries/calendar	controllers.HourEntries.calendarOverview(id:
 GET		/tags						controllers.Tags.find()
 
 # Reports
-GET		/report/entries-per-customer-per-project-per-week			controllers.Reports.entriesPerCustomerPerProjectPerWeek()
+GET		/report/entries-per-customer-per-project-per-week	controllers.Reports.entriesPerCustomerPerProjectPerWeek()
 GET		/report/entries-per-user-per-week	controllers.Reports.entriesPerUserPerWeek()
 GET		/report/assignment-totals-per-user	controllers.Reports.assignmentTotalsPerUser()
 GET		/report/entries-per-week			controllers.Reports.entriesPerWeek()
+GET		/report/entries-table-per-project-per-day	controllers.Reports.entriesTablePerProjectPerDay()
 
 # Javascript routing
 GET     /assets/javascripts/routes	controllers.Application.javascriptRoutes()

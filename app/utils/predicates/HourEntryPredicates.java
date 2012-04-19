@@ -4,6 +4,8 @@ import models.HourEntry;
 import models.Project;
 import models.User;
 
+import org.joda.time.LocalDate;
+
 import com.google.common.base.Predicate;
 
 public class HourEntryPredicates {
@@ -37,6 +39,35 @@ public class HourEntryPredicates {
 	}
 
 	/**
+	 * A predicate that checks if the project of a {@link HourEntry} is equal to
+	 * the provided project
+	 * 
+	 * @param project
+	 *            Project to which the {@link HourEntry}'s project must be equal
+	 *            to
+	 * @return A {@link Predicate}
+	 */
+	public static Predicate<HourEntry> equalProject(final Project project) {
+		return new EqualProject(project);
+	}
+
+	/**
+	 * A predicate that checks if the project of a {@link HourEntry} is equal to
+	 * the provided project
+	 */
+	private static class EqualProject implements Predicate<HourEntry> {
+		private final Project project;
+
+		private EqualProject(final Project project) {
+			this.project = project;
+		}
+
+		public boolean apply(final HourEntry entry) {
+			return entry.assignment.project == project;
+		}
+	}
+
+	/**
 	 * A predicate that checks if the week number of a {@link HourEntry} is
 	 * equal to the provided week number
 	 * 
@@ -62,6 +93,34 @@ public class HourEntryPredicates {
 
 		public boolean apply(final HourEntry entry) {
 			return entry.date.getWeekOfWeekyear() == weekNumber;
+		}
+	}
+
+	/**
+	 * A predicate that checks if the date of a {@link HourEntry} is equal to
+	 * the provided day
+	 * 
+	 * @param day
+	 *            Day to which the {@link HourEntry}'s date must be equal to
+	 * @return A {@link Predicate}
+	 */
+	public static Predicate<HourEntry> equalDay(final LocalDate day) {
+		return new EqualDay(day);
+	}
+
+	/**
+	 * A predicate that checks if the date of a {@link HourEntry} is equal to
+	 * the provided day
+	 */
+	private static class EqualDay implements Predicate<HourEntry> {
+		private final LocalDate day;
+
+		private EqualDay(final LocalDate day) {
+			this.day = day;
+		}
+
+		public boolean apply(final HourEntry entry) {
+			return entry.date.equals(day);
 		}
 	}
 
@@ -100,6 +159,41 @@ public class HourEntryPredicates {
 		public boolean apply(final HourEntry entry) {
 			return entry.assignment.project == project
 					&& entry.date.getWeekOfWeekyear() == weekNumber;
+		}
+	}
+
+	/**
+	 * A predicate that checks if the project and the date of a
+	 * {@link HourEntry} are equal to the provided project and day
+	 * 
+	 * @param project
+	 *            Project to which the {@link HourEntry}'s project must be equal
+	 *            to
+	 * @param day
+	 *            Date to which the {@link HourEntry}'s date must be equal to
+	 * @return A {@link Predicate}
+	 */
+	public static Predicate<HourEntry> equalProjectAndDay(
+			final Project project, final LocalDate day) {
+		return new EqualProjectAndDay(project, day);
+	}
+
+	/**
+	 * A predicate that checks if the project and the date of a
+	 * {@link HourEntry} are equal to the provided project and day
+	 */
+	private static class EqualProjectAndDay implements Predicate<HourEntry> {
+		private final Project project;
+		private LocalDate day;
+
+		private EqualProjectAndDay(final Project project, final LocalDate day) {
+			this.project = project;
+			this.day = day;
+		}
+
+		public boolean apply(final HourEntry entry) {
+			return entry.assignment.project == project
+					&& entry.date.equals(day);
 		}
 	}
 

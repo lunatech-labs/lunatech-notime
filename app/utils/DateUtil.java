@@ -157,4 +157,24 @@ public class DateUtil {
 		return weekNumbers;
 	}
 
+	/**
+	 * Get the days between 2 dates
+	 * 
+	 * @param beginDate
+	 *            The date of the first day
+	 * @param endDate
+	 *            The date of the last day (this day is also included)
+	 * @return A List of {@link LocalDate}s
+	 */
+	public static List<LocalDate> getDays(final LocalDate beginDate,
+			final LocalDate endDate) {
+		final List<LocalDate> days = new LinkedList<LocalDate>();
+		LocalDate indexDate = beginDate;
+		while (indexDate.isBefore(endDate.plusDays(1))) {
+			days.add(indexDate);
+			indexDate = indexDate.plusDays(1);
+		}
+		return days;
+	}
+
 }
