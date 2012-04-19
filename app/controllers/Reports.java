@@ -7,6 +7,7 @@ import play.mvc.Result;
 import views.html.reports.entriesPerCustomerPerProjectPerWeek;
 import views.html.reports.assignmentTotalsPerUser;
 import views.html.reports.entriesPerWeek;
+import views.html.reports.entriesPerUserPerWeek;
 import beans.ReportOptions;
 import datastructures.reports.Report;
 
@@ -34,6 +35,28 @@ public class Reports extends Controller {
 					options.endDate);
 			return ok(entriesPerCustomerPerProjectPerWeek.render(optionsForm,
 					report));
+		}
+	}
+
+	@Transactional(readOnly = true)
+	public static Result entriesPerUserPerWeek() {
+		final Report report;
+		final Form<ReportOptions> optionsForm = form(ReportOptions.class)
+				.bindFromRequest();
+
+		if (optionsForm.data().isEmpty()) { // New form
+			final Form<ReportOptions> newForm = form(ReportOptions.class);
+			report = Report.getEmptyReport();
+			return ok(entriesPerUserPerWeek.render(newForm, report));
+		} else if (optionsForm.hasErrors()) { // Submitted form with errors
+			report = Report.getEmptyReport();
+			return badRequest(entriesPerUserPerWeek.render(optionsForm, report));
+		} else { // Submitted form without errors
+			final ReportOptions options = optionsForm.get();
+			report = Report.getReportEntriesPerUserPerWeek(
+					options.getAllProjects(), options.beginDate,
+					options.endDate);
+			return ok(entriesPerUserPerWeek.render(optionsForm, report));
 		}
 	}
 

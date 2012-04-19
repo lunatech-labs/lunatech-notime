@@ -103,4 +103,41 @@ public class HourEntryPredicates {
 		}
 	}
 
+	/**
+	 * A predicate that checks if the user and the week number of a
+	 * {@link HourEntry} are equal to the provided user and week number
+	 * 
+	 * @param user
+	 *            User to which the {@link HourEntry}'s user must be equal to
+	 * @param weekNumber
+	 *            Week number to which the {@link HourEntry}'s week number must
+	 *            be equal to
+	 * @return A {@link Predicate}
+	 * @param weekNumber
+	 * @return
+	 */
+	public static Predicate<HourEntry> equalUserAndWeekNumber(final User user,
+			final int weekNumber) {
+		return new EqualUserAndWeekNumber(user, weekNumber);
+	}
+
+	/**
+	 * A predicate that checks if the user and the week number of a
+	 * {@link HourEntry} are equal to the provided user and week number
+	 */
+	private static class EqualUserAndWeekNumber implements Predicate<HourEntry> {
+		private final User user;
+		private final int weekNumber;
+
+		private EqualUserAndWeekNumber(final User user, final int weekNumber) {
+			this.user = user;
+			this.weekNumber = weekNumber;
+		}
+
+		public boolean apply(final HourEntry entry) {
+			return entry.assignment.user == user
+					&& entry.date.getWeekOfWeekyear() == weekNumber;
+		}
+	}
+
 }

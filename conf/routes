@@ -68,6 +68,7 @@ GET		/tags						controllers.Tags.find()
 
 # Reports
 GET		/report/entries-per-customer-per-project-per-week			controllers.Reports.entriesPerCustomerPerProjectPerWeek()
+GET		/report/entries-per-user-per-week	controllers.Reports.entriesPerUserPerWeek()
 GET		/report/assignment-totals-per-user	controllers.Reports.assignmentTotalsPerUser()
 GET		/report/entries-per-week			controllers.Reports.entriesPerWeek()
 
