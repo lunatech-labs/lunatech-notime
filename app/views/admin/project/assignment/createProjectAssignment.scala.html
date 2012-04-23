@@ -15,11 +15,11 @@
     	
     	@select(assignmentForm("user.id"), options(User.options), '_label -> "Project member")
     	
-    	@inputDate(assignmentForm("startDate"))
+    	@inputDate(assignmentForm("beginDate"), '_label -> "Begin date")
     	
-    	@inputDate(assignmentForm("endDate"))
+    	@inputDate(assignmentForm("endDate"), '_label -> "End date")
     	
-    	@inputText(assignmentForm("hourlyRate"))
+    	@inputText(assignmentForm("hourlyRate"), '_label -> "Hourly rate")
 	
 		<input type="submit" value="Submit">
 		<a href="@routes.Projects.all()">Cancel</a>

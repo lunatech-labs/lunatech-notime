@@ -35,7 +35,7 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	public User user;
 
 	@Type(type = "org.joda.time.contrib.hibernate.PersistentLocalDate")
-	public LocalDate startDate;
+	public LocalDate beginDate;
 
 	@Type(type = "org.joda.time.contrib.hibernate.PersistentLocalDate")
 	public LocalDate endDate;
@@ -252,7 +252,7 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	}
 
 	public static String validateDates(ProjectAssignment assignment) {
-		if (assignment.startDate.compareTo(assignment.endDate) > 0)
+		if (assignment.beginDate.compareTo(assignment.endDate) > 0)
 			return "Start date is after the End date";
 		else
 			return new String();
@@ -261,7 +261,7 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	public static boolean isDateInAssignmentRange(LocalDate date,
 			Long assignmentId) {
 		ProjectAssignment assignment = ProjectAssignment.findById(assignmentId);
-		return DateUtil.between(date, assignment.startDate,
+		return DateUtil.between(date, assignment.beginDate,
 				assignment.endDate.plusDays(1));
 	}
 

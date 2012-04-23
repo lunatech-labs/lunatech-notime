@@ -18,10 +18,10 @@ insert into project (id, name, code, description, type, customer_id, customercon
 insert into project (id, name, code, description, type, customer_id, customercontact, projectmanager_id, defaultproject) values (3, 'Appie', 'APP', '', 0, 3, '', 4, 0);
 insert into project (id, name, code, description, type, customer_id, customercontact, projectmanager_id, defaultproject) values (4, 'LOSS Timesheet', 'LOSS', '', 0, 1, '', 2, 0);
 
-insert into projectassignment (id, project_id, user_id, startdate, enddate, hourlyrate, starred) values (1, 1, 1, '2012-02-01', '2012-05-30', '35.50', 0);
-insert into projectassignment (id, project_id, user_id, startdate, enddate, hourlyrate, starred) values (2, 1, 3, '2012-02-01', '2012-05-30', '47.50', 0);
-insert into projectassignment (id, project_id, user_id, startdate, enddate, hourlyrate, starred) values (3, 1, 4, '2012-02-01', '2012-05-30', '56.45', 0);
-insert into projectassignment (id, project_id, user_id, startdate, enddate, hourlyrate, starred) values (4, 3, 1, '2012-02-01', '2012-05-30', '54.50', 0);
+insert into projectassignment (id, project_id, user_id, begindate, enddate, hourlyrate, starred) values (1, 1, 1, '2012-02-01', '2012-05-30', '35.50', 0);
+insert into projectassignment (id, project_id, user_id, begindate, enddate, hourlyrate, starred) values (2, 1, 3, '2012-02-01', '2012-05-30', '47.50', 0);
+insert into projectassignment (id, project_id, user_id, begindate, enddate, hourlyrate, starred) values (3, 1, 4, '2012-02-01', '2012-05-30', '56.45', 0);
+insert into projectassignment (id, project_id, user_id, begindate, enddate, hourlyrate, starred) values (4, 3, 1, '2012-02-01', '2012-05-30', '54.50', 0);
 
 insert into hourentry (id, assignment_id, date, hours, minutes, billable, rate) values (1, 1, '2012-04-09', 7, 40, 1, 100);
 insert into hourentry (id, assignment_id, date, hours, minutes, billable, rate) values (2, 1, '2012-04-10', 8, 0, 1, 100);
