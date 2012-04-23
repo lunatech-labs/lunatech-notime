@@ -40,7 +40,7 @@
 		<div class="users">
 
 			@repeat(optionsForm("users"), min = 0) { user =>
-				@userField(optionsForm(user.name + ".id"))
+				@userField(optionsForm(user("id").name))
 			}
             
 			@**
@@ -62,7 +62,7 @@
 		<div class="projects">
 
 			@repeat(optionsForm("projects"), min = 0) { project =>
-				@projectField(optionsForm(project.name + ".id"))
+				@projectField(optionsForm(project("id").name))
 			}
             
 			@**

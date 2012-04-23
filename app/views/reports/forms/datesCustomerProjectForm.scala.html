@@ -34,7 +34,7 @@
 	<div class="customers">
 
 		@repeat(optionsForm("customers"), min = 0) { customer =>
-			@customerField(optionsForm(customer.name + ".id"))
+			@customerField(optionsForm(customer("id").name))
 		}
            
 		@**
@@ -46,17 +46,17 @@
 		)
 
 		<div class="clearfix">
-               <div class="input">
-                   <a class="addCustomer btn">Add a customer</a>
-               </div>
-           </div>
+			<div class="input">
+				<a class="addCustomer btn">Add a customer</a>
+			</div>
+		</div>
            
 	</div>
 
 	<div class="projects">
 
 		@repeat(optionsForm("projects"), min = 0) { project =>
-			@projectField(optionsForm(project.name + ".id"))
+			@projectField(optionsForm(project("id").name))
 		}
            
 		@**

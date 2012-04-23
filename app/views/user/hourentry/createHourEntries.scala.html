@@ -7,16 +7,16 @@
 	<div class="@className">
 		@select(form(field.name + ".assignment.id"), options(ProjectAssignment.optionsFor(userId)), '_label -> "Project")
 
-		@inputDate(form(field.name + ".date"), '_label -> "Date")
+		@inputDate(form(field("date").name), '_label -> "Date")
 		
-		@inputText(form(field.name + ".hours"), '_label -> "Hours")
+		@inputText(form(field("hours").name), '_label -> "Hours")
 		
-		@inputText(form(field.name + ".minutes"), '_label -> "Minutes")
+		@inputText(form(field("minutes").name), '_label -> "Minutes")
 		
 		<div class="clearfix" id="tags_string_field">
 			<label for="tags_string">Tags</label>
 			<div class="input">
-				<input type="text" class="autocomplete" name="@form(field.name + ".tagsString").name" value="@form(field.name + ".tagsString").value" data-url="@routes.Tags.find">
+				<input type="text" class="autocomplete" name="@form(field("tagsString").name).name" value="@form(field("tagsString").name).value" data-url="@routes.Tags.find">
 				<span class="help-block">Please use the same tags for the same type of work. So do not use 'test' and 'testing'</span>
 			</div>
 		</div>
@@ -27,10 +27,10 @@
 }
 
 @script = {
-	<script type="text/javascript" src="@routes.Assets.at("javascripts/multipleHourEntries.js")"></script>
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/multiple-hour-entries.js")"></script>
 }
 
-@main("Enter hours", script = script) {
+@main("Enter hours", script) {
 	
 	@if(entriesForm.hasGlobalErrors()) {
     	<div class="alert-message error">

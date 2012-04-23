@@ -15,10 +15,10 @@
 }
 
 @script = {
-	<script type="text/javascript" src="@routes.Assets.at("javascripts/multipleCustomerManagers.js")"></script>
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/multiple-customer-managers.js")"></script>
 }
 
-@main("Edit customer", script = script) {
+@main("Edit customer", script) {
 	
 	@if(flash.containsKey("error")) {
     	<div class="alert-message error">
@@ -52,8 +52,8 @@
 				</div>
 			</div>
 	
-			<input type="submit" value="Submit">
-			<a href="@routes.Customers.all()">Cancel</a>
+			<input class="btn btn-primary" type="submit" value="Submit">
+			<a class="btn btn-danger" href="@routes.Customers.all()">Cancel</a>
 		</div>
 	}
 	
