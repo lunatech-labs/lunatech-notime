@@ -2,7 +2,6 @@ package utils.predicates;
 
 import models.Customer;
 import models.Project;
-import beans.HourEntryInWeek;
 
 import com.google.common.base.Predicate;
 
