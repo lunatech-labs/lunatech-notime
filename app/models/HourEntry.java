@@ -434,10 +434,7 @@ public class HourEntry {
 	 * @return String of related tags, delimited by a semicolon
 	 */
 	public String enteredTagsString() {
-		String tagsString = new String();
-		for (Tag tag : tags)
-			tagsString += tag.tag + "; ";
-		return tagsString;
+		return Tag.tagsToString(tags);
 	}
 
 }

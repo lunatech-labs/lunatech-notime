@@ -3,7 +3,22 @@
 @import helper._
 @import helper.twitterBootstrap._
 
-@main("Project") {
+@tagField(field: Field, className: String = "tag") = {
+    @input(field, '_label -> "Required tag", '_class -> className) { (id, name, value, _) =>
+        <select id="@id" name="@name">
+        @Tag.options.map { v =>
+            <option value="@v._1" @(if(value == Some(v._1)) "selected" else "")>@v._2</option>
+        }
+    	</select>
+        <a class="removeTag btn btn-danger">Remove</a>
+    }
+}
+
+@script = {
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/project.js")"></script>
+}
+
+@main("Project", script) {
 	
 	@if(flash.containsKey("error")) {
     	<div class="alert-message error">
@@ -11,7 +26,7 @@
         </div>
     }
     
-    @form(routes.Projects.create()) {
+    @form(routes.Projects.create(), 'id -> "project-form") {
     	
     	@inputText(projectForm("name"), '_label -> "Name")
     	
@@ -29,8 +44,30 @@
 
     	@checkbox(projectForm("defaultProject"), '_label -> "Default Project")
     	
-    	<input type="submit" value="Submit">
-    	<a href="@routes.Projects.all()">Cancel</a>
+    	<div class="tags">
+
+    		@repeat(projectForm("requiredTags"), min = 0) { tag =>
+    			@tagField(projectForm(tag("id").name))
+    		}
+
+    		@**
+			* Keep an hidden block that will be used as template for Javascript copy code
+			**@
+			@tagField(
+				projectForm("requiredTags[x].id"),
+				className = "tag-template"
+			)
+
+			<div class="clearfix">
+				<div class="input">
+					<a class="addTag btn">Add a required tag</a>
+				</div>
+			</div>
+
+    	</div>
+
+    	<input class="btn btn-primary" type="submit" value="Submit">
+    	<a class="btn btn-danger" href="@routes.Projects.all()">Cancel</a>
     	
     }
 } {

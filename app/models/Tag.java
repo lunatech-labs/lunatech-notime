@@ -1,6 +1,8 @@
 package models;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -114,8 +116,34 @@ public class Tag {
 		CriteriaQuery<String> query = cb.createQuery(String.class);
 		Root<Tag> tag = query.from(Tag.class);
 		query.select(tag.get(Tag_.tag));
-		query.where(cb.like(cb.upper(tag.get(Tag_.tag)), "%" + term.toUpperCase() + "%"));
+		query.where(cb.like(cb.upper(tag.get(Tag_.tag)),
+				"%" + term.toUpperCase() + "%"));
 		return JPA.em().createQuery(query).getResultList();
 	}
 
+	/**
+	 * All existing tags
+	 * 
+	 * @return A Map with as key the tag's id and as value the tag's name
+	 */
+	public static Map<String, String> options() {
+		LinkedHashMap<String, String> options = new LinkedHashMap<String, String>();
+		for (Tag t : findAll()) {
+			options.put(t.id.toString(), t.tag);
+		}
+		return options;
+	}
+
+	/**
+	 * Creates a String of the rpovided tags, delimited by a semicolon
+	 * 
+	 * @param tags A List of {@link Tag}s
+	 * @return String of tags, delimited by a semicolon
+	 */
+	public static String tagsToString(List<Tag> tags) {
+		String tagsString = new String();
+		for (Tag tag : tags)
+			tagsString += tag.tag + "; ";
+		return tagsString;
+	}
 }

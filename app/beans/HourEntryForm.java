@@ -20,7 +20,7 @@ import play.data.validation.Constraints.Max;
 import play.data.validation.Constraints.Required;
 
 public class HourEntryForm {
-	
+
 	@Id
 	@GeneratedValue
 	public Long id;
@@ -48,10 +48,10 @@ public class HourEntryForm {
 
 	@Min(0)
 	public Integer rate;
-	
+
 	public HourEntryForm() {
 	}
-	
+
 	public HourEntryForm(HourEntry entry) {
 		assignment = entry.assignment;
 		date = entry.date;
@@ -61,7 +61,7 @@ public class HourEntryForm {
 		billable = entry.billable;
 		rate = entry.rate;
 	}
-	
+
 	public List<Tag> getTags() {
 		if (!tagsString.isEmpty()) {
 			List<Tag> tags = new LinkedList<Tag>();
@@ -73,37 +73,50 @@ public class HourEntryForm {
 		return Collections.emptyList();
 	}
 	
+	public List<Tag> getRequiredTags() {
+		return ProjectAssignment.findById(assignment.id).project.requiredTags;
+	}
+
 	public HourEntry toHourEntry() {
 		return new HourEntry(this);
 	}
-	
+
 	public String validate() {
 		if (!isValidAssignment())
 			return "Project is not valid!";
 		if (!isDateInRange())
 			return "Date is not in assigned range!";
-//		if(!containsRequiredTags())
-//			return "Doesn't contain any of the required tags";
+		if (!containsRequiredTags())
+			return "Doesn't contain any of the required tags (" + Tag.tagsToString(getRequiredTags()) + ")";
 		return null;
 	}
 
 	public boolean isValidAssignment() {
 		return assignment.id != null;
 	}
-	
+
 	public boolean isDateInRange() {
 		return ProjectAssignment.isDateInAssignmentRange(date, assignment.id);
 	}
 
 	public boolean containsRequiredTags() {
-		if (assignment.project.requiredTags == null) {
-			return true;
+		List<Tag> requiredTags = getRequiredTags();
+		if (requiredTags == null || requiredTags.isEmpty())
+			return true; // No required tags, so entered tags are valid
+
+		if (tagsString == null)
+			return false; // There are required tags, but no tags are submitted
+
+		int occurences = 0;
+		for (Tag tag : getTags()) {
+			if (requiredTags.contains(tag))
+				occurences++;
 		}
-		if (tagsString == null) {
-			return false;
-		}
-		return false;
-			
+
+		if (occurences == 0)
+			return false; // None of the submitted tag(s) matched the required tag(s)
+
+		return true;
 	}
 
 }
