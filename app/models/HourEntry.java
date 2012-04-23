@@ -26,6 +26,7 @@ import org.joda.time.LocalDate;
 import play.data.validation.Constraints.Max;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
+import beans.HourEntryForm;
 import datastructures.TotalsAssignment;
 import datastructures.TotalsDay;
 
@@ -62,40 +63,37 @@ public class HourEntry {
 	@Min(0)
 	public Integer rate;
 
+	public HourEntry() {
+	}
+
+	public HourEntry(HourEntryForm form) {
+		assignment = form.assignment;
+		date = form.date;
+		hours = form.hours;
+		minutes = form.minutes;
+		tags = form.getTags();
+		billable = form.billable;
+		rate = form.rate;
+	}
+
 	/**
-	 * Sets the tags and inserts this hour entry
+	 * Inserts this hour entry
 	 * 
-	 * @param tagsString
-	 *            A String of tags, delimited by a semicolon
 	 */
-	public void save(String tagsString) {
-		if (!tagsString.isEmpty()) {
-			this.tags = new ArrayList<Tag>();
-			String tags[] = tagsString.split(";");
-			for (int i = 0; i < tags.length; i++)
-				this.tags.add(Tag.findOrCreate(tags[i]));
-		}
+	public void save() {
 		billable = true;
 		rate = 100;
 		JPA.em().persist(this);
 	}
 
 	/**
-	 * Sets the tags and updates this hour entry
+	 * Updates this hour entry
 	 * 
 	 * @param entryId
 	 *            The id of the hour entry that is going to be updated
-	 * @param tagsString
-	 *            A String of tags, delimited by a semicolon
 	 */
-	public void update(Long entryId, String tagsString) {
+	public void update(Long entryId) {
 		this.id = entryId;
-		this.tags = new ArrayList<Tag>();
-		if (!tagsString.isEmpty()) {
-			String tags[] = tagsString.split(";");
-			for (int i = 0; i < tags.length; i++)
-				this.tags.add(Tag.findOrCreate(tags[i]));
-		}
 		JPA.em().merge(this);
 	}
 
@@ -440,23 +438,6 @@ public class HourEntry {
 		for (Tag tag : tags)
 			tagsString += tag.tag + "; ";
 		return tagsString;
-	}
-
-	// VALIDATION METHODS NEED TO BE REPLACED BY ANNOTATIONS OR BE REWRITTEN
-	public String validate() {
-		if (!isValidAssignment())
-			return "Project is not valid!";
-		if (!isDateInRange())
-			return "Date is not in assigned range!";
-		return null;
-	}
-
-	public boolean isDateInRange() {
-		return ProjectAssignment.isDateInAssignmentRange(date, assignment.id);
-	}
-
-	public boolean isValidAssignment() {
-		return assignment.id != null;
 	}
 
 }

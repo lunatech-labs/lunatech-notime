@@ -18,6 +18,7 @@ import views.html.user.hourentry.createHourEntryForDay;
 import views.html.user.hourentry.editHourEntry;
 import views.html.user.hourentry.hourEntriesCalendar;
 import views.html.user.hourentry.hourEntriesTable;
+import beans.HourEntryForm;
 import beans.MultipleHourEntries;
 import datastructures.TotalsDay;
 import datastructures.overview.calendar.CalendarMonth;
@@ -27,7 +28,7 @@ public class HourEntries extends Controller {
 
 	@Transactional(readOnly = true)
 	public static Result add(Long userId) {
-		Form<HourEntry> newForm = form(HourEntry.class);
+		Form<HourEntryForm> newForm = form(HourEntryForm.class);
 		List<HourEntry> entries = HourEntry.findAllForUserForDay(userId,
 				new LocalDate());
 		return ok(createHourEntry.render(userId, newForm, entries));
@@ -35,7 +36,8 @@ public class HourEntries extends Controller {
 
 	@Transactional
 	public static Result create(Long userId) {
-		Form<HourEntry> filledForm = form(HourEntry.class).bindFromRequest();
+		Form<HourEntryForm> filledForm = form(HourEntryForm.class)
+				.bindFromRequest();
 
 		List<HourEntry> entries = HourEntry.findAllForUserForDay(userId,
 				new LocalDate());
@@ -44,18 +46,19 @@ public class HourEntries extends Controller {
 			return badRequest(createHourEntry.render(userId, filledForm,
 					entries));
 
-		String tagsString = filledForm.field("tagsString").value();
-		filledForm.get().save(tagsString);
+		filledForm.get().toHourEntry().save();
 		return redirect(routes.HourEntries.addForDay(userId,
 				filledForm.get().date));
 	}
 
 	@Transactional(readOnly = true)
 	public static Result addForDay(Long userId, LocalDate date) {
-		HourEntry defaultValues = new HourEntry();
-		defaultValues.hours = 0;
-		defaultValues.minutes = 0;
-		Form<HourEntry> newForm = form(HourEntry.class).fill(defaultValues);
+		// HourEntryForm defaultValues = new HourEntryForm();
+		// defaultValues.hours = 0;
+		// defaultValues.minutes = 0;
+		// Form<HourEntryForm> newForm =
+		// form(HourEntryForm.class).fill(defaultValues);
+		Form<HourEntryForm> newForm = form(HourEntryForm.class);
 
 		List<HourEntry> entries = HourEntry.findAllForUserForDay(userId, date);
 		TotalsDay totalsToday = HourEntry.findTotalsForUserForDay(userId, date);
@@ -66,7 +69,8 @@ public class HourEntries extends Controller {
 
 	@Transactional
 	public static Result createForDay(Long userId, LocalDate date) {
-		Form<HourEntry> filledForm = form(HourEntry.class).bindFromRequest();
+		Form<HourEntryForm> filledForm = form(HourEntryForm.class)
+				.bindFromRequest();
 
 		List<HourEntry> entries = HourEntry.findAllForUserForDay(userId, date);
 		TotalsDay totalsToday = HourEntry.findTotalsForUserForDay(userId, date);
@@ -75,8 +79,7 @@ public class HourEntries extends Controller {
 			return badRequest(createHourEntryForDay.render(userId, filledForm,
 					date, entries, totalsToday));
 
-		String tagsString = filledForm.field("tagsString").value();
-		filledForm.get().save(tagsString);
+		filledForm.get().toHourEntry().save();
 		return redirect(routes.HourEntries.addForDay(userId, date));
 	}
 
@@ -96,10 +99,8 @@ public class HourEntries extends Controller {
 		}
 
 		MultipleHourEntries entries = filledForm.get();
-		for (int i = 0; i < entries.hourEntries.size(); i++) {
-			String tagsString = filledForm.field(
-					"hourEntries[" + i + "].tagsString").value();
-			entries.hourEntries.get(i).save(tagsString);
+		for (HourEntryForm entryForm : entries.hourEntryForms) {
+			entryForm.toHourEntry().save();
 		}
 
 		return redirect(routes.HourEntries.calendarOverview(userId));
@@ -128,20 +129,20 @@ public class HourEntries extends Controller {
 
 	@Transactional(readOnly = true)
 	public static Result edit(Long userId, Long entryId) {
-		Form<HourEntry> newForm = form(HourEntry.class).fill(
-				HourEntry.findById(entryId));
+		Form<HourEntryForm> newForm = form(HourEntryForm.class).fill(
+				new HourEntryForm(HourEntry.findById(entryId)));
 		return ok(editHourEntry.render(userId, entryId, newForm));
 	}
 
 	@Transactional
 	public static Result update(Long userId, Long entryId) {
-		Form<HourEntry> filledForm = form(HourEntry.class).bindFromRequest();
+		Form<HourEntryForm> filledForm = form(HourEntryForm.class)
+				.bindFromRequest();
 
 		if (filledForm.hasErrors())
 			return badRequest(editHourEntry.render(userId, entryId, filledForm));
 
-		String tagsString = filledForm.field("tagsString").value();
-		filledForm.get().update(entryId, tagsString);
+		filledForm.get().toHourEntry().update(entryId);
 		return redirect(routes.HourEntries.addForDay(userId,
 				filledForm.get().date));
 	}

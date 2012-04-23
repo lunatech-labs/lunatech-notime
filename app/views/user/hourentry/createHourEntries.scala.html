@@ -42,11 +42,11 @@
     
     	<div class="entries">
     	    
-    	    @repeat(entriesForm("hourEntries"), min = 1) { entry =>
+    	    @repeat(entriesForm("hourEntryForms"), min = 1) { entry =>
 				@entryField(entriesForm, entry)
 			}
     	    
-			@entryField(entriesForm, entriesForm("hourEntries[x]"), "entry_template")
+			@entryField(entriesForm, entriesForm("hourEntryForms[x]"), "entry_template")
 	    	    
     	    <div class="input">
     	    	<a class="addEntry btn">Add another entry</a>

@@ -278,7 +278,7 @@ public class Week {
 						entry.setHoursAndMinutesFromNullToZero();
 						// Validate entry
 						if (entry.isValid()) {
-							entry.toHourEntry().save("");
+							entry.toHourEntry().save();
 						}
 					} else {
 						iterator.remove();
@@ -290,7 +290,7 @@ public class Week {
 						entry.setHoursAndMinutesFromNullToZero();
 						// Validate entry
 						if (entry.isValid()) {
-							entry.toHourEntry().update(entry.id, "");
+							entry.toHourEntry().update(entry.id);
 						}
 					} else {
 						// Check if user is allowed to delete this entry

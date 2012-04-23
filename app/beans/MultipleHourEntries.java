@@ -12,15 +12,15 @@ import models.HourEntry;
 public class MultipleHourEntries {
 
 	@Valid
-	public List<HourEntry> hourEntries;
+	public List<HourEntryForm> hourEntryForms;
 
 	public String validate() {
-		if (hourEntries == null) {
+		if (hourEntryForms == null) {
 			return "No entries submitted";
 		} else {
-			for (HourEntry entry : hourEntries) {
-				if (entry.validate() != null)
-					return entry.validate();
+			for (HourEntryForm entryForm : hourEntryForms) {
+				if (entryForm.validate() != null)
+					return entryForm.validate();
 			}
 			return null;
 		}		

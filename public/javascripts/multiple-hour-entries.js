@@ -23,7 +23,7 @@ require(["jquery-1.7.1.min"], function() {
         var renumberEntries = function(entries) {
 			$( ".entry" , entries).each(function(i) {
 				$( "input:not(.exclude-from-renumbering), select" , this).each(function() {
-					$(this).attr( "name" , $(this).attr( "name" ).replace(/hourEntries\[.+\]/g, 'hourEntries[' + i + ']'))	
+					$(this).attr( "name" , $(this).attr( "name" ).replace(/hourEntryForms\[.+\]/g, 'hourEntryForms[' + i + ']'))
 				})
 			});
 		}
