@@ -68,10 +68,10 @@ insert into hourentry_tag (hourentry_id, tag_id) values (11, 7);
 
 # --- !Downs
 
+delete from hourentry_tag;
 delete from hourentry;
 delete from projectassignment;
 delete from project;
 delete from customer;
 delete from user;
 delete from tag;
-delete from hourentry_tag;
