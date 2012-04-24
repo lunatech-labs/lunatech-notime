@@ -150,6 +150,28 @@ public class HourEntry {
 	}
 
 	/**
+	 * Find all hour entries for a user project assignment
+	 * 
+	 * @param assignmentId
+	 *            The id of the @{link ProjectAssignment} which entries are to
+	 *            be searched for
+	 * @return A List of {@link HourEntry}s
+	 */
+	public static List<HourEntry> findAllForAssignment(Long assignmentId) {
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<HourEntry> query = cb.createQuery(HourEntry.class);
+		Root<HourEntry> entry = query.from(HourEntry.class);
+
+		Join<HourEntry, ProjectAssignment> assignment = entry
+				.join(HourEntry_.assignment);
+
+		query.where(cb.equal(assignment.get(ProjectAssignment_.id),
+				assignmentId));
+		query.orderBy(cb.desc(entry.get(HourEntry_.id)));
+		return JPA.em().createQuery(query).getResultList();
+	}
+
+	/**
 	 * Find all hour entries for a user between two dates
 	 * 
 	 * @param userId

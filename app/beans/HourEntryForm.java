@@ -87,12 +87,14 @@ public class HourEntryForm {
 		if (!isDateInRange())
 			return "Date is not in assigned range!";
 		if (!containsRequiredTags())
-			return "Doesn't contain any of the required tags (" + Tag.tagsToString(getRequiredTags()) + ")";
+			return "Doesn't contain any of the required tags ("
+					+ Tag.tagsToString(getRequiredTags()) + ")";
 		return null;
 	}
 
 	public boolean isValidAssignment() {
-		return assignment.id != null;
+		return assignment.id != null
+				&& ProjectAssignment.findById(assignment.id).active;
 	}
 
 	public boolean isDateInRange() {

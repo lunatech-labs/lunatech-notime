@@ -45,6 +45,8 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 
 	public boolean starred;
 
+	public boolean active;
+
 	/**
 	 * Inserts this project assignment
 	 * 
@@ -52,6 +54,7 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	 *            The id of the related project
 	 */
 	public void save() {
+		active = true;
 		JPA.em().persist(this);
 	}
 
@@ -86,8 +89,6 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	 * 
 	 * @param assignmentId
 	 *            The id of the project assignment that is going to be updated
-	 * @param projectId
-	 *            The id of the related project
 	 */
 	public void update(Long assignmentId) {
 		this.id = assignmentId;
@@ -95,10 +96,33 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	}
 
 	/**
-	 * Deletes this project assignment
+	 * Updates this project assignment
 	 */
-	public void delete() {
-		JPA.em().remove(this);
+	public void update() {
+		JPA.em().merge(this);
+	}
+
+	/**
+	 * Deletes this project assignment
+	 * 
+	 * @return true if the project assignment is removed
+	 */
+	public boolean delete() {
+		boolean deletable = isDeletable();
+		if (deletable) {
+			JPA.em().remove(this);
+		}
+		return deletable;
+	}
+
+	/**
+	 * Checks if a project assignment is deletable. A assignment is deletable
+	 * when there are no hours booked on the assignment
+	 * 
+	 * @return true if the assignment is deletable
+	 */
+	public boolean isDeletable() {
+		return HourEntry.findAllForAssignment(id).isEmpty();
 	}
 
 	/**
@@ -113,14 +137,14 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	}
 
 	/**
-	 * Find all project assignments for a user
+	 * Find all active project assignments for a user
 	 * 
 	 * @param userId
 	 *            The id of the user which project assignments are to be
 	 *            searched for
 	 * @return A List of project assignments
 	 */
-	public static List<ProjectAssignment> findAllForUser(Long userId) {
+	public static List<ProjectAssignment> findAllActiveForUser(Long userId) {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 		CriteriaQuery<ProjectAssignment> query = cb
 				.createQuery(ProjectAssignment.class);
@@ -130,7 +154,8 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 		Join<ProjectAssignment, User> user = assignment
 				.join(ProjectAssignment_.user);
 
-		query.where(cb.equal(user.get(User_.id), userId));
+		query.where(cb.equal(user.get(User_.id), userId),
+				cb.isTrue(assignment.get(ProjectAssignment_.active)));
 		return JPA.em().createQuery(query).getResultList();
 	}
 
@@ -189,7 +214,7 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 		LinkedHashMap<String, String> assignments = new LinkedHashMap<String, String>();
 		assignments.put("", "");
 
-		for (ProjectAssignment assignment : findAllForUser(userId)) {
+		for (ProjectAssignment assignment : findAllActiveForUser(userId)) {
 			if (ProjectAssignment.isDateInAssignmentRange(new LocalDate(),
 					assignment.id))
 				assignments.put(assignment.id.toString(),

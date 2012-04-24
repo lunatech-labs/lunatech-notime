@@ -70,7 +70,9 @@ public class ProjectAssignments extends Controller {
 
 	@Transactional
 	public static Result delete(Long assignmentId) {
-		ProjectAssignment.findById(assignmentId).delete();
+		if (!ProjectAssignment.findById(assignmentId).delete()) {
+			flash("error", "The assignment could not be deleted. Probably there are still hours booked on this assignment");
+		}
 		return redirect(routes.Projects.all());
 	}
 

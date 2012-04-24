@@ -96,6 +96,16 @@ public class HourEntryInWeek {
 			return false;
 		}
 		assignment = ProjectAssignment.findById(assignment.id);
+		hasActiveAssignment();
+		return true;
+	}
+
+	private boolean hasActiveAssignment() {
+		if (!assignment.active) {
+			errors.add("Assignment is not active");
+			valid = false;
+			return false;
+		}
 		return true;
 	}
 

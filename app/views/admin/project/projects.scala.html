@@ -3,7 +3,12 @@
 @import helper._
 
 @main("Projects") {
-	
+
+	@if(flash.containsKey("error")) {
+    	<div class="alert-message error">
+            <strong>Oops!</strong> @flash.get("error")
+        </div>
+    }
 	@if(projects.isEmpty) {
 	    <div class="alert-message warning">
             No projects!
