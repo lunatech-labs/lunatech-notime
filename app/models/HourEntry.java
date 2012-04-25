@@ -276,35 +276,6 @@ public class HourEntry {
 	}
 
 	/**
-	 * Find all hour entries for a user where he has booked too few hours.
-	 * Currently 'too few' is less than 8 hours and less than 60 minutes.
-	 * 
-	 * @param userId
-	 *            The id of the user which entries are to be searched for
-	 * @return A List of {@link HourEntry}s
-	 */
-	public static List<TotalsDay> findWithTooFewHoursForUser(Long userId) {
-		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
-		CriteriaQuery<TotalsDay> query = cb.createQuery(TotalsDay.class);
-		Root<HourEntry> entry = query.from(HourEntry.class);
-		query.select(cb.construct(TotalsDay.class, entry.get(HourEntry_.date),
-				cb.sumAsLong(entry.get(HourEntry_.hours)),
-				cb.sumAsLong(entry.get(HourEntry_.minutes))));
-
-		Join<HourEntry, ProjectAssignment> assignment = entry
-				.join(HourEntry_.assignment);
-		Join<ProjectAssignment, User> user = assignment
-				.join(ProjectAssignment_.user);
-
-		query.where(cb.equal(user.get(User_.id), userId));
-		query.having(cb.lessThan(cb.sum(entry.get(HourEntry_.hours)), 8),
-				cb.lessThan(cb.sum(entry.get(HourEntry_.minutes)), 60));
-		query.groupBy(entry.get(HourEntry_.date));
-		query.orderBy(cb.asc(entry.get(HourEntry_.date)));
-		return JPA.em().createQuery(query).getResultList();
-	}
-
-	/**
 	 * Calculates the totals of the hour entries for a user, per assignment,
 	 * between two dates. Note that the amount of minutes can be more than 60
 	 * 
