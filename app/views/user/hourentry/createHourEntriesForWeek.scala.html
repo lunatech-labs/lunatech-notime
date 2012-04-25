@@ -11,76 +11,72 @@
 
 	<a href="@routes.HourEntries.addForWeek(userId, week.getWeekyearPreviousWeek, week.getWeekOfWeekyearPreviousWeek)">Previous week</a>
 	<a class="next-week" href="@routes.HourEntries.addForWeek(userId, week.getWeekyearNextWeek, week.getWeekOfWeekyearNextWeek)">Next week</a>
+	
+   	@if(!week.getErrors.isEmpty) {
+   		<div class="alert-message error">
+   		@for(fieldErrors <- week.getErrors) {
+           	Your input on @if(fieldErrors._1.date != null) {@DateUtil.formatDate(fieldErrors._1.date, "E d-M"),} @if(fieldErrors._1.assignment.project != null) {@fieldErrors._1.assignment.project.code} contained the following errors:    		
+   			<ul>
+   				@for(error <- fieldErrors._2) {
+   					<li>@error</li>
+   				}
+   			</ul>
+   		}
+   		</div>
+   	}
 
-	@if(week.getHourEntries.isEmpty) {
-    	<p>No entries</p>
-    } else {
-    	@if(!week.getErrors.isEmpty) {
-    		<div class="alert-message error">
-    		@for(fieldErrors <- week.getErrors) {
-            	Your input on @if(fieldErrors._1.date != null) {@DateUtil.formatDate(fieldErrors._1.date, "E d-M"),} @if(fieldErrors._1.assignment.project != null) {@fieldErrors._1.assignment.project.code} contained the following errors:    		
-    			<ul>
-    				@for(error <- fieldErrors._2) {
-    					<li>@error</li>
-    				}
-    			</ul>
-    		}
-    		</div>
-    	}
-
-    	@form(routes.HourEntries.createForWeek(userId, week.getWeekyear, week.getWeekOfWeekyear), 'id -> "entriesForm") {
-			<input name="weekyear" type="hidden" value="@week.getWeekyear">
-			<input name="weekOfWeekyear" type="hidden" value="@week.getWeekOfWeekyear">
-			<table id="weekOverview">
-				<thead>
-					<tr>
-						<th></th>
-						@for(day <- week.getDays) {
-						<th><a href="@routes.HourEntries.createForDay(userId, day)">@DateUtil.formatDate(day, "E d-M")</a></th>
-						}
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					@for(assignment <- week.getAssignments(userId).toList) {
-					<tr class="assignment">
-						<td>@assignment.project.code</td>
-						@for(day <- week.getDays) {
-						<td class="day">
-							@for(hourEntry <- week.getHourEntries(assignment, day)) {
-							<span class="entry @if(hourEntry.hasErrors) {error}">
-								<input name="hourEntries[x].id" type="hidden" value="@hourEntry.id" />
-					    		<input name="hourEntries[x].assignment.id" type="hidden" value="@hourEntry.assignment.id" />
-					    		<input name="hourEntries[x].date" type="hidden" value="@DateUtil.formatDate(hourEntry.date)" />
-					    		<input name="hourEntries[x].hours" type="text" value="@hourEntry.hours" />:
-					    		<input name="hourEntries[x].minutes" type="text" value="@hourEntry.minutes"/>
-					    	</span>
-							}
-							<span class="entry">
-						    	<input name="hourEntries[x].assignment.id" type="hidden" value="@assignment.id" />
-						    	<input name="hourEntries[x].date" type="hidden" value="@DateUtil.formatDate(day)" />
-						    	<input name="hourEntries[x].hours" type="text" />:
-						    	<input name="hourEntries[x].minutes" type="text" />
-						    </span>
-						</td>
-						}
-						<td class="total"></td>
-					</tr>
+   	@form(routes.HourEntries.createForWeek(userId, week.getWeekyear, week.getWeekOfWeekyear), 'id -> "entriesForm") {
+		<input name="weekyear" type="hidden" value="@week.getWeekyear">
+		<input name="weekOfWeekyear" type="hidden" value="@week.getWeekOfWeekyear">
+		<table id="weekOverview">
+			<thead>
+				<tr>
+					<th></th>
+					@for(day <- week.getDays) {
+					<th><a href="@routes.HourEntries.createForDay(userId, day)">@DateUtil.formatDate(day, "E d-M")</a></th>
 					}
-				</tbody>
-				<tfoot>
-					<tr>
-						<td>Totals</td>
-						@for(day <- week.getDays) {
-						<td class="dayTotal"></td>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				@for(assignment <- week.getAssignments(userId).toList) {
+				<tr class="assignment">
+					<td>@assignment.project.code</td>
+					@for(day <- week.getDays) {
+					<td class="day">
+						@for(hourEntry <- week.getHourEntries(assignment, day)) {
+						<span class="entry @if(hourEntry.hasErrors) {error}">
+							<input name="hourEntries[x].id" type="hidden" value="@hourEntry.id" />
+				    		<input name="hourEntries[x].assignment.id" type="hidden" value="@hourEntry.assignment.id" />
+				    		<input name="hourEntries[x].date" type="hidden" value="@DateUtil.formatDate(hourEntry.date)" />
+				    		<input name="hourEntries[x].hours" type="text" value="@hourEntry.hours" />:
+				    		<input name="hourEntries[x].minutes" type="text" value="@hourEntry.minutes"/>
+				    	</span>
 						}
-						<td class="total"></td>
-					</tr>
-				</tfoot>
-	    	</table>
-	    	<input class="btn btn-primary" type="submit" value="Submit">
-    	}
-    }
+						<span class="entry">
+					    	<input name="hourEntries[x].assignment.id" type="hidden" value="@assignment.id" />
+					    	<input name="hourEntries[x].date" type="hidden" value="@DateUtil.formatDate(day)" />
+					    	<input name="hourEntries[x].hours" type="text" />:
+					    	<input name="hourEntries[x].minutes" type="text" />
+					    </span>
+					</td>
+					}
+					<td class="total"></td>
+				</tr>
+				}
+			</tbody>
+			<tfoot>
+				<tr>
+					<td>Totals</td>
+					@for(day <- week.getDays) {
+					<td class="dayTotal"></td>
+					}
+					<td class="total"></td>
+				</tr>
+			</tfoot>
+    	</table>
+    	<input class="btn btn-primary" type="submit" value="Submit">
+   	}
 
 } {
 	@sidebar.userMenu(userId)
