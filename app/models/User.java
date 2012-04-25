@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -25,6 +26,7 @@ import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
 
 @Entity
+@Table(name="Uzer")
 public class User {
 
 	@Id
