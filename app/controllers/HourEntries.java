@@ -53,11 +53,6 @@ public class HourEntries extends Controller {
 
 	@Transactional(readOnly = true)
 	public static Result addForDay(Long userId, LocalDate date) {
-		// HourEntryForm defaultValues = new HourEntryForm();
-		// defaultValues.hours = 0;
-		// defaultValues.minutes = 0;
-		// Form<HourEntryForm> newForm =
-		// form(HourEntryForm.class).fill(defaultValues);
 		Form<HourEntryForm> newForm = form(HourEntryForm.class);
 
 		List<HourEntry> entries = HourEntry.findAllForUserForDay(userId, date);

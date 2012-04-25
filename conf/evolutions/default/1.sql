@@ -13,10 +13,10 @@ insert into customer (id, name, code, description) values (2, 'Belastingdienst',
 insert into customer (id, name, code, description) values (3, 'Albert Heijn', 'AH', '');
 insert into customer (id, name, code, description) values (4, 'Rabobank', 'RABO', '');
 
-insert into project (id, name, code, description, type, customer_id, customercontact, projectmanager_id, defaultproject) values (1, 'NoTime', 'TIME', 'Timesheet application for Lunatech', 0, 1, 'Leonard Punt', 1, FALSE);
-insert into project (id, name, code, description, type, customer_id, customercontact, projectmanager_id, defaultproject) values (2, 'My2Cents', 'MY2C', '', 1, 2, '', 5, FALSE);
-insert into project (id, name, code, description, type, customer_id, customercontact, projectmanager_id, defaultproject) values (3, 'Appie', 'APP', '', 0, 3, '', 4, FALSE);
-insert into project (id, name, code, description, type, customer_id, customercontact, projectmanager_id, defaultproject) values (4, 'LOSS Timesheet', 'LOSS', '', 0, 1, '', 2, FALSE);
+insert into project (id, name, code, description, type, customer_id, customercontact, projectmanager_id, defaultproject, active) values (1, 'NoTime', 'TIME', 'Timesheet application for Lunatech', 0, 1, 'Leonard Punt', 1, FALSE, TRUE);
+insert into project (id, name, code, description, type, customer_id, customercontact, projectmanager_id, defaultproject, active) values (2, 'My2Cents', 'MY2C', '', 1, 2, '', 5, FALSE, TRUE);
+insert into project (id, name, code, description, type, customer_id, customercontact, projectmanager_id, defaultproject, active) values (3, 'Appie', 'APP', '', 0, 3, '', 4, FALSE, TRUE);
+insert into project (id, name, code, description, type, customer_id, customercontact, projectmanager_id, defaultproject, active) values (4, 'LOSS Timesheet', 'LOSS', '', 0, 1, '', 2, FALSE, TRUE);
 
 insert into projectassignment (id, project_id, user_id, begindate, enddate, hourlyrate, starred, active) values (1, 1, 1, '2012-02-01', '2012-05-30', '35.50', FALSE, TRUE);
 insert into projectassignment (id, project_id, user_id, begindate, enddate, hourlyrate, starred, active) values (2, 1, 3, '2012-02-01', '2012-05-30', '47.50', FALSE, TRUE);

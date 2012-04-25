@@ -1,5 +1,6 @@
 package controllers;
 
+import models.Project;
 import models.ProjectAssignment;
 import play.data.Form;
 import play.db.jpa.Transactional;
@@ -25,16 +26,13 @@ public class ProjectAssignments extends Controller {
 			return badRequest(createProjectAssignment.render(projectId,
 					filledForm));
 
-		ProjectAssignment assignmentToBeCreated = filledForm.get();
-
-		if (!ProjectAssignment.hasValidDates(assignmentToBeCreated)) {
-			flash("error",
-					ProjectAssignment.validateDates(assignmentToBeCreated));
+		if (!Project.findById(projectId).active) {
+			filledForm.reject("Project is not active.");
 			return badRequest(createProjectAssignment.render(projectId,
 					filledForm));
 		}
 
-		assignmentToBeCreated.saveAndMaximizeTime(projectId);
+		filledForm.get().save(projectId);
 		return redirect(routes.Projects.all());
 	}
 
@@ -55,23 +53,21 @@ public class ProjectAssignments extends Controller {
 			return badRequest(editProjectAssignment.render(projectId,
 					assignmentId, filledForm));
 
-		ProjectAssignment assignmentToBeUpdated = filledForm.get();
-
-		if (!ProjectAssignment.hasValidDates(assignmentToBeUpdated)) {
-			flash("error",
-					ProjectAssignment.validateDates(assignmentToBeUpdated));
-			return badRequest(editProjectAssignment.render(projectId,
-					assignmentId, filledForm));
+		if (!Project.findById(projectId).active) {
+			filledForm.reject("Project is not active.");
+			return badRequest(createProjectAssignment.render(projectId,
+					filledForm));
 		}
 
-		assignmentToBeUpdated.update(assignmentId, projectId);
+		filledForm.get().update(assignmentId, projectId);
 		return redirect(routes.Projects.all());
 	}
 
 	@Transactional
 	public static Result delete(Long assignmentId) {
 		if (!ProjectAssignment.findById(assignmentId).delete()) {
-			flash("error", "The assignment could not be deleted. Probably there are still hours booked on this assignment");
+			flash("error",
+					"The assignment could not be deleted. Probably there are still hours booked on this assignment.");
 		}
 		return redirect(routes.Projects.all());
 	}

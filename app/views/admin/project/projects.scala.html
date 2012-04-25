@@ -17,8 +17,12 @@
 		<ul>
 			@for(project <- projects) {
 		  		<li>
-		  			<a href="@routes.Projects.edit(project.id)">@project.name</a>	  				  			
-		  			<a class="btn" href="@routes.ProjectAssignments.create(project.id)">Add project member</a>
+		  			<a href="@routes.Projects.edit(project.id)">@project.name</a>
+		  			@if(project.active) {
+		  				<a class="btn" href="@routes.ProjectAssignments.create(project.id)">Add project member</a>
+		  			} else {
+		  				<i>Project is not active</i>
+		  			}
 		  			@form(routes.Projects.delete(project.id)) {
 		  				<input class="btn btn-danger" type="submit" value="Delete project">
 		  			}
@@ -31,7 +35,7 @@
 		  				<ul class="assignments">
 		  					@for(assignment <- project.assignments) {
 		  						<li>
-		  							<a href="@routes.ProjectAssignments.edit(project.id, assignment.id)">@assignment.user.fullname</a> 
+		  							<a href="@routes.ProjectAssignments.edit(project.id, assignment.id)">@assignment.user.fullname</a> @if(!assignment.active) {<i>Not active</i>} 
 		  							
 		  							@form(routes.ProjectAssignments.delete(assignment.id)) {
 		  								<input class="btn btn-danger" type="submit" value="Delete">

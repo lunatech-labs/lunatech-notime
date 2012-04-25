@@ -57,6 +57,8 @@ public class Project {
 	@ManyToMany
 	@JoinTable(name = "project_tag", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
 	public List<Tag> requiredTags;
+	
+	public boolean active;
 
 	/**
 	 * A default project is a project on which all current and all new users are
@@ -75,6 +77,7 @@ public class Project {
 	 * be assigned to it.
 	 */
 	public void save() {
+		active = true;
 		JPA.em().persist(this);
 		if (defaultProject)
 			ProjectAssignment.assignAllUsersTo(this);
@@ -82,7 +85,8 @@ public class Project {
 
 	/**
 	 * Updates this project. If the project is a defaultProject, all users will
-	 * be assigned to it.
+	 * be assigned to it. If the project is set inactive, all it assignments
+	 * will be set inactive.
 	 * 
 	 * @param projectId
 	 *            The id of the project that is going to be updated
@@ -92,13 +96,40 @@ public class Project {
 		JPA.em().merge(this);
 		if (defaultProject)
 			ProjectAssignment.assignAllUsersTo(this);
+		if (!active) {
+			for (ProjectAssignment assignment : ProjectAssignment
+					.findAllActiveForProject(projectId)) {
+				assignment.inactivate();
+			}
+		}
 	}
 
 	/**
 	 * Deletes this project
+	 * 
+	 * @return true if the project is removed
 	 */
-	public void delete() {
-		JPA.em().remove(this);
+	public boolean delete() {
+		boolean deletable = isDeletable();
+		if (deletable) {
+			JPA.em().remove(this);
+		}
+		return deletable;
+	}
+
+	/**
+	 * Checks if a project is deletable. A project is deletable when als its
+	 * assignments are deletable
+	 * 
+	 * @return true if the project is deletable
+	 */
+	public boolean isDeletable() {
+		for (ProjectAssignment assignment : assignments) {
+			if (!assignment.isDeletable()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**

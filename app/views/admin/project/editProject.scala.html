@@ -44,6 +44,8 @@
     	
     	@checkbox(projectForm("defaultProject"), '_label -> "Default Project")
     	
+    	@checkbox(projectForm("active"), '_label -> "Active")
+
 		<div class="tags">
 
     		@repeat(projectForm("requiredTags"), min = 0) { tag =>

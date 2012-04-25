@@ -49,9 +49,6 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 
 	/**
 	 * Inserts this project assignment
-	 * 
-	 * @param projectId
-	 *            The id of the related project
 	 */
 	public void save() {
 		active = true;
@@ -59,13 +56,14 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	}
 
 	/**
-	 * Sets the project and inserts this project assignment
+	 * Inserts this project assignment
 	 * 
 	 * @param projectId
 	 *            The id of the related project
 	 */
-	public void saveAndMaximizeTime(Long projectId) {
+	public void save(long projectId) {
 		this.project = Project.findById(projectId);
+		active = true;
 		JPA.em().persist(this);
 	}
 
@@ -116,6 +114,14 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	}
 
 	/**
+	 * Inactivates this project assignment
+	 */
+	public void inactivate() {
+		active = false;
+		update();
+	}
+
+	/**
 	 * Checks if a project assignment is deletable. A assignment is deletable
 	 * when there are no hours booked on the assignment
 	 * 
@@ -155,6 +161,29 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 				.join(ProjectAssignment_.user);
 
 		query.where(cb.equal(user.get(User_.id), userId),
+				cb.isTrue(assignment.get(ProjectAssignment_.active)));
+		return JPA.em().createQuery(query).getResultList();
+	}
+
+	/**
+	 * Find all active project assignments for a project
+	 * 
+	 * @param projectId
+	 *            The id of the project which project assignments are to be
+	 *            searched for
+	 * @return A List of project assignments
+	 */
+	public static List<ProjectAssignment> findAllActiveForProject(Long projectId) {
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<ProjectAssignment> query = cb
+				.createQuery(ProjectAssignment.class);
+		Root<ProjectAssignment> assignment = query
+				.from(ProjectAssignment.class);
+
+		Join<ProjectAssignment, Project> project = assignment
+				.join(ProjectAssignment_.project);
+
+		query.where(cb.equal(project.get(Project_.id), projectId),
 				cb.isTrue(assignment.get(ProjectAssignment_.active)));
 		return JPA.em().createQuery(query).getResultList();
 	}
@@ -206,7 +235,7 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	}
 
 	/**
-	 * All assignments for a user
+	 * All active assignments for a user
 	 * 
 	 * @return A Map with as key the assignment id and as value the project name
 	 */
@@ -215,10 +244,8 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 		assignments.put("", "");
 
 		for (ProjectAssignment assignment : findAllActiveForUser(userId)) {
-			if (ProjectAssignment.isDateInAssignmentRange(new LocalDate(),
-					assignment.id))
-				assignments.put(assignment.id.toString(),
-						assignment.project.name.toString());
+			assignments.put(assignment.id.toString(),
+					assignment.project.name.toString());
 		}
 		return assignments;
 	}
@@ -271,23 +298,21 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 		return !findByUserAndProject(user, project).isEmpty();
 	}
 
-	// VALIDATION METHODS NEED TO BE REPLACED BY ANNOTATIONS OR BE REWRITTEN
-	public static boolean hasValidDates(ProjectAssignment assignment) {
-		return validateDates(assignment).isEmpty();
-	}
-
-	public static String validateDates(ProjectAssignment assignment) {
-		if (assignment.beginDate.compareTo(assignment.endDate) > 0)
-			return "Start date is after the End date";
-		else
-			return new String();
-	}
-
 	public static boolean isDateInAssignmentRange(LocalDate date,
 			Long assignmentId) {
 		ProjectAssignment assignment = ProjectAssignment.findById(assignmentId);
 		return DateUtil.between(date, assignment.beginDate,
 				assignment.endDate.plusDays(1));
+	}
+
+	public String validate() {
+		if (!isStartDateNotAfterEndDate())
+			return "Start date is after the End date";
+		return null;
+	}
+
+	public boolean isStartDateNotAfterEndDate() {
+		return beginDate.isBefore(endDate.plusDays(1));
 	}
 
 	@Override

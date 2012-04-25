@@ -67,7 +67,9 @@ public class Projects extends Controller {
 
 	@Transactional
 	public static Result delete(Long id) {
-		Project.findById(id).delete();
+		if (!Project.findById(id).delete()) {
+			flash("error", "The project could not be deleted. Probably one of its assignments is not deletable.");
+		}
 		return redirect(routes.Projects.all());
 	}
 

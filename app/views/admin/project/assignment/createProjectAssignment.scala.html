@@ -5,9 +5,9 @@
 
 @main("Assign a user to a project") {
 	
-	@if(flash.containsKey("error")) {
+	@if(assignmentForm.hasGlobalErrors()) {
     	<div class="alert-message error">
-            <strong>Oops!</strong> @flash.get("error")
+            <strong>Oops!</strong> @assignmentForm.globalError().message
         </div>
     }
 	
