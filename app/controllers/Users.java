@@ -1,6 +1,9 @@
 package controllers;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import models.HourEntry;
 import models.User;
@@ -94,21 +97,36 @@ public class Users extends Controller {
 	public static Result daysTooFewHours(Long userId) {
 		LocalDate beginDate = User.findById(userId).createdOn;
 		LocalDate endDate = new LocalDate();
+
 		List<TotalsDay> totals = HourEntry.findTotalsForUserPerDayBetween(
 				userId, beginDate, endDate);
-
-		LocalDate indexDate = beginDate;
-		while (indexDate.isBefore(endDate.plusDays(1))) {
-			// Only weekdays
-			if (indexDate.getDayOfWeek() > 6) {
-				//get total with this date
-				// if no total, there need to be booked 8 hours
-				// if total less than 8, the difference still need to be booked
-				// if total more than 8, skip this date
-				indexDate = indexDate.plusDays(1);
-			}			
+		Map<LocalDate, TotalsDay> totalsPerDay = new HashMap<LocalDate, TotalsDay>();
+		for (TotalsDay total : totals) {
+			totalsPerDay.put(total.date, total);
 		}
 
-		return ok(daysTooFewHours.render(userId, totals));
+		LocalDate indexDate = beginDate;
+		// Also contains the days where there are no hours booked
+		List<TotalsDay> totalsForAllDays = new LinkedList<TotalsDay>();
+		while (indexDate.isBefore(endDate.plusDays(1))) {
+			// Only weekdays
+			if (indexDate.getDayOfWeek() < 6) {
+				// get totals of this date
+				TotalsDay indexDateTotals = totalsPerDay.get(indexDate);
+				if (indexDateTotals != null) {
+					if (indexDateTotals.hasEnteredTooFewHours()) {
+						// if totals are not enough, the difference still need
+						// to be booked
+						totalsForAllDays.add(indexDateTotals);
+					}
+				} else {
+					// if no total, there need to be booked 8 hours
+					totalsForAllDays.add(new TotalsDay(indexDate, 0L, 0L));
+				}
+			}
+			indexDate = indexDate.plusDays(1);
+		}
+
+		return ok(daysTooFewHours.render(userId, totalsForAllDays));
 	}
 }
