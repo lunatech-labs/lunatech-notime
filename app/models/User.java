@@ -26,7 +26,7 @@ import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
 
 @Entity
-@Table(name="Uzer")
+@Table(name="uzer")
 public class User {
 
 	@Id
