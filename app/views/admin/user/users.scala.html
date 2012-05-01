@@ -4,6 +4,11 @@
 
 @main("Users") {
 	
+	@if(flash.containsKey("error")) {
+    	<div class="alert-message error">
+            <strong>Oops!</strong> @flash.get("error")
+        </div>
+    }
 	@if(users.isEmpty) {
     	<div class="alert-message warning">
             No users!
@@ -12,7 +17,7 @@
 		<ul>
 			@for(user <- users) {
 				<li>
-					<a href="@routes.Users.edit(user.id)">@user.fullname</a>
+					<a href="@routes.Users.edit(user.id)">@user.fullname</a> @if(!user.active) {<i>Not active</i>}
 					
 					@form(routes.Users.delete(user.id)) {
 						<input class="btn btn-danger" type="submit" value="Delete">

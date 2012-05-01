@@ -1,5 +1,6 @@
 package models;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,7 @@ import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
 
 @Entity
-@Table(name="uzer")
+@Table(name = "uzer")
 public class User {
 
 	@Id
@@ -54,6 +55,8 @@ public class User {
 	@Type(type = "org.joda.time.contrib.hibernate.PersistentLocalDate")
 	public LocalDate createdOn;
 
+	public boolean active;
+
 	/**
 	 * Encrypts the user's password and inserts this new user. The user will
 	 * also be assigned to all default projects.
@@ -61,6 +64,7 @@ public class User {
 	public void save() {
 		password = User.encryptPassword(password);
 		createdOn = new LocalDate();
+		active = true;
 		JPA.em().persist(this);
 		ProjectAssignment.assignAllDefaultProjectsTo(this);
 	}
@@ -76,13 +80,61 @@ public class User {
 			password = User.encryptPassword(password);
 		this.id = userId;
 		JPA.em().merge(this);
+		if (!active)
+			inactivateAssignments();
 	}
 
 	/**
 	 * Deletes this user
 	 */
-	public void delete() {
-		JPA.em().remove(this);
+	public boolean delete() {
+		boolean deletable = isDeletable();
+		if (deletable) {
+			for (Customer customer : Customer.findAllForCustomerManager(this)) {
+				customer.customerManagers.remove(this);
+			}
+			JPA.em().remove(this);
+		}
+		return deletable;
+	}
+
+	/**
+	 * Inactivates this user.
+	 */
+	public void inactivate() {
+		active = false;
+		update(id);
+
+	}
+
+	/**
+	 * Inactivates all its assignments.
+	 */
+	public void inactivateAssignments() {
+		for (ProjectAssignment assignment : ProjectAssignment
+				.findAllActiveForUser(id)) {
+			assignment.inactivate();
+		}
+	}
+
+	/**
+	 * Checks if a user is deletable. A user is deletable when all its
+	 * assignments are deletable and he is not a project manager.
+	 * 
+	 * @return true if the project is deletable
+	 */
+	public boolean isDeletable() {
+		for (ProjectAssignment assignment : assignments) {
+			if (!assignment.isDeletable()) {
+				return false;
+			}
+		}
+		for (Project project : Project.findAll()) {
+			if (project.projectManager == this) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -138,13 +190,11 @@ public class User {
 	 *            The project which the users must be assigned to
 	 * @return A List of {@link User}s
 	 */
-	public static List<User> findAll(Project project) {
+	public static List<User> findAllForProject(Project project) {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 		CriteriaQuery<User> query = cb.createQuery(User.class);
 		Root<User> user = query.from(User.class);
-
 		Join<User, ProjectAssignment> assignment = user.join(User_.assignments);
-
 		query.where(cb.equal(assignment.get(ProjectAssignment_.project),
 				project));
 		return JPA.em().createQuery(query).getResultList();
@@ -164,13 +214,26 @@ public class User {
 	}
 
 	/**
+	 * Find all active users
+	 * 
+	 * @return A List of {@link User}s
+	 */
+	public static List<User> findAllActive() {
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<User> query = cb.createQuery(User.class);
+		Root<User> user = query.from(User.class);
+		query.where(cb.isTrue(user.get(User_.active)));
+		return JPA.em().createQuery(query).getResultList();
+	}
+
+	/**
 	 * All existing users
 	 * 
 	 * @return A Map with as key the user's id and as value the user's full name
 	 */
 	public static Map<String, String> options() {
 		LinkedHashMap<String, String> options = new LinkedHashMap<String, String>();
-		for (User u : findAll()) {
+		for (User u : findAllActive()) {
 			options.put(u.id.toString(), u.fullname);
 		}
 		return options;
@@ -212,41 +275,46 @@ public class User {
 	public static User authenticate(String username, String password) {
 		User user = findByUsername(username);
 
-		if (user == null || !user.checkPassword(password))
+		if (user == null || !user.checkPassword(password) || !user.active)
 			return null;
 		else
 			return user;
 	}
-
-	// VALIDATION METHODS NEED TO BE REPLACED BY ANNOTATIONS OR BE REWRITTEN
-	public static boolean hasDuplicity(User userToBeCreated) {
-		return !validateDuplicity(userToBeCreated).isEmpty();
+	
+	public String validate() {
+		if (hasDuplicateUsername())
+			return "Duplicate username!";
+		if (hasDuplicateEmail())
+			return "Duplicate email!";
+		return null;
 	}
 
-	public static String validateDuplicity(User userToBeCreated) {
-		for (User existingUser : findAll()) {
-			if (existingUser.username
-					.equalsIgnoreCase(userToBeCreated.username))
-				return "Duplicate username!";
-			if (existingUser.email.equalsIgnoreCase(userToBeCreated.email))
-				return "Duplicate email!";
+	public boolean hasDuplicateUsername() {
+		List<User> users = Collections.emptyList();
+		if (id != null)
+			users = findAllExcept(id);
+		else
+			users = findAll();
+
+		for (User user : users) {
+			if (user.username.equalsIgnoreCase(username))
+				return true;
 		}
-		return new String();
+		return false;
 	}
 
-	public static boolean hasDuplicity(Long id, User userToBeUpdated) {
-		return !validateDuplicity(id, userToBeUpdated).isEmpty();
-	}
+	public boolean hasDuplicateEmail() {
+		List<User> users = Collections.emptyList();
+		if (id != null)
+			users = findAllExcept(id);
+		else
+			users = findAll();
 
-	public static String validateDuplicity(Long id, User userToBeUpdated) {
-		for (User existingUser : findAllExcept(id)) {
-			if (existingUser.username
-					.equalsIgnoreCase(userToBeUpdated.username))
-				return "Duplicate username!";
-			if (existingUser.email.equalsIgnoreCase(userToBeUpdated.email))
-				return "Duplicate email!";
+		for (User user : users) {
+			if (user.email.equalsIgnoreCase(email))
+				return true;
 		}
-		return new String();
+		return false;
 	}
 
 }

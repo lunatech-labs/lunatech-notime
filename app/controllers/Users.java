@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.HourEntry;
+import models.Project;
 import models.User;
 
 import org.joda.time.LocalDate;
@@ -47,14 +48,7 @@ public class Users extends Controller {
 		if (filledForm.hasErrors())
 			return badRequest(createUser.render(filledForm));
 
-		User userToBeCreated = filledForm.get();
-
-		if (User.hasDuplicity(userToBeCreated)) {
-			flash("error", User.validateDuplicity(userToBeCreated));
-			return badRequest(createUser.render(filledForm));
-		}
-
-		userToBeCreated.save();
+		filledForm.get().save();
 		return redirect(routes.Users.all());
 	}
 
@@ -71,20 +65,16 @@ public class Users extends Controller {
 		if (filledForm.hasErrors())
 			return badRequest(editUser.render(userId, filledForm));
 
-		User userToBeUpdated = filledForm.get();
-
-		if (User.hasDuplicity(userId, userToBeUpdated)) {
-			flash("error", User.validateDuplicity(userId, userToBeUpdated));
-			return badRequest(editUser.render(userId, filledForm));
-		}
-
-		userToBeUpdated.update(userId);
+		filledForm.get().update(userId);
 		return redirect(routes.Users.all());
 	}
 
 	@Transactional
 	public static Result delete(Long userId) {
-		User.findById(userId).delete();
+		if (!User.findById(userId).delete()) {
+			flash("error",
+					"The user could not be deleted. Probably one of its assignments is not deletable. Or the user is project manager.");
+		}
 		return redirect(routes.Users.all());
 	}
 

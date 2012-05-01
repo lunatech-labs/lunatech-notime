@@ -14,6 +14,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
 import play.data.validation.Constraints.Required;
@@ -156,6 +157,23 @@ public class Customer {
 		List<Customer> customers = findAll();
 		customers.remove(findById(customerId));
 		return customers;
+	}
+
+	/**
+	 * Find all customers from which a user is customer manager
+	 * 
+	 * @param user
+	 *            The {@link User} which should be the customer manager
+	 * @return A List of customer objects
+	 */
+	public static List<Customer> findAllForCustomerManager(User user) {
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<Customer> query = cb.createQuery(Customer.class);
+		Root<Customer> customer = query.from(Customer.class);
+		Join<Customer, User> customerManager = customer
+				.join(Customer_.customerManagers);
+		query.where(cb.equal(customerManager, user));
+		return JPA.em().createQuery(query).getResultList();
 	}
 
 	/**

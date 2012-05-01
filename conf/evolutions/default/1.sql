@@ -2,11 +2,11 @@
 
 # --- !Ups
 
-insert into uzer (id, username, password, fullname, email, createdon) values (1, 'leonard', '$2a$10$S4oWmAIMLvUxOuspF2Fg4eMehfZzyJvvgyYkT8mzYvQyih/FyhKBG', 'Leonard Punt', 'leonard@test.nl', '2012-03-08');
-insert into uzer (id, username, password, fullname, email, createdon) values (2, 'gerrit', '$2a$10$S4oWmAIMLvUxOuspF2Fg4eMehfZzyJvvgyYkT8mzYvQyih/FyhKBG', 'Gerrit Foo', 'foo@test.nl', '2012-03-08');
-insert into uzer (id, username, password, fullname, email, createdon) values (3, 'kees', '$2a$10$S4oWmAIMLvUxOuspF2Fg4eMehfZzyJvvgyYkT8mzYvQyih/FyhKBG', 'Kees Bar', 'bar@test.nl', '2012-03-08');
-insert into uzer (id, username, password, fullname, email, createdon) values (4, 'klaas', '$2a$10$S4oWmAIMLvUxOuspF2Fg4eMehfZzyJvvgyYkT8mzYvQyih/FyhKBG', 'Klaas Bar', 'klaas@test.nl', '2012-03-08');
-insert into uzer (id, username, password, fullname, email, createdon) values (5, 'piet', '$2a$10$S4oWmAIMLvUxOuspF2Fg4eMehfZzyJvvgyYkT8mzYvQyih/FyhKBG', 'Piet Foo', 'piet@test.nl', '2012-03-08');
+insert into uzer (id, username, password, fullname, email, createdon, active) values (1, 'leonard', '$2a$10$S4oWmAIMLvUxOuspF2Fg4eMehfZzyJvvgyYkT8mzYvQyih/FyhKBG', 'Leonard Punt', 'leonard@test.nl', '2012-03-08', TRUE);
+insert into uzer (id, username, password, fullname, email, createdon, active) values (2, 'gerrit', '$2a$10$S4oWmAIMLvUxOuspF2Fg4eMehfZzyJvvgyYkT8mzYvQyih/FyhKBG', 'Gerrit Foo', 'foo@test.nl', '2012-03-08', TRUE);
+insert into uzer (id, username, password, fullname, email, createdon, active) values (3, 'kees', '$2a$10$S4oWmAIMLvUxOuspF2Fg4eMehfZzyJvvgyYkT8mzYvQyih/FyhKBG', 'Kees Bar', 'bar@test.nl', '2012-03-08', TRUE);
+insert into uzer (id, username, password, fullname, email, createdon, active) values (4, 'klaas', '$2a$10$S4oWmAIMLvUxOuspF2Fg4eMehfZzyJvvgyYkT8mzYvQyih/FyhKBG', 'Klaas Bar', 'klaas@test.nl', '2012-03-08', TRUE);
+insert into uzer (id, username, password, fullname, email, createdon, active) values (5, 'piet', '$2a$10$S4oWmAIMLvUxOuspF2Fg4eMehfZzyJvvgyYkT8mzYvQyih/FyhKBG', 'Piet Foo', 'piet@test.nl', '2012-03-08', TRUE);
 
 insert into customer (id, name, code, description, active) values (1, 'Lunatech', 'LUNA', '', TRUE);
 insert into customer (id, name, code, description, active) values (2, 'Belastingdienst', 'BEL', 'Leuker kunnen we het niet maken, wel makkelijker..', TRUE);

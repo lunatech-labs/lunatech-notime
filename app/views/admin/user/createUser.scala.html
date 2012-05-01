@@ -5,11 +5,11 @@
 
 @main("Create user") {
 	
-	@if(flash.containsKey("error")) {
+	@if(userForm.hasGlobalErrors()) {
     	<div class="alert-message error">
-            <strong>Oops!</strong> @flash.get("error")
+            <strong>Oops!</strong> @userForm.globalError().message
         </div>
-    } 
+    }
 
 	@form(routes.Users.create()) {
 
@@ -21,8 +21,8 @@
 
 		@inputText(userForm("email"), '_label -> "Email")
 
-		<input type="submit" value="Submit">
-		<a href="@routes.Users.all()">Cancel</a>
+		<input class="btn btn-primary" type="submit" value="Submit">
+		<a class="btn btn-danger" href="@routes.Users.all()">Cancel</a>
 
 	}
 } {

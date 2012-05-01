@@ -311,11 +311,20 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	public String validate() {
 		if (!isStartDateNotAfterEndDate())
 			return "Start date is after the End date";
+		if (!hasActiveUser())
+			return "User is not active!";
 		return null;
 	}
 
 	public boolean isStartDateNotAfterEndDate() {
 		return beginDate.isBefore(endDate.plusDays(1));
+	}
+
+	public boolean hasActiveUser() {
+		// Check if user is loaded
+		if (user.username == null)
+			user = User.findById(user.id);
+		return user.active;
 	}
 
 	@Override

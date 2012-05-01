@@ -60,7 +60,7 @@ public class ReportOptions {
 		final Set<User> users = new HashSet<User>();
 		if (projects != null && !projects.isEmpty()) {
 			for (Project project : projects) {
-				users.addAll(User.findAll(project));
+				users.addAll(User.findAllForProject(project));
 			}
 		}
 		if (this.users != null) {
