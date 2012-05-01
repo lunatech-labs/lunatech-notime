@@ -14,13 +14,15 @@ object ApplicationBuild extends Build {
     		"joda-time" % "joda-time" % "2.0",
     		"org.hibernate" % "hibernate-entitymanager" % "3.6.9.Final",    		
     		"org.hibernate" % "hibernate-jpamodelgen" % "1.2.0.Final",
-    		"postgresql" % "postgresql" % "9.1-901-1.jdbc4"
+    		"postgresql" % "postgresql" % "9.1-901-1.jdbc4",
+    		"be.objectify" %% "deadbolt-2" % "1.1.2"
     )
     
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
     		ebeanEnabled := false,
     		routesImport ++= Seq("binders.routes.CustomPathBinders._", "org.joda.time.LocalDate"),
-    		javacOptions ++= Seq("-s", "metamodel")
+    		javacOptions ++= Seq("-s", "metamodel"),
+    		resolvers += Resolver.url("Objectify Play Repository", url("http://schaloner.github.com/releases/"))(Resolver.ivyStylePatterns)
     )
 
 }
