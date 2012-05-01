@@ -4,6 +4,11 @@
 
 @main("Customers") {
 	
+	@if(flash.containsKey("error")) {
+    	<div class="alert-message error">
+            <strong>Oops!</strong> @flash.get("error")
+        </div>
+    }
 	@if(customers.isEmpty) {
 	    <div class="alert-message warning">
             No customers!
@@ -12,10 +17,10 @@
 		<ul>
 			@for(customer <- customers) {
 				<li>
-					<a href="@routes.Customers.edit(customer.id)">@customer.name</a>
+					<a href="@routes.Customers.edit(customer.id)">@customer.name</a> @if(!customer.active) {<i>Not active</i>}
 				
 					@form(routes.Customers.delete(customer.id)) {
-						<input class="btn btn-delete" type="submit" value="Delete">
+						<input class="btn btn-danger" type="submit" value="Delete">
 					}	
 				</li>
 			}

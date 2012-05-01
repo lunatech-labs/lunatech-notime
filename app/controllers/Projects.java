@@ -29,14 +29,7 @@ public class Projects extends Controller {
 		if (filledForm.hasErrors())
 			return badRequest(createProject.render(filledForm));
 
-		Project projectToBeCreated = filledForm.get();
-
-		if (Project.hasDuplicity(projectToBeCreated)) {
-			flash("error", Project.validateDuplicity(projectToBeCreated));
-			return badRequest(createProject.render(filledForm));
-		}
-
-		projectToBeCreated.save();
+		filledForm.get().save();
 		return redirect(routes.Projects.all());
 	}
 
@@ -54,14 +47,7 @@ public class Projects extends Controller {
 		if (filledForm.hasErrors())
 			return badRequest(editProject.render(id, filledForm));
 
-		Project projectToBeUpdated = filledForm.get();
-
-		if (Project.hasDuplicity(id, projectToBeUpdated)) {
-			flash("error", Project.validateDuplicity(id, projectToBeUpdated));
-			return badRequest(editProject.render(id, filledForm));
-		}
-
-		projectToBeUpdated.update(id);
+		filledForm.get().update(id);		
 		return redirect(routes.Projects.all());
 	}
 

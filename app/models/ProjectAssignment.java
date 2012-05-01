@@ -18,6 +18,7 @@ import javax.persistence.criteria.Root;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
+import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
 import utils.DateUtil;
 
@@ -34,9 +35,11 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	@ManyToOne
 	public User user;
 
+	@Required
 	@Type(type = "org.joda.time.contrib.hibernate.PersistentLocalDate")
 	public LocalDate beginDate;
 
+	@Required
 	@Type(type = "org.joda.time.contrib.hibernate.PersistentLocalDate")
 	public LocalDate endDate;
 

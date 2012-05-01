@@ -27,7 +27,7 @@ public class ProjectAssignments extends Controller {
 					filledForm));
 
 		if (!Project.findById(projectId).active) {
-			filledForm.reject("Project is not active.");
+			filledForm.reject("Project is not active!");
 			return badRequest(createProjectAssignment.render(projectId,
 					filledForm));
 		}
@@ -54,7 +54,7 @@ public class ProjectAssignments extends Controller {
 					assignmentId, filledForm));
 
 		if (!Project.findById(projectId).active) {
-			filledForm.reject("Project is not active.");
+			filledForm.reject("Project is not active!");
 			return badRequest(createProjectAssignment.render(projectId,
 					filledForm));
 		}

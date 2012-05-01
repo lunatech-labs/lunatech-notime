@@ -20,13 +20,15 @@
 
 @main("Project", script) {
 		
-	@if(flash.containsKey("error")) {
+	@if(projectForm.hasGlobalErrors()) {
     	<div class="alert-message error">
-            <strong>Oops!</strong> @flash.get("error")
+            <strong>Oops!</strong> @projectForm.globalError().message
         </div>
     }
     
     @form(routes.Projects.update(id), 'id -> "project-form") {
+
+    	<input name="id" type="hidden" value="@id" />
     	
     	@inputText(projectForm("name"), '_label -> "Name")
     	

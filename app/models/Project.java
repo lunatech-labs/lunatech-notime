@@ -1,5 +1,6 @@
 package models;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -53,11 +54,11 @@ public class Project {
 
 	@OneToMany(mappedBy = "project")
 	public List<ProjectAssignment> assignments;
-	
+
 	@ManyToMany
 	@JoinTable(name = "project_tag", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
 	public List<Tag> requiredTags;
-	
+
 	public boolean active;
 
 	/**
@@ -85,8 +86,8 @@ public class Project {
 
 	/**
 	 * Updates this project. If the project is a defaultProject, all users will
-	 * be assigned to it. If the project is set inactive, all it assignments
-	 * will be set inactive.
+	 * be assigned to it. If the project is not active, all its assignments will
+	 * be set inactive.
 	 * 
 	 * @param projectId
 	 *            The id of the project that is going to be updated
@@ -96,12 +97,8 @@ public class Project {
 		JPA.em().merge(this);
 		if (defaultProject)
 			ProjectAssignment.assignAllUsersTo(this);
-		if (!active) {
-			for (ProjectAssignment assignment : ProjectAssignment
-					.findAllActiveForProject(projectId)) {
-				assignment.inactivate();
-			}
-		}
+		if (!active)
+			inactivateAssignments();
 	}
 
 	/**
@@ -118,7 +115,26 @@ public class Project {
 	}
 
 	/**
-	 * Checks if a project is deletable. A project is deletable when als its
+	 * Inactivates this project.
+	 */
+	public void inactivate() {
+		active = false;
+		update(id);
+
+	}
+
+	/**
+	 * Inactivates all its assignments.
+	 */
+	public void inactivateAssignments() {
+		for (ProjectAssignment assignment : ProjectAssignment
+				.findAllActiveForProject(id)) {
+			assignment.inactivate();
+		}
+	}
+
+	/**
+	 * Checks if a project is deletable. A project is deletable when all its
 	 * assignments are deletable
 	 * 
 	 * @return true if the project is deletable
@@ -156,17 +172,33 @@ public class Project {
 	}
 
 	/**
-	 * Finds all project for a customer
+	 * Finds all projects for a customer
 	 * 
 	 * @param customer
 	 *            The customer of the project that needs to be searched for
 	 * @return A List of {@link Project}s
 	 */
-	public static List<Project> findAll(Customer customer) {
+	public static List<Project> findAllForCustomer(Customer customer) {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 		CriteriaQuery<Project> query = cb.createQuery(Project.class);
 		Root<Project> project = query.from(Project.class);
 		query.where(cb.equal(project.get(Project_.customer), customer));
+		return JPA.em().createQuery(query).getResultList();
+	}
+
+	/**
+	 * Finds all active projects for a customer
+	 * 
+	 * @param customer
+	 *            The customer of the project that needs to be searched for
+	 * @return A List of {@link Project}s
+	 */
+	public static List<Project> findAllActiveForCustomer(Customer customer) {
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<Project> query = cb.createQuery(Project.class);
+		Root<Project> project = query.from(Project.class);
+		query.where(cb.equal(project.get(Project_.customer), customer),
+				cb.isTrue(project.get(Project_.active)));
 		return JPA.em().createQuery(query).getResultList();
 	}
 
@@ -223,33 +255,49 @@ public class Project {
 		return options;
 	}
 
-	// VALIDATION METHODS NEED TO BE REPLACED BY ANNOTATIONS OR BE REWRITTEN
-	public static boolean hasDuplicity(Project projectToBeCreated) {
-		return !validateDuplicity(projectToBeCreated).isEmpty();
+	public String validate() {
+		if (hasDuplicateName())
+			return "Duplicate name!";
+		if (hasDuplicateCode())
+			return "Duplicate code!";
+		if (!hasActiveCustomer())
+			return "Customer is not active!";
+		return null;
 	}
 
-	public static String validateDuplicity(Project projectToBeCreated) {
-		for (Project existingProject : findAll()) {
-			if (existingProject.name.equalsIgnoreCase(projectToBeCreated.name))
-				return "Duplicate name!";
-			if (existingProject.code.equalsIgnoreCase(projectToBeCreated.code))
-				return "Duplicate code!";
+	public boolean hasDuplicateName() {
+		List<Project> projects = Collections.emptyList();
+		if (id != null)
+			projects = findAllExcept(id);
+		else
+			projects = findAll();
+
+		for (Project project : projects) {
+			if (project.name.equalsIgnoreCase(name))
+				return true;
 		}
-		return new String();
+		return false;
 	}
 
-	public static boolean hasDuplicity(Long id, Project projectToBeUpdated) {
-		return !validateDuplicity(id, projectToBeUpdated).isEmpty();
-	}
+	public boolean hasDuplicateCode() {
+		List<Project> projects = Collections.emptyList();
+		if (id != null)
+			projects = findAllExcept(id);
+		else
+			projects = findAll();
 
-	public static String validateDuplicity(Long id, Project projectToBeUpdated) {
-		for (Project existingProject : findAllExcept(id)) {
-			if (existingProject.name.equalsIgnoreCase(projectToBeUpdated.name))
-				return "Duplicate name!";
-			if (existingProject.code.equalsIgnoreCase(projectToBeUpdated.code))
-				return "Duplicate code!";
+		for (Project project : projects) {
+			if (project.code.equalsIgnoreCase(code))
+				return true;
 		}
-		return new String();
+		return false;
+	}
+
+	public boolean hasActiveCustomer() {
+		// Check if customer is loaded
+		if (customer.name == null)
+			customer = Customer.findById(customer.id);
+		return customer.active;
 	}
 
 }

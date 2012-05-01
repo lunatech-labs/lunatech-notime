@@ -1,5 +1,6 @@
 package models;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
@@ -38,10 +40,13 @@ public class Customer {
 	@JoinTable(name = "customermanager", joinColumns = @JoinColumn(name = "customer_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
 	public List<User> customerManagers;
 
+	public boolean active;
+
 	/**
 	 * Inserts this new customer
 	 */
 	public void save() {
+		active = true;
 		JPA.em().persist(this);
 	}
 
@@ -54,13 +59,54 @@ public class Customer {
 	public void update(Long customerId) {
 		this.id = customerId;
 		JPA.em().merge(this);
+		if (!active)
+			inactivateProjects();
 	}
 
 	/**
 	 * Deletes this customer
+	 * 
+	 * @return true if the project is removed
 	 */
-	public void delete() {
-		JPA.em().remove(this);
+	public boolean delete() {
+		boolean deletable = isDeletable();
+		if (deletable) {
+			JPA.em().remove(this);
+		}
+		return deletable;
+	}
+
+	/**
+	 * Inactivates this customer.
+	 */
+	public void inactivate() {
+		active = false;
+		update(id);
+		inactivateProjects();
+	}
+
+	/**
+	 * Inactivates all its projects.
+	 */
+	private void inactivateProjects() {
+		for (Project project : Project.findAllActiveForCustomer(this)) {
+			project.inactivate();
+		}
+	}
+
+	/**
+	 * Checks if a customer is deletable. A customer is deletable when all its
+	 * projects are deletable
+	 * 
+	 * @return true if the project is deletable
+	 */
+	public boolean isDeletable() {
+		for (Project project : Project.findAllForCustomer(this)) {
+			if (!project.isDeletable()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -87,6 +133,19 @@ public class Customer {
 	}
 
 	/**
+	 * Find all active customers
+	 * 
+	 * @return @return A List of customer objects
+	 */
+	public static List<Customer> findAllActive() {
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<Customer> query = cb.createQuery(Customer.class);
+		Root<Customer> customer = query.from(Customer.class);
+		query.where(cb.isTrue(customer.get(Customer_.active)));
+		return JPA.em().createQuery(query).getResultList();
+	}
+
+	/**
 	 * Find all customers except one customer
 	 * 
 	 * @param customerId
@@ -107,42 +166,46 @@ public class Customer {
 	 */
 	public static Map<String, String> options() {
 		LinkedHashMap<String, String> options = new LinkedHashMap<String, String>();
-		for (Customer c : findAll()) {
+		for (Customer c : findAllActive()) {
 			options.put(c.id.toString(), c.name);
 		}
 		return options;
 	}
 
-	// VALIDATION METHODS NEED TO BE REPLACED BY ANNOTATIONS OR BE REWRITTEN
-	public static boolean hasDuplicity(Customer customerToBeCreated) {
-		return !validateDuplicity(customerToBeCreated).isEmpty();
+	public String validate() {
+		if (hasDuplicateName())
+			return "Duplicate name!";
+		if (hasDuplicateCode())
+			return "Duplicate code!";
+		return null;
 	}
 
-	public static String validateDuplicity(Customer customerToBeCreated) {
-		for (Customer existingCustomer : findAll()) {
-			if (existingCustomer.name
-					.equalsIgnoreCase(customerToBeCreated.name))
-				return "Duplicate name!";
-			if (existingCustomer.code
-					.equalsIgnoreCase(customerToBeCreated.code))
-				return "Duplicate code!";
+	public boolean hasDuplicateName() {
+		List<Customer> customers = Collections.emptyList();
+		if (id != null)
+			customers = findAllExcept(id);
+		else
+			customers = findAll();
+
+		for (Customer customer : customers) {
+			if (customer.name.equalsIgnoreCase(name))
+				return true;
 		}
-		return new String();
+		return false;
 	}
 
-	public static boolean hasDuplicity(Long id, Customer customerToBeUpdated) {
-		return !validateDuplicity(id, customerToBeUpdated).isEmpty();
-	}
+	public boolean hasDuplicateCode() {
+		List<Customer> customers = Collections.emptyList();
+		if (id != null)
+			customers = findAllExcept(id);
+		else
+			customers = findAll();
 
-	public static String validateDuplicity(Long id, Customer customerToBeUpdated) {
-		for (Customer existingCustomer : findAllExcept(id)) {
-			if (existingCustomer.name
-					.equalsIgnoreCase(customerToBeUpdated.name))
-				return "Duplicate name!";
-			if (existingCustomer.code
-					.equalsIgnoreCase(customerToBeUpdated.code))
-				return "Duplicate code!";
+		for (Customer customer : customers) {
+			if (customer.code.equalsIgnoreCase(code))
+				return true;
 		}
-		return new String();
+		return false;
 	}
+
 }

@@ -10,7 +10,7 @@
         		<option value="@v._1" @(if(value == Some(v._1)) "selected" else "")>@v._2</option>
         	}
     	</select>
-    	<a class="removeManager btn danger">Remove</a>
+    	<a class="removeManager btn btn-danger">Remove</a>
 	}
 }
 
@@ -20,9 +20,9 @@
 
 @main("Create customer", script) {
 	
-	@if(flash.containsKey("error")) {
+	@if(customerForm.hasGlobalErrors()) {
     	<div class="alert-message error">
-            <strong>Oops!</strong> @flash.get("error")
+            <strong>Oops!</strong> @customerForm.globalError().message
         </div>
     }
 	

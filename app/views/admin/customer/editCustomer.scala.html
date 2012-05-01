@@ -10,7 +10,7 @@
         		<option value="@v._1" @(if(value == Some(v._1)) "selected" else "")>@v._2</option>
         	}
     	</select>
-    	<a class="removeManager btn danger">Remove</a>
+    	<a class="removeManager btn btn-danger">Remove</a>
 	}
 }
 
@@ -20,11 +20,11 @@
 
 @main("Edit customer", script) {
 	
-	@if(flash.containsKey("error")) {
+	@if(customerForm.hasGlobalErrors()) {
     	<div class="alert-message error">
-            <strong>Oops!</strong> @flash.get("error")
+            <strong>Oops!</strong> @customerForm.globalError().message
         </div>
-    } 
+    }
 	
 	@form(routes.Customers.update(id), 'id -> "form") {
 		
@@ -51,10 +51,13 @@
 					<a class="addManager btn success">Add a customer manager</a>
 				</div>
 			</div>
-	
-			<input class="btn btn-primary" type="submit" value="Submit">
-			<a class="btn btn-danger" href="@routes.Customers.all()">Cancel</a>
 		</div>
+
+		@checkbox(customerForm("active"), '_label -> "Active")
+
+		<input class="btn btn-primary" type="submit" value="Submit">
+		<a class="btn btn-danger" href="@routes.Customers.all()">Cancel</a>
+
 	}
 	
 } {

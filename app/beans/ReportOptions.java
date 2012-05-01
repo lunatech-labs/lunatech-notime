@@ -40,7 +40,7 @@ public class ReportOptions {
 		} else {
 			if (customers != null && !customers.isEmpty()) {
 				for (Customer customer : customers) {
-					projects.addAll(Project.findAll(customer));
+					projects.addAll(Project.findAllForCustomer(customer));
 				}
 			}
 			if (this.projects != null) {

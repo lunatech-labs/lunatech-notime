@@ -8,10 +8,10 @@ insert into uzer (id, username, password, fullname, email, createdon) values (3,
 insert into uzer (id, username, password, fullname, email, createdon) values (4, 'klaas', '$2a$10$S4oWmAIMLvUxOuspF2Fg4eMehfZzyJvvgyYkT8mzYvQyih/FyhKBG', 'Klaas Bar', 'klaas@test.nl', '2012-03-08');
 insert into uzer (id, username, password, fullname, email, createdon) values (5, 'piet', '$2a$10$S4oWmAIMLvUxOuspF2Fg4eMehfZzyJvvgyYkT8mzYvQyih/FyhKBG', 'Piet Foo', 'piet@test.nl', '2012-03-08');
 
-insert into customer (id, name, code, description) values (1, 'Lunatech', 'LUNA', '');
-insert into customer (id, name, code, description) values (2, 'Belastingdienst', 'BEL', 'Leuker kunnen we het niet maken, wel makkelijker..');
-insert into customer (id, name, code, description) values (3, 'Albert Heijn', 'AH', '');
-insert into customer (id, name, code, description) values (4, 'Rabobank', 'RABO', '');
+insert into customer (id, name, code, description, active) values (1, 'Lunatech', 'LUNA', '', TRUE);
+insert into customer (id, name, code, description, active) values (2, 'Belastingdienst', 'BEL', 'Leuker kunnen we het niet maken, wel makkelijker..', TRUE);
+insert into customer (id, name, code, description, active) values (3, 'Albert Heijn', 'AH', '', TRUE);
+insert into customer (id, name, code, description, active) values (4, 'Rabobank', 'RABO', '', TRUE);
 
 insert into project (id, name, code, description, type, customer_id, customercontact, projectmanager_id, defaultproject, active) values (1, 'NoTime', 'TIME', 'Timesheet application for Lunatech', 0, 1, 'Leonard Punt', 1, FALSE, TRUE);
 insert into project (id, name, code, description, type, customer_id, customercontact, projectmanager_id, defaultproject, active) values (2, 'My2Cents', 'MY2C', '', 1, 2, '', 5, FALSE, TRUE);
