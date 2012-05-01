@@ -28,6 +28,8 @@
 	
 	@form(routes.Customers.update(id), 'id -> "form") {
 		
+		<input name="id" type="hidden" value="@id" />
+
 		@inputText(customerForm("name"), '_label -> "Name")
 		
 		@inputText(customerForm("code"), '_label -> "Code")
