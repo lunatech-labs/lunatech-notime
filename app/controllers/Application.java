@@ -1,6 +1,6 @@
 package controllers;
 
-import datastructures.Login;
+import beans.LoginForm;
 import models.User;
 import play.Routes;
 import play.data.Form;
@@ -13,12 +13,12 @@ import views.html.admin.overview;
 public class Application extends Controller {
 
 	public static Result login() {
-		return ok(login.render(form(Login.class)));
+		return ok(login.render(form(LoginForm.class)));
 	}
 
 	@Transactional(readOnly=true)
 	public static Result authenticate() {
-		Form<Login> loginForm = form(Login.class).bindFromRequest();
+		Form<LoginForm> loginForm = form(LoginForm.class).bindFromRequest();
 		if (loginForm.hasErrors()) {
 			return badRequest(login.render(loginForm));
 		} else {

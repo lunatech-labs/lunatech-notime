@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import models.HourEntry;
-import models.Project;
 import models.User;
 
 import org.joda.time.LocalDate;

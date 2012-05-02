@@ -1,8 +1,8 @@
-package datastructures;
+package beans;
 
 import models.User;
 
-public class Login {
+public class LoginForm {
 	
 	public String username;
     public String password;
