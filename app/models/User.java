@@ -2,6 +2,7 @@ package models;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.OneToMany;
@@ -18,6 +20,10 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
+import models.security.Permission;
+import models.security.Role;
+import models.security.Role_;
+
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 import org.mindrot.jbcrypt.BCrypt;
@@ -25,10 +31,11 @@ import org.mindrot.jbcrypt.BCrypt;
 import play.data.validation.Constraints.Email;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
+import be.objectify.deadbolt.models.RoleHolder;
 
 @Entity
 @Table(name = "uzer")
-public class User {
+public class User implements RoleHolder {
 
 	@Id
 	@GeneratedValue
@@ -57,6 +64,12 @@ public class User {
 
 	public boolean active;
 
+	@ManyToMany
+	public List<Role> roles;
+
+	@ManyToMany
+	public List<Permission> permissions;
+
 	/**
 	 * Encrypts the user's password and inserts this new user. The user will
 	 * also be assigned to all default projects.
@@ -65,6 +78,11 @@ public class User {
 		password = User.encryptPassword(password);
 		createdOn = new LocalDate();
 		active = true;
+
+		List<Role> roles = new LinkedList<Role>();
+		roles.add(Role.findByRoleName("user"));
+		this.roles = roles;
+
 		JPA.em().persist(this);
 		ProjectAssignment.assignAllDefaultProjectsTo(this);
 	}
@@ -119,7 +137,8 @@ public class User {
 
 	/**
 	 * Checks if a user is deletable. A user is deletable when all its
-	 * assignments are deletable and he is not a project manager.
+	 * assignments are deletable, he is not a project manager and he is not the
+	 * last user with the admin role.
 	 * 
 	 * @return true if the project is deletable
 	 */
@@ -133,6 +152,9 @@ public class User {
 			if (project.projectManager == this) {
 				return false;
 			}
+		}
+		if (findAllForRole("admin").size() <= 1) {
+			return false;
 		}
 		return true;
 	}
@@ -149,7 +171,7 @@ public class User {
 	}
 
 	/**
-	 * Find a user by username
+	 * Find a user by his username
 	 * 
 	 * @param username
 	 *            The username of the user to be searched for
@@ -163,6 +185,29 @@ public class User {
 			CriteriaQuery<User> query = cb.createQuery(User.class);
 			Root<User> user = query.from(User.class);
 			query.where(cb.equal(user.get(User_.username), username));
+			return JPA.em().createQuery(query).getSingleResult();
+		} catch (NoResultException nre) {
+			return null;
+		} catch (NonUniqueResultException nure) {
+			return null;
+		}
+	}
+
+	/**
+	 * Find a user by his email
+	 * 
+	 * @param email
+	 *            The email of the user to be searched for
+	 * @return If 0 or more than 1 (more than one means non-unique value, which
+	 *         shouldn't be possible) users are found, null is returned. If one
+	 *         is found, this user is returned
+	 */
+	public static User findByEmail(String email) {
+		try {
+			CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+			CriteriaQuery<User> query = cb.createQuery(User.class);
+			Root<User> user = query.from(User.class);
+			query.where(cb.equal(user.get(User_.email), email));
 			return JPA.em().createQuery(query).getSingleResult();
 		} catch (NoResultException nre) {
 			return null;
@@ -197,6 +242,23 @@ public class User {
 		Join<User, ProjectAssignment> assignment = user.join(User_.assignments);
 		query.where(cb.equal(assignment.get(ProjectAssignment_.project),
 				project));
+		return JPA.em().createQuery(query).getResultList();
+	}
+
+	/**
+	 * Find all users which have a certain role
+	 * 
+	 * @param roleName
+	 *            The roleName of the role to which the users must be assigned
+	 *            to
+	 * @return A List of {@link User}s
+	 */
+	public static List<User> findAllForRole(String roleName) {
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<User> query = cb.createQuery(User.class);
+		Root<User> user = query.from(User.class);
+		Join<User, Role> role = user.join(User_.roles);
+		query.where(cb.equal(role.get(Role_.roleName), roleName));
 		return JPA.em().createQuery(query).getResultList();
 	}
 
@@ -274,13 +336,12 @@ public class User {
 	 */
 	public static User authenticate(String username, String password) {
 		User user = findByUsername(username);
-
 		if (user == null || !user.checkPassword(password) || !user.active)
 			return null;
 		else
 			return user;
 	}
-	
+
 	public String validate() {
 		if (hasDuplicateUsername())
 			return "Duplicate username!";
@@ -315,6 +376,16 @@ public class User {
 				return true;
 		}
 		return false;
+	}
+
+	@Override
+	public List<? extends be.objectify.deadbolt.models.Permission> getPermissions() {
+		return permissions;
+	}
+
+	@Override
+	public List<? extends be.objectify.deadbolt.models.Role> getRoles() {
+		return roles;
 	}
 
 }
