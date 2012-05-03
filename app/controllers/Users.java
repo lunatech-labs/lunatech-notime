@@ -10,6 +10,8 @@ import models.User;
 
 import org.joda.time.LocalDate;
 
+import be.objectify.deadbolt.actions.Restrict;
+
 import play.data.Form;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
@@ -26,6 +28,7 @@ import datastructures.TotalsDay;
 public class Users extends Controller {
 
 	@Transactional(readOnly = true)
+	@Restrict("admin")
 	public static Result all() {
 		return ok(users.render(User.findAll()));
 	}
@@ -36,12 +39,14 @@ public class Users extends Controller {
 	}
 
 	@Transactional(readOnly = true)
+	@Restrict("admin")
 	public static Result add() {
 		Form<User> newForm = form(User.class);
 		return ok(createUser.render(newForm));
 	}
 
 	@Transactional
+	@Restrict("admin")
 	public static Result create() {
 		Form<User> filledForm = form(User.class).bindFromRequest();
 
@@ -53,12 +58,14 @@ public class Users extends Controller {
 	}
 
 	@Transactional(readOnly = true)
+	@Restrict("admin")
 	public static Result edit(Long userId) {
 		Form<User> filledForm = form(User.class).fill(User.findById(userId));
 		return ok(editUser.render(userId, filledForm));
 	}
 
 	@Transactional
+	@Restrict("admin")
 	public static Result update(Long userId) {
 		Form<User> filledForm = form(User.class).bindFromRequest();
 		if (filledForm.hasErrors())
@@ -69,6 +76,7 @@ public class Users extends Controller {
 	}
 
 	@Transactional
+	@Restrict("admin")
 	public static Result delete(Long userId) {
 		if (!User.findById(userId).delete()) {
 			flash("error",

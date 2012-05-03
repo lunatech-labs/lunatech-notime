@@ -3,7 +3,6 @@ package security;
 import models.User;
 import play.mvc.Http.Context;
 import play.mvc.Result;
-import views.html.accessFailed;
 import be.objectify.deadbolt.AbstractDeadboltHandler;
 import be.objectify.deadbolt.DynamicResourceHandler;
 import be.objectify.deadbolt.models.RoleHolder;
@@ -27,7 +26,7 @@ public class DeadboltHandlerImpl extends AbstractDeadboltHandler {
 
 	@Override
 	public Result onAccessFailure(Context context, String content) {
-		return ok(accessFailed.render());
+		return forbidden(views.html.forbidden.render());
 	}
 
 }
