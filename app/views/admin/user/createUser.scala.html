@@ -3,7 +3,22 @@
 @import helper._
 @import helper.twitterBootstrap._
 
-@main("Create user") {
+@roleField(field: Field, className: String = "role") = {
+    @input(field, '_label -> "Role", '_class -> className) { (id, name, value, _) =>
+        <select id="@id" name="@name">
+        @security.UserRole.options.map { v =>
+            <option value="@v._1" @(if(value == Some(v._1)) "selected" else "")>@v._2</option>
+        }
+    	</select>
+        <a class="removeRole btn btn-danger">Remove</a>
+    }
+}
+
+@script = {
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/user.js")"></script>
+}
+
+@main("Create user", script) {
 	
 	@if(userForm.hasGlobalErrors()) {
     	<div class="alert-message error">
@@ -11,7 +26,7 @@
         </div>
     }
 
-	@form(routes.Users.create()) {
+	@form(routes.Users.create(), 'id -> "user-form") {
 
 		@inputText(userForm("username"), '_label -> "Username")
 
@@ -20,6 +35,28 @@
 		@inputText(userForm("fullname"), '_label -> "Full name")
 
 		@inputText(userForm("email"), '_label -> "Email")
+
+		<div class="roles">
+
+			@repeat(userForm("userRoles"), min = 0) { role =>
+				@roleField(userForm(role("id").name))
+			}
+
+			@**
+			* Keep an hidden block that will be used as template for Javascript copy code
+			**@
+			@roleField(
+				userForm("userRoles[x].id"),
+				className = "role-template"
+			)
+
+			<div class="clearfix">
+				<div class="input">
+					<a class="addRole btn">Add a role</a>
+				</div>
+			</div>
+
+		</div>
 
 		<input class="btn btn-primary" type="submit" value="Submit">
 		<a class="btn btn-danger" href="@routes.Users.all()">Cancel</a>

@@ -35,6 +35,7 @@ public class Users extends Controller {
 		return ok(views.html.user.user.render(User.findById(id)));
 	}
 
+	@Transactional(readOnly = true)
 	public static Result add() {
 		Form<User> newForm = form(User.class);
 		return ok(createUser.render(newForm));
@@ -60,7 +61,6 @@ public class Users extends Controller {
 	@Transactional
 	public static Result update(Long userId) {
 		Form<User> filledForm = form(User.class).bindFromRequest();
-
 		if (filledForm.hasErrors())
 			return badRequest(editUser.render(userId, filledForm));
 

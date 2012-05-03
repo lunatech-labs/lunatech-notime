@@ -2,7 +2,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import models.User;
-import models.security.Role;
+import models.security.UserRole;
 import play.Application;
 import play.GlobalSettings;
 import play.db.jpa.JPA;
@@ -38,14 +38,14 @@ public class Global extends GlobalSettings {
 				}
 
 				private void createDefaultRoles() {
-					if (Role.findByRoleName("admin") == null) {
-						Role adminRole = new Role();
+					if (UserRole.findByRoleName("admin") == null) {
+						UserRole adminRole = new UserRole();
 						adminRole.roleName = "admin";
 						adminRole.save();
 					}
 
-					if (Role.findByRoleName("user") == null) {
-						Role userRole = new Role();
+					if (UserRole.findByRoleName("user") == null) {
+						UserRole userRole = new UserRole();
 						userRole.roleName = "user";
 						userRole.save();
 					}
@@ -73,9 +73,9 @@ public class Global extends GlobalSettings {
 				}
 
 				private void assignAdminRole(User adminUser) {
-					List<Role> roles = new LinkedList<Role>();
-					roles.add(Role.findByRoleName("admin"));
-					adminUser.roles = roles;
+					List<UserRole> roles = new LinkedList<UserRole>();
+					roles.add(UserRole.findByRoleName("admin"));
+					adminUser.userRoles = roles;
 					adminUser.update(adminUser.id);
 				}
 

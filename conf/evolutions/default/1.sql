@@ -8,6 +8,16 @@ insert into uzer (id, username, password, fullname, email, createdon, active) va
 insert into uzer (id, username, password, fullname, email, createdon, active) values (4, 'klaas', '$2a$10$S4oWmAIMLvUxOuspF2Fg4eMehfZzyJvvgyYkT8mzYvQyih/FyhKBG', 'Klaas Bar', 'klaas@test.nl', '2012-03-08', TRUE);
 insert into uzer (id, username, password, fullname, email, createdon, active) values (5, 'piet', '$2a$10$S4oWmAIMLvUxOuspF2Fg4eMehfZzyJvvgyYkT8mzYvQyih/FyhKBG', 'Piet Foo', 'piet@test.nl', '2012-03-08', TRUE);
 
+insert into userrole (id, rolename) values (1, 'admin');
+insert into userrole (id, rolename) values (2, 'user');
+
+insert into uzer_userrole (uzer_id, userroles_id) values (1, 1);
+insert into uzer_userrole (uzer_id, userroles_id) values (1, 2);
+insert into uzer_userrole (uzer_id, userroles_id) values (2, 2);
+insert into uzer_userrole (uzer_id, userroles_id) values (3, 2);
+insert into uzer_userrole (uzer_id, userroles_id) values (4, 2);
+insert into uzer_userrole (uzer_id, userroles_id) values (5, 2);
+
 insert into customer (id, name, code, description, active) values (1, 'Lunatech', 'LUNA', '', TRUE);
 insert into customer (id, name, code, description, active) values (2, 'Belastingdienst', 'BEL', 'Leuker kunnen we het niet maken, wel makkelijker..', TRUE);
 insert into customer (id, name, code, description, active) values (3, 'Albert Heijn', 'AH', '', TRUE);
@@ -74,4 +84,6 @@ delete from hourentry;
 delete from projectassignment;
 delete from project;
 delete from customer;
+delete from uzer_userrole;
 delete from uzer;
+delete from userrole;

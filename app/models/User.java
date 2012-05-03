@@ -20,9 +20,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
-import models.security.Permission;
-import models.security.Role;
-import models.security.Role_;
+import models.security.UserRole;
+import models.security.UserRole_;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
@@ -31,6 +30,8 @@ import org.mindrot.jbcrypt.BCrypt;
 import play.data.validation.Constraints.Email;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
+import be.objectify.deadbolt.models.Permission;
+import be.objectify.deadbolt.models.Role;
 import be.objectify.deadbolt.models.RoleHolder;
 
 @Entity
@@ -65,10 +66,7 @@ public class User implements RoleHolder {
 	public boolean active;
 
 	@ManyToMany
-	public List<Role> roles;
-
-	@ManyToMany
-	public List<Permission> permissions;
+	public List<UserRole> userRoles;
 
 	/**
 	 * Encrypts the user's password and inserts this new user. The user will
@@ -78,10 +76,6 @@ public class User implements RoleHolder {
 		password = User.encryptPassword(password);
 		createdOn = new LocalDate();
 		active = true;
-
-		List<Role> roles = new LinkedList<Role>();
-		roles.add(Role.findByRoleName("user"));
-		this.roles = roles;
 
 		JPA.em().persist(this);
 		ProjectAssignment.assignAllDefaultProjectsTo(this);
@@ -97,7 +91,23 @@ public class User implements RoleHolder {
 		if (!password.equals(findById(userId).password))
 			password = User.encryptPassword(password);
 		this.id = userId;
+
+		// Make it impossible to delete the last admin role
+		if (isLastAdminUser()) {
+			UserRole adminRole = UserRole.findByRoleName("admin");
+			if (userRoles == null) {
+				List<UserRole> roles = new LinkedList<UserRole>();
+				roles.add(adminRole);
+				userRoles = roles;
+			} else {
+				if (!userRoles.contains(adminRole)) {
+					userRoles.add(adminRole);
+				}
+			}
+		}
+
 		JPA.em().merge(this);
+
 		if (!active)
 			inactivateAssignments();
 	}
@@ -153,10 +163,20 @@ public class User implements RoleHolder {
 				return false;
 			}
 		}
-		if (findAllForRole("admin").size() <= 1) {
+		if (isLastAdminUser()) {
 			return false;
 		}
 		return true;
+	}
+
+	private boolean isLastAdminUser() {
+		List<User> admins = findAllForRole("admin");
+		if (admins.size() <= 1) {
+			if (admins.get(0).id == id) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -257,8 +277,8 @@ public class User implements RoleHolder {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 		CriteriaQuery<User> query = cb.createQuery(User.class);
 		Root<User> user = query.from(User.class);
-		Join<User, Role> role = user.join(User_.roles);
-		query.where(cb.equal(role.get(Role_.roleName), roleName));
+		Join<User, UserRole> role = user.join(User_.userRoles);
+		query.where(cb.equal(role.get(UserRole_.roleName), roleName));
 		return JPA.em().createQuery(query).getResultList();
 	}
 
@@ -379,13 +399,15 @@ public class User implements RoleHolder {
 	}
 
 	@Override
-	public List<? extends be.objectify.deadbolt.models.Permission> getPermissions() {
-		return permissions;
+	public List<? extends Role> getRoles() {
+		return userRoles;
 	}
 
+	/**
+	 * Permissions are not used.
+	 */
 	@Override
-	public List<? extends be.objectify.deadbolt.models.Role> getRoles() {
-		return roles;
+	public List<? extends Permission> getPermissions() {
+		return null;
 	}
-
 }
