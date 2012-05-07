@@ -47,6 +47,18 @@ public class UserRole implements Role {
 		return roleName;
 	}
 
+	public static UserRole adminRole() {
+		return findByRoleName("admin");
+	}
+
+	public static UserRole userRole() {
+		return findByRoleName("user");
+	}
+
+	public static UserRole customerManagerRole() {
+		return findByRoleName("customerManager");
+	}
+
 	/**
 	 * Find a role by its role name
 	 * 
@@ -88,7 +100,7 @@ public class UserRole implements Role {
 	public static Map<String, String> options() {
 		Map<String, String> options = new HashMap<String, String>();
 		for (UserRole r : findAll()) {
-			options.put(r.id.toString(), r.roleName);
+			options.put(r.id.toString(), r.roleName.toUpperCase());
 		}
 		return options;
 	}

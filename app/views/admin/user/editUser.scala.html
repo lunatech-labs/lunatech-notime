@@ -5,12 +5,14 @@
 
 @roleField(field: Field, className: String = "role") = {
     @input(field, '_label -> "Role", '_class -> className) { (id, name, value, _) =>
-        <select id="@id" name="@name">
+    	<select id="@id" name="@name">
         @security.UserRole.options.map { v =>
             <option value="@v._1" @(if(value == Some(v._1)) "selected" else "")>@v._2</option>
         }
     	</select>
+    	@if(Some(security.UserRole.customerManagerRole.id.toString) != value) {
         <a class="removeRole btn btn-danger">Remove</a>
+   		}
     }
 }
 

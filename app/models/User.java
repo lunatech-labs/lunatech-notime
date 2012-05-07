@@ -76,7 +76,6 @@ public class User implements RoleHolder {
 		password = User.encryptPassword(password);
 		createdOn = new LocalDate();
 		active = true;
-
 		JPA.em().persist(this);
 		ProjectAssignment.assignAllDefaultProjectsTo(this);
 	}
@@ -94,7 +93,7 @@ public class User implements RoleHolder {
 
 		// Make it impossible to delete the last admin role
 		if (isLastAdminUser()) {
-			UserRole adminRole = UserRole.findByRoleName("admin");
+			UserRole adminRole = UserRole.adminRole();
 			if (userRoles == null) {
 				List<UserRole> roles = new LinkedList<UserRole>();
 				roles.add(adminRole);
@@ -131,8 +130,7 @@ public class User implements RoleHolder {
 	 */
 	public void inactivate() {
 		active = false;
-		update(id);
-
+		JPA.em().merge(this);
 	}
 
 	/**
@@ -169,6 +167,11 @@ public class User implements RoleHolder {
 		return true;
 	}
 
+	/**
+	 * Checks if this user is the last user with an admin role
+	 * 
+	 * @return true if this is the last user with an admin role
+	 */
 	private boolean isLastAdminUser() {
 		List<User> admins = findAllForRole("admin");
 		if (admins.size() <= 1) {
@@ -399,6 +402,31 @@ public class User implements RoleHolder {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
+	@Override
 	public List<? extends Role> getRoles() {
 		return userRoles;
 	}
@@ -410,4 +438,49 @@ public class User implements RoleHolder {
 	public List<? extends Permission> getPermissions() {
 		return null;
 	}
+
+	/**
+	 * Checks if this user is assigned to a role
+	 * 
+	 * @param role
+	 *            The {@link UserRole} to check if assigned to this user
+	 * @return True if the role is assigned to this user
+	 */
+	public boolean containsRole(UserRole role) {
+		if (userRoles != null) {
+			return userRoles.contains(role);
+		}
+		return false;
+	}
+
+	/**
+	 * Assigns a role to this user
+	 * 
+	 * @param role
+	 *            The {@link UserRole} to assign to this user
+	 */
+	public void assignRole(UserRole role) {
+		if (userRoles == null) {
+			List<UserRole> roles = new LinkedList<UserRole>();
+			roles.add(role);
+			userRoles = roles;
+		} else {
+			userRoles.add(role);
+		}
+		JPA.em().merge(this);
+	}
+
+	/**
+	 * Remove a role from this user
+	 * 
+	 * @param role
+	 *            The {@link UserRole} to remove from this user
+	 */
+	public void removeRole(UserRole role) {
+		if (userRoles != null) {
+			userRoles.remove(role);
+			JPA.em().merge(this);
+		}
+	}
+
 }

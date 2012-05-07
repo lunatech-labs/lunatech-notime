@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
 import play.data.validation.Constraints.Required;
@@ -175,7 +176,7 @@ public class Project {
 	 * Finds all projects for a customer
 	 * 
 	 * @param customer
-	 *            The customer of the project that needs to be searched for
+	 *            The customer of the projects that need to be searched for
 	 * @return A List of {@link Project}s
 	 */
 	public static List<Project> findAllForCustomer(Customer customer) {
@@ -183,6 +184,25 @@ public class Project {
 		CriteriaQuery<Project> query = cb.createQuery(Project.class);
 		Root<Project> project = query.from(Project.class);
 		query.where(cb.equal(project.get(Project_.customer), customer));
+		return JPA.em().createQuery(query).getResultList();
+	}
+
+	/**
+	 * Finds all projects for a customer manager
+	 * 
+	 * @param customerManager
+	 *            The customer manager of the projects that need to be searched
+	 *            for
+	 * @return A List of {@link Project}s
+	 */
+	public static List<Project> findAllForCustomerManager(User customerManager) {
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<Project> query = cb.createQuery(Project.class);
+		Root<Project> project = query.from(Project.class);
+		Join<Project, Customer> customer = project.join(Project_.customer);
+		Join<Customer, User> customerManagerJoin = customer
+				.join(Customer_.customerManagers);
+		query.where(cb.equal(customerManagerJoin, customerManager));
 		return JPA.em().createQuery(query).getResultList();
 	}
 

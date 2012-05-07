@@ -1,5 +1,6 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,6 +18,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
+import models.security.UserRole;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
 
@@ -49,6 +51,13 @@ public class Customer {
 	public void save() {
 		active = true;
 		JPA.em().persist(this);
+
+		if (customerManagers != null) {
+			for (User u : customerManagers) {
+				User customerManager = User.findById(u.id);
+				customerManager.assignRole(UserRole.customerManagerRole());
+			}
+		}
 	}
 
 	/**
@@ -59,6 +68,7 @@ public class Customer {
 	 */
 	public void update(Long customerId) {
 		this.id = customerId;
+		updateCustomerManagerRoles();
 		JPA.em().merge(this);
 		if (!active)
 			inactivateProjects();
@@ -108,6 +118,67 @@ public class Customer {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Updates the CustomerManager roles. Must be called before the actual
+	 * update is done! This is because the updates are based on the differences
+	 * between the saved customerManagers and the submitted customersManagers
+	 */
+	public void updateCustomerManagerRoles() {
+		UserRole customerManagerRole = UserRole.customerManagerRole();
+		List<User> savedCustomerManagers = findById(id).customerManagers;
+		List<User> currentCustomerManagers = new ArrayList<User>();
+
+		if (customerManagers != null) {
+			currentCustomerManagers.addAll(customerManagers);
+		}
+
+		if (savedCustomerManagers.isEmpty()
+				&& !currentCustomerManagers.isEmpty()) {
+			// assign role to all current managers
+			for (User user : currentCustomerManagers) {
+				// current CustomerManagers aren't loaded
+				User customerManager = User.findById(user.id);
+				if (!customerManager.containsRole(customerManagerRole))
+					customerManager.assignRole(customerManagerRole);
+			}
+		}
+		if (!savedCustomerManagers.isEmpty()
+				&& currentCustomerManagers.isEmpty()) {
+			// remove role form all saved managers
+			for (User user : savedCustomerManagers) {
+				// is this the user's last customer he was manager of?
+				if (findAllForCustomerManager(user).size() == 1)
+					user.removeRole(customerManagerRole);
+			}
+		}
+		if (!savedCustomerManagers.isEmpty()
+				&& !currentCustomerManagers.isEmpty()) {
+			List<User> newCustomerManagers = currentCustomerManagers;
+
+			for (User savedUser : savedCustomerManagers) {
+				if (currentCustomerManagers.contains(savedUser)) {
+					// savedUser is already a customer manager
+					newCustomerManagers.remove(savedUser);
+				} else {
+					// is this the user's last customer he was manager of?
+					if (findAllForCustomerManager(savedUser).size() == 1) {
+						// savedUser is no longer customer manager
+						savedUser.removeRole(customerManagerRole);
+					}
+				}
+			}
+			for (User newUser : newCustomerManagers) {
+				User loadedNewUser = User.findById(newUser.id);
+				if (!loadedNewUser.containsRole(customerManagerRole)) {
+					// user isn't loaded
+					loadedNewUser.assignRole(customerManagerRole);
+				}
+
+			}
+		}
+
 	}
 
 	/**

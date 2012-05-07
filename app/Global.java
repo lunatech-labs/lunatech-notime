@@ -6,7 +6,6 @@ import models.security.UserRole;
 import play.Application;
 import play.GlobalSettings;
 import play.db.jpa.JPA;
-import play.db.jpa.Transactional;
 import binders.form.CustomDataBinders;
 
 public class Global extends GlobalSettings {
@@ -38,15 +37,21 @@ public class Global extends GlobalSettings {
 				}
 
 				private void createDefaultRoles() {
-					if (UserRole.findByRoleName("admin") == null) {
+					if (UserRole.adminRole() == null) {
 						UserRole adminRole = new UserRole();
 						adminRole.roleName = "admin";
 						adminRole.save();
 					}
 
-					if (UserRole.findByRoleName("user") == null) {
+					if (UserRole.userRole() == null) {
 						UserRole userRole = new UserRole();
 						userRole.roleName = "user";
+						userRole.save();
+					}
+
+					if (UserRole.customerManagerRole() == null) {
+						UserRole userRole = new UserRole();
+						userRole.roleName = "customerManager";
 						userRole.save();
 					}
 				}
@@ -74,7 +79,7 @@ public class Global extends GlobalSettings {
 
 				private void assignAdminRole(User adminUser) {
 					List<UserRole> roles = new LinkedList<UserRole>();
-					roles.add(UserRole.findByRoleName("admin"));
+					roles.add(UserRole.adminRole());
 					adminUser.userRoles = roles;
 					adminUser.update(adminUser.id);
 				}
