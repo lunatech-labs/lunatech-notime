@@ -42,6 +42,14 @@ public class Application extends Controller {
 		return ok(overview.render());
 	}
 	
+	/**
+	 * Get the user that is currently logged in
+	 * @return A {@link User}
+	 */
+	public static User getCurrentUser() {
+		return User.findByUsername(session("username"));
+	}
+
 	// Javascript routing    
     public static Result javascriptRoutes() {
         response().setContentType("text/javascript");

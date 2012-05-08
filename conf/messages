@@ -1,0 +1,2 @@
+project.notCustomerManager=You aren't customer manager of this customer
+project.notDeletable=The project could not be deleted. Probably one of its assignments is not deletable.

@@ -483,4 +483,22 @@ public class User implements RoleHolder {
 		}
 	}
 
+	/**
+	 * Checks if this user is has the admin role
+	 * 
+	 * @return True if this user has the admin role
+	 */
+	public boolean isAdmin() {
+		return containsRole(UserRole.adminRole());
+	}
+
+	/**
+	 * Checks if this user is has the customer manager role
+	 * 
+	 * @return True if this user has the customer manager role
+	 */
+	public boolean isCustomerManager() {
+		return containsRole(UserRole.customerManagerRole());
+	}
+
 }

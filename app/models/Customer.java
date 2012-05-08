@@ -137,11 +137,11 @@ public class Customer {
 		if (savedCustomerManagers.isEmpty()
 				&& !currentCustomerManagers.isEmpty()) {
 			// assign role to all current managers
-			for (User user : currentCustomerManagers) {
+			for (User currentUser : currentCustomerManagers) {
 				// current CustomerManagers aren't loaded
-				User customerManager = User.findById(user.id);
-				if (!customerManager.containsRole(customerManagerRole))
-					customerManager.assignRole(customerManagerRole);
+				User user = User.findById(currentUser.id);
+				if (!user.isCustomerManager())
+					user.assignRole(customerManagerRole);
 			}
 		}
 		if (!savedCustomerManagers.isEmpty()
