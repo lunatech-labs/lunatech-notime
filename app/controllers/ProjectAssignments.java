@@ -1,23 +1,33 @@
 package controllers;
 
+import be.objectify.deadbolt.actions.And;
+import be.objectify.deadbolt.actions.Restrictions;
 import models.Project;
 import models.ProjectAssignment;
+import models.User;
 import play.data.Form;
+import play.data.validation.ValidationError;
 import play.db.jpa.Transactional;
+import play.i18n.Messages;
 import play.mvc.Controller;
 import play.mvc.Result;
+import views.html.admin.project.createProject;
 import views.html.admin.project.assignment.createProjectAssignment;
 import views.html.admin.project.assignment.editProjectAssignment;
 
 public class ProjectAssignments extends Controller {
 
 	@Transactional(readOnly = true)
+	@Restrictions({ @And("admin"), @And("customerManager"),
+			@And("projectManager") })
 	public static Result add(Long projectId) {
 		Form<ProjectAssignment> newForm = form(ProjectAssignment.class);
 		return ok(createProjectAssignment.render(projectId, newForm));
 	}
 
 	@Transactional
+	@Restrictions({ @And("admin"), @And("customerManager"),
+			@And("projectManager") })
 	public static Result create(Long projectId) {
 		Form<ProjectAssignment> filledForm = form(ProjectAssignment.class)
 				.bindFromRequest();
@@ -26,7 +36,30 @@ public class ProjectAssignments extends Controller {
 			return badRequest(createProjectAssignment.render(projectId,
 					filledForm));
 
-		if (!Project.findById(projectId).active) {
+		final Project project = Project.findById(projectId);
+		final User user = Application.getCurrentUser();
+		if (!user.hasAdminRole()) {
+			// Check if customer manager is allowed to do this
+			if (user.hasCustomerManagerRole()) {
+				if (!project.customer.customerManagers.contains(user)) {
+					filledForm.reject(Messages
+							.get("project.notCustomerManager"));
+					return badRequest(createProjectAssignment.render(projectId,
+							filledForm));
+				}
+			}
+			// Check if project manager is allowed to do this
+			if (user.hasProjectManagerRole()) {
+				if (!project.projectManager.equals(user)) {
+					filledForm
+							.reject(Messages.get("project.notProjectManager"));
+					return badRequest(createProjectAssignment.render(projectId,
+							filledForm));
+				}
+			}
+		}
+
+		if (!project.active) {
 			filledForm.reject("Project is not active!");
 			return badRequest(createProjectAssignment.render(projectId,
 					filledForm));
@@ -37,7 +70,28 @@ public class ProjectAssignments extends Controller {
 	}
 
 	@Transactional(readOnly = true)
+	@Restrictions({ @And("admin"), @And("customerManager"),
+			@And("projectManager") })
 	public static Result edit(Long projectId, Long assignmentId) {
+		final Project project = Project.findById(projectId);
+		final User user = Application.getCurrentUser();
+		if (!user.hasAdminRole()) {
+			// Check if customer manager is allowed to do this
+			if (user.hasCustomerManagerRole()) {
+				if (!project.customer.customerManagers.contains(user)) {
+					flash("error", Messages.get("project.notCustomerManager"));
+					return redirect(routes.Projects.all());
+				}
+			}
+			// Check if project manager is allowed to do this
+			if (user.hasProjectManagerRole()) {
+				if (!project.projectManager.equals(user)) {
+					flash("error", Messages.get("project.notProjectManager"));
+					return redirect(routes.Projects.all());
+				}
+			}
+		}
+
 		Form<ProjectAssignment> newForm = form(ProjectAssignment.class).fill(
 				ProjectAssignment.findById(assignmentId));
 		return ok(editProjectAssignment
@@ -45,6 +99,8 @@ public class ProjectAssignments extends Controller {
 	}
 
 	@Transactional
+	@Restrictions({ @And("admin"), @And("customerManager"),
+			@And("projectManager") })
 	public static Result update(Long projectId, Long assignmentId) {
 		Form<ProjectAssignment> filledForm = form(ProjectAssignment.class)
 				.bindFromRequest();
@@ -53,7 +109,30 @@ public class ProjectAssignments extends Controller {
 			return badRequest(editProjectAssignment.render(projectId,
 					assignmentId, filledForm));
 
-		if (!Project.findById(projectId).active) {
+		final Project project = Project.findById(projectId);
+		final User user = Application.getCurrentUser();
+		if (!user.hasAdminRole()) {
+			// Check if customer manager is allowed to do this
+			if (user.hasCustomerManagerRole()) {
+				if (!project.customer.customerManagers.contains(user)) {
+					filledForm.reject(Messages
+							.get("project.notCustomerManager"));
+					return badRequest(editProjectAssignment.render(projectId,
+							assignmentId, filledForm));
+				}
+			}
+			// Check if project manager is allowed to do this
+			if (user.hasProjectManagerRole()) {
+				if (!project.projectManager.equals(user)) {
+					filledForm
+							.reject(Messages.get("project.notProjectManager"));
+					return badRequest(editProjectAssignment.render(projectId,
+							assignmentId, filledForm));
+				}
+			}
+		}
+
+		if (!project.active) {
 			filledForm.reject("Project is not active!");
 			return badRequest(createProjectAssignment.render(projectId,
 					filledForm));
@@ -64,10 +143,32 @@ public class ProjectAssignments extends Controller {
 	}
 
 	@Transactional
+	@Restrictions({ @And("admin"), @And("customerManager"),
+			@And("projectManager") })
 	public static Result delete(Long assignmentId) {
-		if (!ProjectAssignment.findById(assignmentId).delete()) {
-			flash("error",
-					"The assignment could not be deleted. Probably there are still hours booked on this assignment.");
+		final ProjectAssignment assignment = ProjectAssignment
+				.findById(assignmentId);
+		final Project project = assignment.project;
+		final User user = Application.getCurrentUser();
+		if (!user.hasAdminRole()) {
+			// Check if customer manager is allowed to do this
+			if (user.hasCustomerManagerRole()) {
+				if (!project.customer.customerManagers.contains(user)) {
+					flash("error", Messages.get("project.notCustomerManager"));
+					return redirect(routes.Projects.all());
+				}
+			}
+			// Check if project manager is allowed to do this
+			if (user.hasProjectManagerRole()) {
+				if (!project.projectManager.equals(user)) {
+					flash("error", Messages.get("project.notProjectManager"));
+					return redirect(routes.Projects.all());
+				}
+			}
+		}
+
+		if (!assignment.delete()) {
+			flash("error", Messages.get("assignment.notDeletable"));
 		}
 		return redirect(routes.Projects.all());
 	}

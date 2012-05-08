@@ -4,6 +4,7 @@ import be.objectify.deadbolt.actions.Restrict;
 import models.Customer;
 import play.data.Form;
 import play.db.jpa.Transactional;
+import play.i18n.Messages;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.admin.customer.createCustomer;
@@ -61,8 +62,7 @@ public class Customers extends Controller {
 	@Restrict("admin")
 	public static Result delete(Long id) {
 		if (!Customer.findById(id).delete()) {
-			flash("error",
-					"The customer could not be deleted. Probably one of its projects is not deletable.");
+			flash("error", Messages.get("customer.notDeletable"));
 		}
 		return redirect(routes.Customers.all());
 	}

@@ -20,6 +20,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
+import models.security.UserRole;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
 
@@ -81,6 +82,11 @@ public class Project {
 	public void save() {
 		active = true;
 		JPA.em().persist(this);
+
+		if (projectManager != null) {
+			final User user = User.findById(projectManager.id);
+			user.assignRole(UserRole.projectManagerRole());
+		}
 		if (defaultProject)
 			ProjectAssignment.assignAllUsersTo(this);
 	}
@@ -95,6 +101,7 @@ public class Project {
 	 */
 	public void update(Long projectId) {
 		id = projectId;
+		updateProjectManagerRoles();
 		JPA.em().merge(this);
 		if (defaultProject)
 			ProjectAssignment.assignAllUsersTo(this);
@@ -147,6 +154,28 @@ public class Project {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Updates the ProjectManager role. Must be called before the actual update
+	 * is done! This is because the updates are based on the differences between
+	 * the saved project manager and the submitted project manager
+	 */
+	public void updateProjectManagerRoles() {
+		final UserRole projectManagerRole = UserRole.projectManagerRole();
+		final User savedProjectManager = findById(id).projectManager;
+		final User currentProjectManager = User.findById(projectManager.id);
+
+		if (!currentProjectManager.equals(savedProjectManager)) {
+			// If new project manager hasn't the project manager role, assign it
+			if (!currentProjectManager.hasProjectManagerRole())
+				currentProjectManager.assignRole(projectManagerRole);
+
+			// If this is last project where the saved user was project manager,
+			// delete its project manager role
+			if (findAllForProjectManager(savedProjectManager).size() == 1)
+				savedProjectManager.removeRole(projectManagerRole);
+		}
 	}
 
 	/**
@@ -203,6 +232,23 @@ public class Project {
 		Join<Customer, User> customerManagerJoin = customer
 				.join(Customer_.customerManagers);
 		query.where(cb.equal(customerManagerJoin, customerManager));
+		return JPA.em().createQuery(query).getResultList();
+	}
+
+	/**
+	 * Finds all projects for a project manager
+	 * 
+	 * @param projectManager
+	 *            The project manager of the projects that need to be searched
+	 *            for
+	 * @return A List of {@link Project}s
+	 */
+	public static List<Project> findAllForProjectManager(User projectManager) {
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<Project> query = cb.createQuery(Project.class);
+		Root<Project> project = query.from(Project.class);
+		query.where(cb.equal(project.get(Project_.projectManager),
+				projectManager));
 		return JPA.em().createQuery(query).getResultList();
 	}
 

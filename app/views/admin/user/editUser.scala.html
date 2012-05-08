@@ -10,7 +10,7 @@
             <option value="@v._1" @(if(value == Some(v._1)) "selected" else "")>@v._2</option>
         }
     	</select>
-    	@if(Some(security.UserRole.customerManagerRole.id.toString) != value) {
+    	@if(value != Some(security.UserRole.customerManagerRole.id.toString) && value != Some(security.UserRole.projectManagerRole.id.toString)) {
         <a class="removeRole btn btn-danger">Remove</a>
    		}
     }

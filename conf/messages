@@ -1,2 +1,8 @@
-project.notCustomerManager=You aren't customer manager of this customer
+customer.notCustomerManager=You aren't a customer manager of this customer
+customer..notDeletable=The customer could not be deleted. Probably one of its projects is not deletable.
+
 project.notDeletable=The project could not be deleted. Probably one of its assignments is not deletable.
+project.notCustomerManager=You aren't a customer manager of the customer of this project
+project.notProjectManager=You aren't the project manager of this project
+
+assignment.notDeletable=The assignment could not be deleted. Probably there are still hours booked on this assignment.

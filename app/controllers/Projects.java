@@ -20,15 +20,19 @@ import be.objectify.deadbolt.actions.Restrictions;
 public class Projects extends Controller {
 
 	@Transactional(readOnly = true)
-	@Restrictions({ @And("admin"), @And("customerManager") })
+	@Restrictions({ @And("admin"), @And("customerManager"),
+			@And("projectManager") })
 	public static Result all() {
 		List<Project> projectsList = Collections.emptyList();
 		final User user = Application.getCurrentUser();
 
-		if (user.isAdmin()) {
+		if (user.hasAdminRole()) {
 			projectsList = Project.findAll();
 		} else {
-			projectsList = Project.findAllForCustomerManager(user);
+			if (user.hasCustomerManagerRole())
+				projectsList = Project.findAllForCustomerManager(user);
+			else 
+				projectsList = Project.findAllForProjectManager(user);
 		}
 		return ok(projects.render(projectsList));
 	}
@@ -48,14 +52,14 @@ public class Projects extends Controller {
 		if (filledForm.hasErrors())
 			return badRequest(createProject.render(filledForm));
 
-		Project project = filledForm.get();
+		final Project project = filledForm.get();
 		final User user = Application.getCurrentUser();
 
-		// Check is customer manager is allowed to do this
-		if (!user.isAdmin() && user.isCustomerManager()) {
+		// Check if customer manager is allowed to do this
+		if (!user.hasAdminRole() && user.hasCustomerManagerRole()) {
 			if (!project.customer.customerManagers.contains(user)) {
 				filledForm.reject(new ValidationError("customer.id", Messages
-						.get("validation.notCustomerManager"), null));
+						.get("customer.notCustomerManager"), null));
 				return badRequest(createProject.render(filledForm));
 			}
 		}
@@ -70,8 +74,8 @@ public class Projects extends Controller {
 		final User user = Application.getCurrentUser();
 		final Project project = Project.findById(id);
 
-		// Check is customer manager is allowed to do this
-		if (!user.isAdmin() && user.isCustomerManager()) {
+		// Check if customer manager is allowed to do this
+		if (!user.hasAdminRole() && user.hasCustomerManagerRole()) {
 			if (!project.customer.customerManagers.contains(user)) {
 				flash("error", Messages.get("project.notCustomerManager"));
 				return redirect(routes.Projects.all());
@@ -90,14 +94,14 @@ public class Projects extends Controller {
 		if (filledForm.hasErrors())
 			return badRequest(editProject.render(id, filledForm));
 
-		Project project = filledForm.get();
+		final Project project = filledForm.get();
 		final User user = Application.getCurrentUser();
 
-		// Check is customer manager is allowed to do this
-		if (!user.isAdmin() && user.isCustomerManager()) {
+		// Check if customer manager is allowed to do this
+		if (!user.hasAdminRole() && user.hasCustomerManagerRole()) {
 			if (!project.customer.customerManagers.contains(user)) {
 				filledForm.reject(new ValidationError("customer.id", Messages
-						.get("project.notCustomerManager"), null));
+						.get("customer.notCustomerManager"), null));
 				return badRequest(editProject.render(id, filledForm));
 			}
 		}
@@ -112,8 +116,8 @@ public class Projects extends Controller {
 		final User user = Application.getCurrentUser();
 		final Project project = Project.findById(id);
 
-		// Check is customer manager is allowed to do this
-		if (!user.isAdmin() && user.isCustomerManager()) {
+		// Check if customer manager is allowed to do this
+		if (!user.hasAdminRole() && user.hasCustomerManagerRole()) {
 			if (!project.customer.customerManagers.contains(user)) {
 				flash("error", Messages.get("project.notCustomerManager"));
 				return redirect(routes.Projects.all());

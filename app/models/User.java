@@ -488,7 +488,7 @@ public class User implements RoleHolder {
 	 * 
 	 * @return True if this user has the admin role
 	 */
-	public boolean isAdmin() {
+	public boolean hasAdminRole() {
 		return containsRole(UserRole.adminRole());
 	}
 
@@ -497,8 +497,17 @@ public class User implements RoleHolder {
 	 * 
 	 * @return True if this user has the customer manager role
 	 */
-	public boolean isCustomerManager() {
+	public boolean hasCustomerManagerRole() {
 		return containsRole(UserRole.customerManagerRole());
+	}
+	
+	/**
+	 * Checks if this user is has the project manager role
+	 * 
+	 * @return True if this user has the project manager role
+	 */
+	public boolean hasProjectManagerRole() {
+		return containsRole(UserRole.projectManagerRole());
 	}
 
 }

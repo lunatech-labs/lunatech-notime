@@ -58,6 +58,10 @@ public class UserRole implements Role {
 	public static UserRole customerManagerRole() {
 		return findByRoleName("customerManager");
 	}
+	
+	public static UserRole projectManagerRole() {
+		return findByRoleName("projectManager");
+	}
 
 	/**
 	 * Find a role by its role name

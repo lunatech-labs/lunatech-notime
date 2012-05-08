@@ -126,9 +126,9 @@ public class Customer {
 	 * between the saved customerManagers and the submitted customersManagers
 	 */
 	public void updateCustomerManagerRoles() {
-		UserRole customerManagerRole = UserRole.customerManagerRole();
-		List<User> savedCustomerManagers = findById(id).customerManagers;
-		List<User> currentCustomerManagers = new ArrayList<User>();
+		final UserRole customerManagerRole = UserRole.customerManagerRole();
+		final List<User> savedCustomerManagers = findById(id).customerManagers;
+		final List<User> currentCustomerManagers = new ArrayList<User>();
 
 		if (customerManagers != null) {
 			currentCustomerManagers.addAll(customerManagers);
@@ -139,8 +139,8 @@ public class Customer {
 			// assign role to all current managers
 			for (User currentUser : currentCustomerManagers) {
 				// current CustomerManagers aren't loaded
-				User user = User.findById(currentUser.id);
-				if (!user.isCustomerManager())
+				final User user = User.findById(currentUser.id);
+				if (!user.hasCustomerManagerRole())
 					user.assignRole(customerManagerRole);
 			}
 		}
@@ -155,7 +155,7 @@ public class Customer {
 		}
 		if (!savedCustomerManagers.isEmpty()
 				&& !currentCustomerManagers.isEmpty()) {
-			List<User> newCustomerManagers = currentCustomerManagers;
+			final List<User> newCustomerManagers = currentCustomerManagers;
 
 			for (User savedUser : savedCustomerManagers) {
 				if (currentCustomerManagers.contains(savedUser)) {
@@ -170,7 +170,7 @@ public class Customer {
 				}
 			}
 			for (User newUser : newCustomerManagers) {
-				User loadedNewUser = User.findById(newUser.id);
+				final User loadedNewUser = User.findById(newUser.id);
 				if (!loadedNewUser.containsRole(customerManagerRole)) {
 					// user isn't loaded
 					loadedNewUser.assignRole(customerManagerRole);

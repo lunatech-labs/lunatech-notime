@@ -54,6 +54,12 @@ public class Global extends GlobalSettings {
 						userRole.roleName = "customerManager";
 						userRole.save();
 					}
+
+					if (UserRole.projectManagerRole() == null) {
+						UserRole userRole = new UserRole();
+						userRole.roleName = "projectManager";
+						userRole.save();
+					}
 				}
 
 				private boolean hasAnAdminUser() {
