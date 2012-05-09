@@ -40,8 +40,9 @@ public class Reports extends Controller {
 				report = Report.getReportForUser(user, options.beginDate,
 						options.endDate);
 			} else {
-				report = Report.getReportForProjects(options.getAllProjects(),
-						options.beginDate, options.endDate);
+				report = Report.getReportForProjects(
+						options.getAllProjects(user), options.beginDate,
+						options.endDate);
 			}
 			return ok(entriesPerCustomerPerProjectPerWeek.render(optionsForm,
 					report));
@@ -68,8 +69,9 @@ public class Reports extends Controller {
 				report = Report.getReportForUser(user, options.beginDate,
 						options.endDate);
 			} else {
-				report = Report.getReportForProjects(options.getAllProjects(),
-						options.beginDate, options.endDate);
+				report = Report.getReportForProjects(
+						options.getAllProjects(user), options.beginDate,
+						options.endDate);
 			}
 			return ok(entriesPerUserPerWeek.render(optionsForm, report));
 		}
@@ -118,8 +120,9 @@ public class Reports extends Controller {
 				report = Report.getReportForUser(user, options.beginDate,
 						options.endDate);
 			} else {
-				report = Report.getReportForProjects(options.getAllProjects(),
-						options.beginDate, options.endDate);
+				report = Report.getReportForProjects(
+						options.getAllProjects(user), options.beginDate,
+						options.endDate);
 			}
 			return ok(entriesPerWeek.render(optionsForm, report));
 		}
@@ -146,8 +149,9 @@ public class Reports extends Controller {
 				report = Report.getReportForUser(user, options.beginDate,
 						options.endDate);
 			} else {
-				report = Report.getReportForProjects(options.getAllProjects(),
-						options.beginDate, options.endDate);
+				report = Report.getReportForProjects(
+						options.getAllProjects(user), options.beginDate,
+						options.endDate);
 			}
 			return ok(entriesTablePerProjectPerDay.render(optionsForm, report));
 		}

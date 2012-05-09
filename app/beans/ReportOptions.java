@@ -27,13 +27,24 @@ public class ReportOptions {
 	public LocalDate endDate;
 
 	/**
-	 * Finds all projects. Gets all the projects from the selected customers and
+	 * Finds all projects to which the user is available to. Gets all the projects from the selected customers and
 	 * add the selected projects. If there are no customers and projects
 	 * selected, all projects will be returned.
 	 * 
 	 * @return A Set of {@link Project}s
 	 */
-	public Set<Project> getAllProjects() {
+	public Set<Project> getAllProjects(final User user) {
+		final Set<Project> projects = new HashSet<Project>();
+		if (user.hasAdminRole())
+			projects.addAll(getProjectsForAdmin(user));
+		else if (user.hasCustomerManagerRole())
+			projects.addAll(getProjectsForCustomerManager(user));
+		else if (user.hasProjectManagerRole())
+			projects.addAll(getProjectsForProjectManager(user));
+		return projects;
+	}
+
+	private Set<Project> getProjectsForAdmin(final User user) {
 		final Set<Project> projects = new HashSet<Project>();
 		if (customers == null && this.projects == null) {
 			projects.addAll(Project.findAll());
@@ -45,6 +56,56 @@ public class ReportOptions {
 			}
 			if (this.projects != null) {
 				projects.addAll(this.projects);
+			}
+		}
+		return projects;
+	}
+
+	private Set<Project> getProjectsForCustomerManager(final User user) {
+		final Set<Project> projects = new HashSet<Project>();
+		if (customers == null && this.projects == null) {
+			projects.addAll(Project.findAllForCustomerManager(user));
+		} else {
+			if (customers != null && !customers.isEmpty()) {
+				for (Customer customer : customers) {
+					if (customer.customerManagers.contains(user)) {
+						projects.addAll(Project.findAllForCustomer(customer));
+					}
+				}
+			}
+			if (this.projects != null) {
+				for (Project project : this.projects) {
+					if (project.customer.customerManagers.contains(user)) {
+						projects.add(project);
+					}
+				}
+			}
+		}
+		return projects;
+	}
+
+	private Set<Project> getProjectsForProjectManager(final User user) {
+		final Set<Project> projects = new HashSet<Project>();
+		if (customers == null && this.projects == null) {
+			projects.addAll(Project.findAllForProjectManager(user));
+		} else {
+			if (customers != null && !customers.isEmpty()) {
+				for (Customer customer : customers) {
+					final List<Project> projectsOfCustomer = Project
+							.findAllForCustomer(customer);
+					for (Project project : projectsOfCustomer) {
+						if (project.projectManager.equals(user)) {
+							projects.add(project);
+						}
+					}
+				}
+			}
+			if (this.projects != null) {
+				for (Project project : this.projects) {
+					if (project.projectManager.equals(user)) {
+						projects.add(project);
+					}
+				}
 			}
 		}
 		return projects;
