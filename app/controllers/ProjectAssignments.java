@@ -1,33 +1,31 @@
 package controllers;
 
-import be.objectify.deadbolt.actions.And;
-import be.objectify.deadbolt.actions.Restrictions;
 import models.Project;
 import models.ProjectAssignment;
 import models.User;
 import play.data.Form;
-import play.data.validation.ValidationError;
 import play.db.jpa.Transactional;
 import play.i18n.Messages;
 import play.mvc.Controller;
 import play.mvc.Result;
-import views.html.admin.project.createProject;
+import play.mvc.Security;
 import views.html.admin.project.assignment.createProjectAssignment;
 import views.html.admin.project.assignment.editProjectAssignment;
+import be.objectify.deadbolt.actions.And;
+import be.objectify.deadbolt.actions.Restrictions;
+import be.objectify.deadbolt.actions.Unrestricted;
 
+@Security.Authenticated(Secured.class)
+@Restrictions({ @And("admin"), @And("customerManager"), @And("projectManager") })
 public class ProjectAssignments extends Controller {
 
 	@Transactional(readOnly = true)
-	@Restrictions({ @And("admin"), @And("customerManager"),
-			@And("projectManager") })
 	public static Result add(Long projectId) {
 		Form<ProjectAssignment> newForm = form(ProjectAssignment.class);
 		return ok(createProjectAssignment.render(projectId, newForm));
 	}
 
 	@Transactional
-	@Restrictions({ @And("admin"), @And("customerManager"),
-			@And("projectManager") })
 	public static Result create(Long projectId) {
 		Form<ProjectAssignment> filledForm = form(ProjectAssignment.class)
 				.bindFromRequest();
@@ -70,8 +68,6 @@ public class ProjectAssignments extends Controller {
 	}
 
 	@Transactional(readOnly = true)
-	@Restrictions({ @And("admin"), @And("customerManager"),
-			@And("projectManager") })
 	public static Result edit(Long projectId, Long assignmentId) {
 		final Project project = Project.findById(projectId);
 		final User user = Application.getCurrentUser();
@@ -99,8 +95,6 @@ public class ProjectAssignments extends Controller {
 	}
 
 	@Transactional
-	@Restrictions({ @And("admin"), @And("customerManager"),
-			@And("projectManager") })
 	public static Result update(Long projectId, Long assignmentId) {
 		Form<ProjectAssignment> filledForm = form(ProjectAssignment.class)
 				.bindFromRequest();
@@ -143,8 +137,6 @@ public class ProjectAssignments extends Controller {
 	}
 
 	@Transactional
-	@Restrictions({ @And("admin"), @And("customerManager"),
-			@And("projectManager") })
 	public static Result delete(Long assignmentId) {
 		final ProjectAssignment assignment = ProjectAssignment
 				.findById(assignmentId);
@@ -174,6 +166,7 @@ public class ProjectAssignments extends Controller {
 	}
 
 	@Transactional
+	@Unrestricted
 	public static Result toggleStarred(Long userId, Long assignmentId) {
 		ProjectAssignment assignment = ProjectAssignment.findById(assignmentId);
 		if (assignment.starred) {

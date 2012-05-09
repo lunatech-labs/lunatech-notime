@@ -10,8 +10,6 @@ import models.User;
 
 import org.joda.time.LocalDate;
 
-import be.objectify.deadbolt.actions.Restrict;
-
 import play.data.Form;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
@@ -22,31 +20,32 @@ import views.html.admin.user.editUser;
 import views.html.admin.user.users;
 import views.html.user.assignments;
 import views.html.user.daysTooFewHours;
+import be.objectify.deadbolt.actions.Restrict;
+import be.objectify.deadbolt.actions.Unrestricted;
 import datastructures.TotalsDay;
 
 @Security.Authenticated(Secured.class)
+@Restrict("admin")
 public class Users extends Controller {
 
 	@Transactional(readOnly = true)
-	@Restrict("admin")
 	public static Result all() {
 		return ok(users.render(User.findAll()));
 	}
 
 	@Transactional(readOnly = true)
+	@Unrestricted
 	public static Result read(Long id) {
 		return ok(views.html.user.user.render(User.findById(id)));
 	}
 
 	@Transactional(readOnly = true)
-	@Restrict("admin")
 	public static Result add() {
 		Form<User> newForm = form(User.class);
 		return ok(createUser.render(newForm));
 	}
 
 	@Transactional
-	@Restrict("admin")
 	public static Result create() {
 		Form<User> filledForm = form(User.class).bindFromRequest();
 
@@ -58,14 +57,12 @@ public class Users extends Controller {
 	}
 
 	@Transactional(readOnly = true)
-	@Restrict("admin")
 	public static Result edit(Long userId) {
 		Form<User> filledForm = form(User.class).fill(User.findById(userId));
 		return ok(editUser.render(userId, filledForm));
 	}
 
 	@Transactional
-	@Restrict("admin")
 	public static Result update(Long userId) {
 		Form<User> filledForm = form(User.class).bindFromRequest();
 		if (filledForm.hasErrors())
@@ -76,7 +73,6 @@ public class Users extends Controller {
 	}
 
 	@Transactional
-	@Restrict("admin")
 	public static Result delete(Long userId) {
 		if (!User.findById(userId).delete()) {
 			flash("error",
@@ -86,11 +82,13 @@ public class Users extends Controller {
 	}
 
 	@Transactional(readOnly = true)
+	@Unrestricted
 	public static Result assignmentsOverview(Long userId) {
 		return ok(assignments.render(userId, User.findById(userId).assignments));
 	}
 
 	@Transactional(readOnly = true)
+	@Unrestricted
 	public static Result daysTooFewHours(Long userId) {
 		LocalDate beginDate = User.findById(userId).createdOn;
 		LocalDate endDate = new LocalDate();

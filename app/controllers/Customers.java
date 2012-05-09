@@ -7,27 +7,27 @@ import play.db.jpa.Transactional;
 import play.i18n.Messages;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Security;
 import views.html.admin.customer.createCustomer;
 import views.html.admin.customer.customers;
 import views.html.admin.customer.editCustomer;
 
+@Security.Authenticated(Secured.class)
+@Restrict("admin")
 public class Customers extends Controller {
 
 	@Transactional(readOnly = true)
-	@Restrict("admin")
 	public static Result all() {
 		return ok(customers.render(Customer.findAll()));
 	}
 
 	@Transactional(readOnly = true)
-	@Restrict("admin")
 	public static Result add() {
 		Form<Customer> newForm = form(Customer.class);
 		return ok(createCustomer.render(newForm));
 	}
 
 	@Transactional
-	@Restrict("admin")
 	public static Result create() {
 		Form<Customer> filledForm = form(Customer.class).bindFromRequest();
 
@@ -39,7 +39,6 @@ public class Customers extends Controller {
 	}
 
 	@Transactional(readOnly = true)
-	@Restrict("admin")
 	public static Result edit(Long id) {
 		Form<Customer> filledForm = form(Customer.class).fill(
 				Customer.findById(id));
@@ -47,7 +46,6 @@ public class Customers extends Controller {
 	}
 
 	@Transactional
-	@Restrict("admin")
 	public static Result update(Long id) {
 		Form<Customer> filledForm = form(Customer.class).bindFromRequest();
 
@@ -59,7 +57,6 @@ public class Customers extends Controller {
 	}
 
 	@Transactional
-	@Restrict("admin")
 	public static Result delete(Long id) {
 		if (!Customer.findById(id).delete()) {
 			flash("error", Messages.get("customer.notDeletable"));

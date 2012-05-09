@@ -10,6 +10,7 @@ import play.data.Form;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Security;
 import utils.DateUtil;
 import views.html.user.hourentry.createHourEntries;
 import views.html.user.hourentry.createHourEntriesForWeek;
@@ -24,6 +25,7 @@ import datastructures.TotalsDay;
 import datastructures.overview.calendar.CalendarMonth;
 import datastructures.overview.week.Week;
 
+@Security.Authenticated(Secured.class)
 public class HourEntries extends Controller {
 
 	@Transactional(readOnly = true)

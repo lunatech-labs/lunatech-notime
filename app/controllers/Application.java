@@ -7,16 +7,21 @@ import play.data.Form;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Security;
 import views.html.login;
 import views.html.admin.overview;
 
 public class Application extends Controller {
 
+	public static Result index() {
+		return redirect(routes.Application.login());
+	}
+
 	public static Result login() {
 		return ok(login.render(form(LoginForm.class)));
 	}
 
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public static Result authenticate() {
 		Form<LoginForm> loginForm = form(LoginForm.class).bindFromRequest();
 		if (loginForm.hasErrors()) {
@@ -28,36 +33,33 @@ public class Application extends Controller {
 		}
 	}
 
+	@Security.Authenticated(Secured.class)
 	public static Result logout() {
 		session().clear();
 		flash("success", "You've been logged out");
 		return redirect(routes.Application.login());
 	}
 
-	public static Result index() {
-		return redirect(routes.Application.login());
-	}
-
+	@Security.Authenticated(Secured.class)
 	public static Result admin() {
 		return ok(overview.render());
 	}
-	
+
 	/**
 	 * Get the user that is currently logged in
+	 * 
 	 * @return A {@link User}
 	 */
+	@Security.Authenticated(Secured.class)
 	public static User getCurrentUser() {
 		return User.findByUsername(session("username"));
 	}
 
-	// Javascript routing    
-    public static Result javascriptRoutes() {
-        response().setContentType("text/javascript");
-        return ok(
-            Routes.javascriptRouter("jsRoutes",            
-                controllers.routes.javascript.HourEntries.addForDay()                
-            )
-        );
-    }
-    
+	@Security.Authenticated(Secured.class)
+	public static Result javascriptRoutes() {
+		response().setContentType("text/javascript");
+		return ok(Routes.javascriptRouter("jsRoutes",
+				controllers.routes.javascript.HourEntries.addForDay()));
+	}
+
 }

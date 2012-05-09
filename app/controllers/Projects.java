@@ -11,15 +11,19 @@ import play.db.jpa.Transactional;
 import play.i18n.Messages;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Security;
 import views.html.admin.project.createProject;
 import views.html.admin.project.editProject;
 import views.html.admin.project.projects;
 import be.objectify.deadbolt.actions.And;
 import be.objectify.deadbolt.actions.Restrictions;
 
+@Security.Authenticated(Secured.class)
+@Restrictions({ @And("admin"), @And("customerManager") })
 public class Projects extends Controller {
 
 	@Transactional(readOnly = true)
+	@Security.Authenticated(Secured.class)
 	@Restrictions({ @And("admin"), @And("customerManager"),
 			@And("projectManager") })
 	public static Result all() {
@@ -38,14 +42,12 @@ public class Projects extends Controller {
 	}
 
 	@Transactional(readOnly = true)
-	@Restrictions({ @And("admin"), @And("customerManager") })
 	public static Result add() {
 		Form<Project> newForm = form(Project.class);
 		return ok(createProject.render(newForm));
 	}
 
 	@Transactional
-	@Restrictions({ @And("admin"), @And("customerManager") })
 	public static Result create() {
 		Form<Project> filledForm = form(Project.class).bindFromRequest();
 
@@ -69,7 +71,6 @@ public class Projects extends Controller {
 	}
 
 	@Transactional(readOnly = true)
-	@Restrictions({ @And("admin"), @And("customerManager") })
 	public static Result edit(Long id) {
 		final User user = Application.getCurrentUser();
 		final Project project = Project.findById(id);
@@ -87,7 +88,6 @@ public class Projects extends Controller {
 	}
 
 	@Transactional
-	@Restrictions({ @And("admin"), @And("customerManager") })
 	public static Result update(Long id) {
 		Form<Project> filledForm = form(Project.class).bindFromRequest();
 
@@ -111,7 +111,6 @@ public class Projects extends Controller {
 	}
 
 	@Transactional
-	@Restrictions({ @And("admin"), @And("customerManager") })
 	public static Result delete(Long id) {
 		final User user = Application.getCurrentUser();
 		final Project project = Project.findById(id);

@@ -4,6 +4,7 @@ import play.data.Form;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Security;
 import views.html.reports.entriesPerCustomerPerProjectPerWeek;
 import views.html.reports.assignmentTotalsPerUser;
 import views.html.reports.entriesPerWeek;
@@ -11,6 +12,8 @@ import views.html.reports.entriesPerUserPerWeek;
 import views.html.reports.entriesTablePerProjectPerDay;
 import beans.ReportOptions;
 import datastructures.reports.Report;
+
+@Security.Authenticated(Secured.class)
 
 public class Reports extends Controller {
 
