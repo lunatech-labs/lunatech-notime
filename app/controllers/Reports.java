@@ -1,5 +1,6 @@
 package controllers;
 
+import models.User;
 import play.data.Form;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
@@ -10,11 +11,11 @@ import views.html.reports.assignmentTotalsPerUser;
 import views.html.reports.entriesPerWeek;
 import views.html.reports.entriesPerUserPerWeek;
 import views.html.reports.entriesTablePerProjectPerDay;
+import be.objectify.deadbolt.actions.Restrict;
 import beans.ReportOptions;
 import datastructures.reports.Report;
 
 @Security.Authenticated(Secured.class)
-
 public class Reports extends Controller {
 
 	@Transactional(readOnly = true)
@@ -34,9 +35,16 @@ public class Reports extends Controller {
 					optionsForm, report));
 		} else { // Submitted form without errors
 			final ReportOptions options = optionsForm.get();
-			report = Report.getReportEntriesPerCustomerPerProjectPerWeek(
-					options.getAllProjects(), options.beginDate,
-					options.endDate);
+			final User user = Application.getCurrentUser();
+			if (user.hasOnlyUserRole()) {
+				report = Report.getReportEntriesPerCustomerPerProjectPerWeek(
+						options.getAllProjects(), user, options.beginDate,
+						options.endDate);
+			} else {
+				report = Report.getReportEntriesPerCustomerPerProjectPerWeek(
+						options.getAllProjects(), null, options.beginDate,
+						options.endDate);
+			}
 			return ok(entriesPerCustomerPerProjectPerWeek.render(optionsForm,
 					report));
 		}
@@ -57,14 +65,22 @@ public class Reports extends Controller {
 			return badRequest(entriesPerUserPerWeek.render(optionsForm, report));
 		} else { // Submitted form without errors
 			final ReportOptions options = optionsForm.get();
-			report = Report.getReportEntriesPerUserPerWeek(
-					options.getAllProjects(), options.beginDate,
-					options.endDate);
+			final User user = Application.getCurrentUser();
+			if (user.hasOnlyUserRole()) {
+				report = Report.getReportEntriesPerUserPerWeek(
+						options.getAllProjects(), user, options.beginDate,
+						options.endDate);
+			} else {
+				report = Report.getReportEntriesPerUserPerWeek(
+						options.getAllProjects(), null, options.beginDate,
+						options.endDate);
+			}
 			return ok(entriesPerUserPerWeek.render(optionsForm, report));
 		}
 	}
 
 	@Transactional(readOnly = true)
+	@Restrict("admin")
 	public static Result assignmentTotalsPerUser() {
 		final Report report;
 		final Form<ReportOptions> optionsForm = form(ReportOptions.class)
@@ -101,8 +117,16 @@ public class Reports extends Controller {
 			return badRequest(entriesPerWeek.render(optionsForm, report));
 		} else { // Submitted form without errors
 			final ReportOptions options = optionsForm.get();
-			report = Report.getReportEntriesPerWeek(options.getAllProjects(),
-					options.beginDate, options.endDate);
+			final User user = Application.getCurrentUser();
+			if (user.hasOnlyUserRole()) {
+				report = Report.getReportEntriesPerWeek(
+						options.getAllProjects(), user, options.beginDate,
+						options.endDate);
+			} else {
+				report = Report.getReportEntriesPerWeek(
+						options.getAllProjects(), null, options.beginDate,
+						options.endDate);
+			}
 			return ok(entriesPerWeek.render(optionsForm, report));
 		}
 	}
@@ -123,9 +147,16 @@ public class Reports extends Controller {
 					report));
 		} else { // Submitted form without errors
 			final ReportOptions options = optionsForm.get();
-			report = Report.getReportEntriesTablePerProjectPerDay(
-					options.getAllProjects(), options.beginDate,
-					options.endDate);
+			final User user = Application.getCurrentUser();
+			if (user.hasOnlyUserRole()) {
+				report = Report.getReportEntriesTablePerProjectPerDay(
+						options.getAllProjects(), user, options.beginDate,
+						options.endDate);
+			} else {
+				report = Report.getReportEntriesTablePerProjectPerDay(
+						options.getAllProjects(), null, options.beginDate,
+						options.endDate);
+			}
 			return ok(entriesTablePerProjectPerDay.render(optionsForm, report));
 		}
 	}

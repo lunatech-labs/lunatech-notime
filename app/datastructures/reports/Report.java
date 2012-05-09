@@ -44,17 +44,25 @@ public class Report {
 	 * 
 	 * @param projects
 	 *            The projects for which the report must be created
+	 * @param user
+	 *            The user for which the report must be created. If null the
+	 *            report is created for all users
 	 * @param beginDate
 	 *            The date form which the report is created
 	 * @param endDate
 	 *            The date till which the report is created (the entries on
 	 *            endDate will also be included)
+	 * 
 	 * @return A {@link Report}
 	 */
 	public static Report getReportEntriesPerCustomerPerProjectPerWeek(
-			final Set<Project> projects, final LocalDate beginDate,
-			final LocalDate endDate) {
-		return createReportForProjectsBetween(projects, beginDate, endDate);
+			final Set<Project> projects, final User user,
+			final LocalDate beginDate, final LocalDate endDate) {
+		if (user == null)
+			return createReportForProjectsBetween(projects, beginDate, endDate);
+		else
+			return createReportForProjectsForUserBetween(projects, user,
+					beginDate, endDate);
 	}
 
 	/**
@@ -62,6 +70,9 @@ public class Report {
 	 * 
 	 * @param projects
 	 *            The projects for which the report must be created
+	 * @param user
+	 *            The user for which the report must be created. If null the
+	 *            report is created for all users
 	 * @param beginDate
 	 *            The date form which the report is created
 	 * @param endDate
@@ -70,9 +81,13 @@ public class Report {
 	 * @return A {@link Report}
 	 */
 	public static Report getReportEntriesPerUserPerWeek(
-			final Set<Project> projects, final LocalDate beginDate,
-			final LocalDate endDate) {
-		return createReportForProjectsBetween(projects, beginDate, endDate);
+			final Set<Project> projects, final User user,
+			final LocalDate beginDate, final LocalDate endDate) {
+		if (user == null)
+			return createReportForProjectsBetween(projects, beginDate, endDate);
+		else
+			return createReportForProjectsForUserBetween(projects, user,
+					beginDate, endDate);
 	}
 
 	/**
@@ -80,6 +95,9 @@ public class Report {
 	 * 
 	 * @param projects
 	 *            The projects for which the report must be created
+	 * @param user
+	 *            The user for which the report must be created. If null the
+	 *            report is created for all users
 	 * @param beginDate
 	 *            The date form which the report is created
 	 * @param endDate
@@ -88,8 +106,12 @@ public class Report {
 	 * @return A {@link Report}
 	 */
 	public static Report getReportEntriesPerWeek(final Set<Project> projects,
-			final LocalDate beginDate, final LocalDate endDate) {
-		return createReportForProjectsBetween(projects, beginDate, endDate);
+			final User user, final LocalDate beginDate, final LocalDate endDate) {
+		if (user == null)
+			return createReportForProjectsBetween(projects, beginDate, endDate);
+		else
+			return createReportForProjectsForUserBetween(projects, user,
+					beginDate, endDate);
 	}
 
 	/**
@@ -97,6 +119,9 @@ public class Report {
 	 * 
 	 * @param projects
 	 *            The projects for which the report must be created
+	 * @param user
+	 *            The user for which the report must be created. If null the
+	 *            report is created for all users
 	 * @param beginDate
 	 *            The date form which the report is created
 	 * @param endDate
@@ -105,9 +130,13 @@ public class Report {
 	 * @return A {@link Report}
 	 */
 	public static Report getReportEntriesTablePerProjectPerDay(
-			final Set<Project> projects, final LocalDate beginDate,
-			final LocalDate endDate) {
-		return createReportForProjectsBetween(projects, beginDate, endDate);
+			final Set<Project> projects, final User user,
+			final LocalDate beginDate, final LocalDate endDate) {
+		if (user == null)
+			return createReportForProjectsBetween(projects, beginDate, endDate);
+		else
+			return createReportForProjectsForUserBetween(projects, user,
+					beginDate, endDate);
 	}
 
 	/**
@@ -156,6 +185,33 @@ public class Report {
 		} else {
 			hourEntries = HourEntry.findAllForProjectsBetween(projects,
 					beginDate, endDate);
+		}
+		return new Report(hourEntries);
+	}
+
+	/**
+	 * Creates a report for a set of projects, for a user between 2 dates.
+	 * 
+	 * @param projects
+	 *            The projects for which the report must be created
+	 * @param user
+	 *            The user for which the report must be created
+	 * @param beginDate
+	 *            The date form which the report is created
+	 * @param endDate
+	 *            The date till which the report is created (the entries on
+	 *            endDate will also be included)
+	 * @return A {@link Report}
+	 */
+	private static Report createReportForProjectsForUserBetween(
+			final Set<Project> projects, final User user,
+			final LocalDate beginDate, final LocalDate endDate) {
+		List<HourEntry> hourEntries = Collections.emptyList();
+		if (projects.isEmpty()) {
+			hourEntries = new LinkedList<HourEntry>();
+		} else {
+			hourEntries = HourEntry.findAllForProjectsForUserBetween(projects,
+					user, beginDate, endDate);
 		}
 		return new Report(hourEntries);
 	}

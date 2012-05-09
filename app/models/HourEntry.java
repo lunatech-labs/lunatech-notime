@@ -276,6 +276,35 @@ public class HourEntry {
 	}
 
 	/**
+	 * Find all hour entries for projects, for a user between two dates
+	 * 
+	 * @param projects
+	 *            The projects which entries are to be searched for
+	 * @param user
+	 *            The user which entries are to be searched for
+	 * @param beginDate
+	 *            The date from which entries are to be searched for
+	 * @param endDate
+	 *            The date till which entries are to be searched for
+	 * @return A List of {@link HourEntry}s
+	 */
+	public static List<HourEntry> findAllForProjectsForUserBetween(
+			Set<Project> projects, User user, LocalDate beginDate,
+			LocalDate endDate) {
+		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
+		CriteriaQuery<HourEntry> query = cb.createQuery(HourEntry.class);
+		Root<HourEntry> entry = query.from(HourEntry.class);
+
+		Join<HourEntry, ProjectAssignment> assignment = entry
+				.join(HourEntry_.assignment);
+
+		query.where(cb.between(entry.get(HourEntry_.date), beginDate, endDate),
+				assignment.get(ProjectAssignment_.project).in(projects),
+				cb.equal(assignment.get(ProjectAssignment_.user), user));
+		return JPA.em().createQuery(query).getResultList();
+	}
+
+	/**
 	 * Calculates the totals of the hour entries for a user, per assignment,
 	 * between two dates. Note that the amount of minutes can be more than 60
 	 * 

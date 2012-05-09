@@ -25,7 +25,7 @@
 				<div class="week">
 					Week: <b>@weekNumber</b>
 					@if(report.getHourEntries(user, weekNumber).isEmpty) {
-					<div class="no-entries"><i>No hours entered in week @weekNumber by @user.fullname.</i></div>
+					<div class="no-entries"><i>No hours entered in week @weekNumber for user @user.fullname.</i></div>
 					} else {
 					<table class="entries-table">
 						<thead>
