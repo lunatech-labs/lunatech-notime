@@ -61,8 +61,7 @@ public class Report {
 		if (user == null)
 			return createReportForProjectsBetween(projects, beginDate, endDate);
 		else
-			return createReportForProjectsForUserBetween(projects, user,
-					beginDate, endDate);
+			return createReportForUserBetween(user, beginDate, endDate);
 	}
 
 	/**
@@ -86,8 +85,7 @@ public class Report {
 		if (user == null)
 			return createReportForProjectsBetween(projects, beginDate, endDate);
 		else
-			return createReportForProjectsForUserBetween(projects, user,
-					beginDate, endDate);
+			return createReportForUserBetween(user, beginDate, endDate);
 	}
 
 	/**
@@ -110,8 +108,7 @@ public class Report {
 		if (user == null)
 			return createReportForProjectsBetween(projects, beginDate, endDate);
 		else
-			return createReportForProjectsForUserBetween(projects, user,
-					beginDate, endDate);
+			return createReportForUserBetween(user, beginDate, endDate);
 	}
 
 	/**
@@ -135,8 +132,7 @@ public class Report {
 		if (user == null)
 			return createReportForProjectsBetween(projects, beginDate, endDate);
 		else
-			return createReportForProjectsForUserBetween(projects, user,
-					beginDate, endDate);
+			return createReportForUserBetween(user, beginDate, endDate);
 	}
 
 	/**
@@ -203,15 +199,14 @@ public class Report {
 	 *            endDate will also be included)
 	 * @return A {@link Report}
 	 */
-	private static Report createReportForProjectsForUserBetween(
-			final Set<Project> projects, final User user,
+	private static Report createReportForUserBetween(final User user,
 			final LocalDate beginDate, final LocalDate endDate) {
 		List<HourEntry> hourEntries = Collections.emptyList();
-		if (projects.isEmpty()) {
+		if (user == null) {
 			hourEntries = new LinkedList<HourEntry>();
 		} else {
-			hourEntries = HourEntry.findAllForProjectsForUserBetween(projects,
-					user, beginDate, endDate);
+			hourEntries = HourEntry.findAllForUserBetween(user.id, beginDate,
+					endDate);
 		}
 		return new Report(hourEntries);
 	}
