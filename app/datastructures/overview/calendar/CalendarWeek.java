@@ -3,6 +3,8 @@ package datastructures.overview.calendar;
 import java.util.LinkedList;
 import java.util.List;
 
+import models.User;
+
 import org.joda.time.LocalDate;
 
 import utils.DateUtil;
@@ -24,11 +26,11 @@ public class CalendarWeek {
 	 * can contain a few days of the next month.
 	 * 
 	 * @param firstDateOfMonth
-	 * @param userId
+	 * @param user
 	 * @return
 	 */
 	public static List<CalendarWeek> createWeeks(LocalDate firstDateOfMonth,
-			Long userId) {
+			User user) {
 		LocalDate lastDateOfMonth = DateUtil
 				.lastDateOfMonth(firstDateOfMonth);
 		LocalDate firstDateOfWeek = DateUtil
@@ -43,7 +45,7 @@ public class CalendarWeek {
 
 			while (currentDate.getWeekOfWeekyear() == lastDateOfWeek
 					.getWeekOfWeekyear()) {
-				week.days.add(new CalendarDay(currentDate, userId));
+				week.days.add(new CalendarDay(currentDate, user));
 				currentDate = currentDate.plusDays(1);
 			}
 			weeks.add(week);

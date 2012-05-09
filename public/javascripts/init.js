@@ -9,8 +9,7 @@ require(["jquery-1.7.1.min"], function() {
 				$elem.datepicker({
 					firstDay: 1,
 					dateFormat: 'dd-mm-yy',
-					showWeek: true,
-					showButtonPanel: true
+					showWeek: true
 				}).focus()
 			})
 		})
@@ -22,7 +21,6 @@ require(["jquery-1.7.1.min"], function() {
 					firstDay: 1,
 					dateFormat: 'dd-mm-yy',
 					showWeek: true,
-					showButtonPanel: true,
 					onSelect: function( selectedDate ) {
 					var option = this.id == "beginDate" ? "minDate" : "maxDate",
 						instance = $( this ).data( "datepicker" ),
@@ -42,7 +40,7 @@ require(["jquery-1.7.1.min"], function() {
 			require(["jquery-ui-1.8.18.custom.min"], function() {
 				$elem.datepicker({ firstDay: 1, dateFormat: 'dd-mm-yy', showWeek: true, showButtonPanel: true,
 					onSelect: function(date) {
-			            location.href = jsRoutes.controllers.HourEntries.addForDay("1", date).url
+			            location.href = jsRoutes.controllers.HourEntries.addForDay(date).url
 			        }
 				})
 			})

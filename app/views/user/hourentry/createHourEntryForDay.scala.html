@@ -1,4 +1,4 @@
-@(userId: Long, entryForm: Form[beans.HourEntryForm], date: org.joda.time.LocalDate, entries: List[HourEntry], totals: datastructures.TotalsDay)
+@(entryForm: Form[beans.HourEntryForm], date: org.joda.time.LocalDate, entries: List[HourEntry], totals: datastructures.TotalsDay)
 
 @import helper._
 
@@ -16,7 +16,7 @@
         </div>
     }    
         
-    @form(routes.HourEntries.createForDay(userId, date), 'id -> "entryForm", 'class -> "inline-entry-form") {
+    @form(routes.HourEntries.createForDay(date), 'id -> "entryForm", 'class -> "inline-entry-form") {
 		<div class="entry">
 			<div class="hidden-date">
 				<div class="input">
@@ -24,7 +24,7 @@
 				</div>
 			</div>
 			
-	    	@select(entryForm("assignment.id"), options(ProjectAssignment.optionsFor(userId)), '_label -> "", '_default -> "-- Choose a Project --", '_class -> "assignment")
+	    	@select(entryForm("assignment.id"), options(ProjectAssignments.optionsForCurrentUser()), '_label -> "", '_default -> "-- Choose a Project --", '_class -> "assignment")
 				
 			@inputText(entryForm("hours"), '_label -> "h", '_class -> "hours")
 			
@@ -38,7 +38,7 @@
 			</div>
 			
 			<input class="btn btn-primary" type="submit" value="Submit">
-			<a class="btn" href="@routes.Users.read(userId)">Cancel</a>
+			<a class="btn" href="@routes.Users.home()">Cancel</a>
 		</div>
 	}
 	
@@ -61,7 +61,7 @@
 					
 					<tr>
 						<td>@entry.assignment.project.name</td>
-						<td><a href="@routes.HourEntries.edit(userId, entry.id)">@CalculationUtil.formatTotalHoursMinutes(entry.hours, entry.minutes)</a></td>
+						<td><a href="@routes.HourEntries.edit(entry.id)">@CalculationUtil.formatTotalHoursMinutes(entry.hours, entry.minutes)</a></td>
 						<td>@entry.enteredTagsString()</td>
 					</tr>
 				}
@@ -76,5 +76,5 @@
 	
 
 } {
-	@sidebar.userMenu(userId)
+	@sidebar.userMenu()
 }

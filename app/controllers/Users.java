@@ -35,8 +35,8 @@ public class Users extends Controller {
 
 	@Transactional(readOnly = true)
 	@Unrestricted
-	public static Result read(Long id) {
-		return ok(views.html.user.user.render(User.findById(id)));
+	public static Result home() {
+		return ok(views.html.user.home.render(Application.getCurrentUser()));
 	}
 
 	@Transactional(readOnly = true)
@@ -83,18 +83,20 @@ public class Users extends Controller {
 
 	@Transactional(readOnly = true)
 	@Unrestricted
-	public static Result assignmentsOverview(Long userId) {
-		return ok(assignments.render(userId, User.findById(userId).assignments));
+	public static Result assignmentsOverview() {
+		final User user = Application.getCurrentUser();
+		return ok(assignments.render(user.assignments));
 	}
 
 	@Transactional(readOnly = true)
 	@Unrestricted
-	public static Result daysTooFewHours(Long userId) {
-		LocalDate beginDate = User.findById(userId).createdOn;
-		LocalDate endDate = new LocalDate();
+	public static Result daysTooFewHours() {
+		final User user = Application.getCurrentUser();
+		final LocalDate beginDate = user.createdOn;
+		final LocalDate endDate = new LocalDate();
 
 		List<TotalsDay> totals = HourEntry.findTotalsForUserPerDayBetween(
-				userId, beginDate, endDate);
+				user, beginDate, endDate);
 		Map<LocalDate, TotalsDay> totalsPerDay = new HashMap<LocalDate, TotalsDay>();
 		for (TotalsDay total : totals) {
 			totalsPerDay.put(total.date, total);
@@ -122,6 +124,6 @@ public class Users extends Controller {
 			indexDate = indexDate.plusDays(1);
 		}
 
-		return ok(daysTooFewHours.render(userId, totalsForAllDays));
+		return ok(daysTooFewHours.render(totalsForAllDays));
 	}
 }

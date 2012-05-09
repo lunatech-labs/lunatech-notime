@@ -29,7 +29,7 @@ public class Application extends Controller {
 		} else {
 			String username = loginForm.get().username;
 			session("username", username);
-			return redirect(routes.Users.read(User.findByUsername(username).id));
+			return redirect(routes.Users.home());
 		}
 	}
 

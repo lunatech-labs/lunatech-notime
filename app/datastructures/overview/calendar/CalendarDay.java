@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import models.HourEntry;
+import models.User;
 
 import org.joda.time.LocalDate;
 
@@ -14,7 +15,7 @@ public class CalendarDay {
 
 	public final LocalDate date;
 
-	public final Long userId;
+	public final User user;
 
 	private List<HourEntry> hourEntries;
 
@@ -23,15 +24,15 @@ public class CalendarDay {
 	 * hours for this day.
 	 * 
 	 * @param date
-	 * @param userId
+	 * @param user
 	 */
-	public CalendarDay(LocalDate date, Long userId) {
+	public CalendarDay(LocalDate date, User user) {
 		this.date = date;
-		this.userId = userId;
+		this.user = user;
 	}
 
 	public List<HourEntry> getHourEntries() {
-		hourEntries = HourEntry.findAllForUserForDay(userId, date);
+		hourEntries = HourEntry.findAllForUserForDay(user, date);
 		return Collections.unmodifiableList(hourEntries);
 	}
 

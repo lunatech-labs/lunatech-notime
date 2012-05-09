@@ -1,5 +1,7 @@
 package controllers;
 
+import java.util.Map;
+
 import models.Project;
 import models.ProjectAssignment;
 import models.User;
@@ -167,15 +169,19 @@ public class ProjectAssignments extends Controller {
 
 	@Transactional
 	@Unrestricted
-	public static Result toggleStarred(Long userId, Long assignmentId) {
-		ProjectAssignment assignment = ProjectAssignment.findById(assignmentId);
+	public static Result toggleStarred(Long assignmentId) {
+		final ProjectAssignment assignment = ProjectAssignment.findById(assignmentId);
 		if (assignment.starred) {
 			assignment.starred = false;
 		} else {
 			assignment.starred = true;
 		}
 		assignment.update(assignmentId);
-		return redirect(routes.Users.assignmentsOverview(userId));
+		return redirect(routes.Users.assignmentsOverview());
+	}
+
+	public static Map<String, String> optionsForCurrentUser() {
+		return ProjectAssignment.optionsFor(Application.getCurrentUser());
 	}
 
 }

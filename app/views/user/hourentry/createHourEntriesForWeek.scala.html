@@ -1,4 +1,4 @@
-@(userId: Long, week: datastructures.overview.week.Week)
+@(week: datastructures.overview.week.Week)
 
 @import helper._
 @import utils.DateUtil
@@ -9,8 +9,8 @@
 
 @main("Enter hours per week", script = script) {
 
-	<a href="@routes.HourEntries.addForWeek(userId, week.getWeekyearPreviousWeek, week.getWeekOfWeekyearPreviousWeek)">Previous week</a>
-	<a class="next-week" href="@routes.HourEntries.addForWeek(userId, week.getWeekyearNextWeek, week.getWeekOfWeekyearNextWeek)">Next week</a>
+	<a href="@routes.HourEntries.addForWeek(week.getWeekyearPreviousWeek, week.getWeekOfWeekyearPreviousWeek)">Previous week</a>
+	<a class="next-week" href="@routes.HourEntries.addForWeek(week.getWeekyearNextWeek, week.getWeekOfWeekyearNextWeek)">Next week</a>
 	
    	@if(!week.getErrors.isEmpty) {
    		<div class="alert-message error">
@@ -25,7 +25,7 @@
    		</div>
    	}
 
-   	@form(routes.HourEntries.createForWeek(userId, week.getWeekyear, week.getWeekOfWeekyear), 'id -> "entriesForm") {
+   	@form(routes.HourEntries.createForWeek(week.getWeekyear, week.getWeekOfWeekyear), 'id -> "entriesForm") {
 		<input name="weekyear" type="hidden" value="@week.getWeekyear">
 		<input name="weekOfWeekyear" type="hidden" value="@week.getWeekOfWeekyear">
 		<table id="weekOverview">
@@ -33,13 +33,13 @@
 				<tr>
 					<th></th>
 					@for(day <- week.getDays) {
-					<th><a href="@routes.HourEntries.createForDay(userId, day)">@DateUtil.formatDate(day, "E d-M")</a></th>
+					<th><a href="@routes.HourEntries.createForDay(day)">@DateUtil.formatDate(day, "E d-M")</a></th>
 					}
 					<th></th>
 				</tr>
 			</thead>
 			<tbody>
-				@for(assignment <- week.getAssignments(userId).toList) {
+				@for(assignment <- week.getAssignments().toList) {
 				<tr class="assignment">
 					<td>@assignment.project.code</td>
 					@for(day <- week.getDays) {
@@ -79,5 +79,5 @@
    	}
 
 } {
-	@sidebar.userMenu(userId)
+	@sidebar.userMenu()
 }

@@ -11,18 +11,15 @@ import java.util.TreeSet;
 
 import models.HourEntry;
 import models.ProjectAssignment;
+import models.User;
 
 import org.joda.time.LocalDate;
 
 import utils.DateUtil;
 import utils.predicates.HourEntryInWeekPredicates;
-
 import beans.HourEntryInWeek;
 
 import com.google.common.collect.Collections2;
-
-import datastructures.TotalsAssignment;
-import datastructures.TotalsDay;
 
 public class Week {
 
@@ -31,6 +28,8 @@ public class Week {
 	private int weekyear;
 
 	private int weekOfWeekyear;
+
+	private User user;
 
 	private final Map<HourEntryInWeek, List<String>> errors;
 
@@ -41,11 +40,12 @@ public class Week {
 		errors = new HashMap<HourEntryInWeek, List<String>>();
 	}
 
-	public Week(final Long userId, final int weekyear, final int weekOfWeekyear) {
+	public Week(final User user, final int weekyear, final int weekOfWeekyear) {
 		hourEntries = new LinkedList<HourEntryInWeek>();
+		this.user = user;
 		this.weekyear = weekyear;
 		this.weekOfWeekyear = weekOfWeekyear;
-		fillHourEntries(userId);
+		fillHourEntries();
 		errors = new HashMap<HourEntryInWeek, List<String>>();
 	}
 
@@ -62,13 +62,13 @@ public class Week {
 	 * 
 	 * @return A {@link Set} of {@link ProjectAssignment}s
 	 */
-	public Set<ProjectAssignment> getAssignments(final Long userId) {
+	public Set<ProjectAssignment> getAssignments() {
 		Set<ProjectAssignment> assignments = new TreeSet<ProjectAssignment>();
 		for (HourEntryInWeek hourEntry : hourEntries) {
 			assignments.add(hourEntry.assignment);
 		}
 		for (ProjectAssignment assignment : ProjectAssignment
-				.findAllStarredForUser(userId)) {
+				.findAllStarredForUser(user)) {
 			assignments.add(assignment);
 		}
 		return assignments;
@@ -91,34 +91,6 @@ public class Week {
 				HourEntryInWeekPredicates.equalAssignmentAndDay(assignment, day));
 		hourEntries.addAll(filtered);
 		return hourEntries;
-	}
-
-	/**
-	 * Get the totals of a Day for a user
-	 * 
-	 * @param userId
-	 *            The id of the user for which the totals have to be calculated
-	 * @param day
-	 *            The day for which the totals have to be calculated
-	 * @return A {@link TotalsDay} with the totals
-	 */
-	public TotalsDay getDayTotals(final Long userId, final LocalDate day) {
-		return HourEntry.findTotalsForUserForDay(userId, day);
-	}
-
-	/**
-	 * Get the totals of an {@link ProjectAssignment} for this week
-	 * 
-	 * @param assignmentId
-	 *            The id of the assignment which totals have to be calculated
-	 * @return A {@link TotalsAssignment} with the totals
-	 */
-	public TotalsAssignment getAssignmentTotals(final Long assignmentId) {
-		final LocalDate date = getDateThisWeek();
-		final LocalDate firstDateThisWeek = DateUtil.firstDateOfWeek(date);
-		final LocalDate lastDateThisWeek = DateUtil.lastDateOfWeek(date);
-		return HourEntry.findTotalsForAssignmentBetween(assignmentId,
-				firstDateThisWeek, lastDateThisWeek);
 	}
 
 	public Map<HourEntryInWeek, List<String>> getErrors() {
@@ -181,12 +153,12 @@ public class Week {
 	 * @param date
 	 *            A date in the represented week
 	 */
-	private void fillHourEntries(final Long userId) {
+	private void fillHourEntries() {
 		final LocalDate date = getDateThisWeek();
 		final LocalDate firstDateThisWeek = DateUtil.firstDateOfWeek(date);
 		final LocalDate lastDateThisWeek = DateUtil.lastDateOfWeek(date);
 		List<HourEntry> hourEntryModels = HourEntry.findAllForUserBetween(
-				userId, firstDateThisWeek, lastDateThisWeek);
+				user, firstDateThisWeek, lastDateThisWeek);
 		for (HourEntry entry : hourEntryModels) {
 			hourEntries.add(new HourEntryInWeek(entry));
 		}
@@ -264,7 +236,7 @@ public class Week {
 	 * delete @{link HourEntry}. 2.2. Hours & minutes have a value -> validate
 	 * input and update.
 	 */
-	public void process(Long userId) {
+	public void process() {
 		if (valid) {
 			ListIterator<HourEntryInWeek> iterator = hourEntries
 					.listIterator();
@@ -295,7 +267,7 @@ public class Week {
 					} else {
 						// Check if user is allowed to delete this entry
 						HourEntry hourEntry = HourEntry.findById(entry.id);
-						if (hourEntry.assignment.user.id.equals(userId)) {
+						if (hourEntry.assignment.user.equals(user)) {
 							hourEntry.delete();
 							iterator.remove();
 						}

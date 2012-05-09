@@ -127,45 +127,19 @@ public class HourEntry {
 	}
 
 	/**
-	 * Find all hour entries for a user
-	 * 
-	 * @param userId
-	 *            The id of the user which entries are to be searched for
-	 * @return A List of {@link HourEntry}s
-	 */
-	public static List<HourEntry> findAllForUser(Long userId) {
-		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
-		CriteriaQuery<HourEntry> query = cb.createQuery(HourEntry.class);
-		Root<HourEntry> entry = query.from(HourEntry.class);
-
-		Join<HourEntry, ProjectAssignment> assignment = entry
-				.join(HourEntry_.assignment);
-		Join<ProjectAssignment, User> user = assignment
-				.join(ProjectAssignment_.user);
-
-		query.where(cb.equal(user.get(User_.id), userId));
-		query.orderBy(cb.desc(entry.get(HourEntry_.id)));
-		return JPA.em().createQuery(query).getResultList();
-	}
-
-	/**
 	 * Find all hour entries for a user project assignment
 	 * 
-	 * @param assignmentId
-	 *            The id of the @{link ProjectAssignment} which entries are to
-	 *            be searched for
+	 * @param assignment
+	 *            The @{link ProjectAssignment} which entries are to be searched
+	 *            for
 	 * @return A List of {@link HourEntry}s
 	 */
-	public static List<HourEntry> findAllForAssignment(Long assignmentId) {
+	public static List<HourEntry> findAllForAssignment(
+			final ProjectAssignment assignment) {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 		CriteriaQuery<HourEntry> query = cb.createQuery(HourEntry.class);
 		Root<HourEntry> entry = query.from(HourEntry.class);
-
-		Join<HourEntry, ProjectAssignment> assignment = entry
-				.join(HourEntry_.assignment);
-
-		query.where(cb.equal(assignment.get(ProjectAssignment_.id),
-				assignmentId));
+		query.where(cb.equal(entry.get(HourEntry_.assignment), assignment));
 		query.orderBy(cb.desc(entry.get(HourEntry_.id)));
 		return JPA.em().createQuery(query).getResultList();
 	}
@@ -173,26 +147,24 @@ public class HourEntry {
 	/**
 	 * Find all hour entries for a user between two dates
 	 * 
-	 * @param userId
-	 *            The id of the user which entries are to be searched for
+	 * @param user
+	 *            The user which entries are to be searched for
 	 * @param beginDate
 	 *            The date from which entries are to be searched for
 	 * @param endDate
 	 *            The date till which entries are to be searched for
 	 * @return A List of {@link HourEntry}s
 	 */
-	public static List<HourEntry> findAllForUserBetween(Long userId,
-			LocalDate beginDate, LocalDate endDate) {
+	public static List<HourEntry> findAllForUserBetween(final User user,
+			final LocalDate beginDate, final LocalDate endDate) {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 		CriteriaQuery<HourEntry> query = cb.createQuery(HourEntry.class);
 		Root<HourEntry> entry = query.from(HourEntry.class);
 
 		Join<HourEntry, ProjectAssignment> assignment = entry
 				.join(HourEntry_.assignment);
-		Join<ProjectAssignment, User> user = assignment
-				.join(ProjectAssignment_.user);
 
-		query.where(cb.equal(user.get(User_.id), userId),
+		query.where(cb.equal(assignment.get(ProjectAssignment_.user), user),
 				cb.between(entry.get(HourEntry_.date), beginDate, endDate));
 		query.orderBy(cb.desc(entry.get(HourEntry_.id)));
 		return JPA.em().createQuery(query).getResultList();
@@ -209,8 +181,8 @@ public class HourEntry {
 	 *            The date till which entries are to be searched for
 	 * @return A List of {@link HourEntry}s
 	 */
-	public static List<HourEntry> findAllForUsersBetween(Set<User> users,
-			LocalDate beginDate, LocalDate endDate) {
+	public static List<HourEntry> findAllForUsersBetween(final Set<User> users,
+			final LocalDate beginDate, final LocalDate endDate) {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 		CriteriaQuery<HourEntry> query = cb.createQuery(HourEntry.class);
 		Root<HourEntry> entry = query.from(HourEntry.class);
@@ -227,24 +199,22 @@ public class HourEntry {
 	/**
 	 * Find all hour entries for a user for a day
 	 * 
-	 * @param userId
-	 *            The id of the user which entries are to be searched for
+	 * @param user
+	 *            The user which entries are to be searched for
 	 * @param day
 	 *            The date on which entries are to be searched for
 	 * @return A List of {@link HourEntry}s
 	 */
-	public static List<HourEntry> findAllForUserForDay(Long userId,
-			LocalDate day) {
+	public static List<HourEntry> findAllForUserForDay(final User user,
+			final LocalDate day) {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 		CriteriaQuery<HourEntry> query = cb.createQuery(HourEntry.class);
 		Root<HourEntry> entry = query.from(HourEntry.class);
 
 		Join<HourEntry, ProjectAssignment> assignment = entry
 				.join(HourEntry_.assignment);
-		Join<ProjectAssignment, User> user = assignment
-				.join(ProjectAssignment_.user);
 
-		query.where(cb.equal(user.get(User_.id), userId),
+		query.where(cb.equal(assignment.get(ProjectAssignment_.user), user),
 				cb.equal(entry.get(HourEntry_.date), day));
 		query.orderBy(cb.desc(entry.get(HourEntry_.id)));
 		return JPA.em().createQuery(query).getResultList();
@@ -279,8 +249,8 @@ public class HourEntry {
 	 * Calculates the totals of the hour entries for a user, per assignment,
 	 * between two dates. Note that the amount of minutes can be more than 60
 	 * 
-	 * @param userId
-	 *            The id of the user which entries are to be summed
+	 * @param user
+	 *            The user which entries are to be summed
 	 * @param beginDate
 	 *            The date from which entries are to be searched for
 	 * @param endDate
@@ -288,7 +258,7 @@ public class HourEntry {
 	 * @return A List of {@link TotalsAssignment} objects
 	 */
 	public static List<TotalsAssignment> findTotalsForUserPerAssignmentBetween(
-			Long userId, LocalDate beginDate, LocalDate endDate) {
+			final User user, LocalDate beginDate, LocalDate endDate) {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 		CriteriaQuery<TotalsAssignment> query = cb
 				.createQuery(TotalsAssignment.class);
@@ -300,71 +270,27 @@ public class HourEntry {
 
 		Join<HourEntry, ProjectAssignment> assignment = entry
 				.join(HourEntry_.assignment);
-		Join<ProjectAssignment, User> user = assignment
-				.join(ProjectAssignment_.user);
 
-		query.where(cb.equal(user.get(User_.id), userId),
+		query.where(cb.equal(assignment.get(ProjectAssignment_.user), user),
 				cb.between(entry.get(HourEntry_.date), beginDate, endDate));
 		query.groupBy(entry.get(HourEntry_.assignment));
 		return JPA.em().createQuery(query).getResultList();
 	}
 
 	/**
-	 * Calculates the totals of the hour entries for an assignment, between two
-	 * dates
-	 * 
-	 * @param assignmentId
-	 *            The id of the assignment which entries are to be summed
-	 * @param beginDate
-	 *            The date from which entries are to be searched for
-	 * @param endDate
-	 *            The date till which entries are to be searched for
-	 * @return A {@link TotalsAssignment} object
-	 */
-	public static TotalsAssignment findTotalsForAssignmentBetween(
-			Long assignmentId, LocalDate beginDate, LocalDate endDate) {
-		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
-		CriteriaQuery<TotalsAssignment> query = cb
-				.createQuery(TotalsAssignment.class);
-		Root<HourEntry> entry = query.from(HourEntry.class);
-		query.select(cb.construct(TotalsAssignment.class,
-				entry.get(HourEntry_.assignment),
-				cb.sumAsLong(entry.get(HourEntry_.hours)),
-				cb.sumAsLong(entry.get(HourEntry_.minutes))));
-
-		Join<HourEntry, ProjectAssignment> assignment = entry
-				.join(HourEntry_.assignment);
-
-		query.where(
-				cb.equal(assignment.get(ProjectAssignment_.id), assignmentId),
-				cb.between(entry.get(HourEntry_.date), beginDate, endDate));
-		query.groupBy(entry.get(HourEntry_.assignment));
-		Query typedQuery = JPA.em().createQuery(query);
-		try {
-			return (TotalsAssignment) typedQuery.getSingleResult();
-		} catch (NoResultException nre) {
-			return new TotalsAssignment(
-					ProjectAssignment.findById(assignmentId), 0L, 0L);
-		} catch (NonUniqueResultException nure) {
-			return new TotalsAssignment(
-					ProjectAssignment.findById(assignmentId), 0L, 0L);
-		}
-	}
-
-	/**
 	 * Calculates the totals of the hour entries for a user, per day, between
 	 * two dates. Note that the amount of minutes can be more than 60
 	 * 
-	 * @param userId
-	 *            The id of the user which entries are to be summed
+	 * @param user
+	 *            The user which entries are to be summed
 	 * @param beginDate
 	 *            The date from which entries are to be searched for
 	 * @param endDate
 	 *            The date till which entries are to be searched for
 	 * @return A List of {@link TotalsDay} objects
 	 */
-	public static List<TotalsDay> findTotalsForUserPerDayBetween(Long userId,
-			LocalDate beginDate, LocalDate endDate) {
+	public static List<TotalsDay> findTotalsForUserPerDayBetween(
+			final User user, final LocalDate beginDate, final LocalDate endDate) {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 		CriteriaQuery<TotalsDay> query = cb.createQuery(TotalsDay.class);
 		Root<HourEntry> entry = query.from(HourEntry.class);
@@ -374,10 +300,8 @@ public class HourEntry {
 
 		Join<HourEntry, ProjectAssignment> assignment = entry
 				.join(HourEntry_.assignment);
-		Join<ProjectAssignment, User> user = assignment
-				.join(ProjectAssignment_.user);
 
-		query.where(cb.equal(user.get(User_.id), userId),
+		query.where(cb.equal(assignment.get(ProjectAssignment_.user), user),
 				cb.between(entry.get(HourEntry_.date), beginDate, endDate));
 		query.groupBy(entry.get(HourEntry_.date));
 		query.orderBy(cb.asc(entry.get(HourEntry_.date)));
@@ -388,13 +312,14 @@ public class HourEntry {
 	 * Calculates the totals of the hour entries for a user, for a day. Note
 	 * that the amount of minutes can be more than 60
 	 * 
-	 * @param userId
-	 *            The id of the user which entries are to be summed
+	 * @param user
+	 *            The user which entries are to be summed
 	 * @param day
 	 *            The day for which the entries are to be summed
 	 * @return A {@link TotalsDay} with the totals
 	 */
-	public static TotalsDay findTotalsForUserForDay(Long userId, LocalDate day) {
+	public static TotalsDay findTotalsForUserForDay(final User user,
+			final LocalDate day) {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 		CriteriaQuery<TotalsDay> query = cb.createQuery(TotalsDay.class);
 		Root<HourEntry> entry = query.from(HourEntry.class);
@@ -404,10 +329,8 @@ public class HourEntry {
 
 		Join<HourEntry, ProjectAssignment> assignment = entry
 				.join(HourEntry_.assignment);
-		Join<ProjectAssignment, User> user = assignment
-				.join(ProjectAssignment_.user);
 
-		query.where(cb.equal(user.get(User_.id), userId),
+		query.where(cb.equal(assignment.get(ProjectAssignment_.user), user),
 				cb.equal(entry.get(HourEntry_.date), day));
 		query.groupBy(entry.get(HourEntry_.date));
 		Query typedQuery = JPA.em().createQuery(query);

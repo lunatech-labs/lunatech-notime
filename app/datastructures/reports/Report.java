@@ -139,7 +139,7 @@ public class Report {
 		if (user == null) {
 			hourEntries = new LinkedList<HourEntry>();
 		} else {
-			hourEntries = HourEntry.findAllForUserBetween(user.id, beginDate,
+			hourEntries = HourEntry.findAllForUserBetween(user, beginDate,
 					endDate);
 		}
 		return new Report(hourEntries);

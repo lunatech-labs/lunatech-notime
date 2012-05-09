@@ -1,4 +1,4 @@
-@(userId: Long, entryId: Long, entryForm: Form[beans.HourEntryForm])
+@(entryId: Long, entryForm: Form[beans.HourEntryForm])
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -11,9 +11,9 @@
         </div>
     }
     
-    @form(routes.HourEntries.update(userId, entryId), 'id -> "entryForm") {
+    @form(routes.HourEntries.update(entryId), 'id -> "entryForm") {
 	    <div class="entry">
-	    	@select(entryForm("assignment.id"), options(ProjectAssignment.optionsFor(userId)), '_label -> "Project")
+	    	@select(entryForm("assignment.id"), options(ProjectAssignments.optionsForCurrentUser()), '_label -> "Project")
 	
 			@inputDate(entryForm("date"), '_label -> "Date")
 			
@@ -33,13 +33,13 @@
 			@inputText(entryForm("rate"), '_label -> "Rate")
 
 			<input class="btn btn-primary" type="submit" value="Submit">
-			<a class="btn" href="@routes.Users.read(userId)">Cancel</a>	
+			<a class="btn" href="@routes.Users.home()">Cancel</a>
 		</div>
 	}
-	@form(routes.HourEntries.delete(userId, entryId)) {
+	@form(routes.HourEntries.delete(entryId)) {
 		<input class="btn btn-danger" type="submit" value="Delete">
 	}
 
 } {
-	@sidebar.userMenu(userId)
+	@sidebar.userMenu()
 }

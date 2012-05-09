@@ -138,7 +138,7 @@ public class User implements RoleHolder {
 	 */
 	public void inactivateAssignments() {
 		for (ProjectAssignment assignment : ProjectAssignment
-				.findAllActiveForUser(id)) {
+				.findAllActiveForUser(this)) {
 			assignment.inactivate();
 		}
 	}
@@ -189,7 +189,7 @@ public class User implements RoleHolder {
 	 *            The id of the user to be searched for
 	 * @return A user
 	 */
-	public static User findById(Long userId) {
+	public static User findById(final Long userId) {
 		return JPA.em().find(User.class, userId);
 	}
 
@@ -202,7 +202,7 @@ public class User implements RoleHolder {
 	 *         shouldn't be possible) users are found, null is returned. If one
 	 *         is found, this user is returned
 	 */
-	public static User findByUsername(String username) {
+	public static User findByUsername(final String username) {
 		try {
 			CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 			CriteriaQuery<User> query = cb.createQuery(User.class);
@@ -225,7 +225,7 @@ public class User implements RoleHolder {
 	 *         shouldn't be possible) users are found, null is returned. If one
 	 *         is found, this user is returned
 	 */
-	public static User findByEmail(String email) {
+	public static User findByEmail(final String email) {
 		try {
 			CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 			CriteriaQuery<User> query = cb.createQuery(User.class);
@@ -258,7 +258,7 @@ public class User implements RoleHolder {
 	 *            The project which the users must be assigned to
 	 * @return A List of {@link User}s
 	 */
-	public static List<User> findAllForProject(Project project) {
+	public static List<User> findAllForProject(final Project project) {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 		CriteriaQuery<User> query = cb.createQuery(User.class);
 		Root<User> user = query.from(User.class);
@@ -276,7 +276,7 @@ public class User implements RoleHolder {
 	 *            to
 	 * @return A List of {@link User}s
 	 */
-	public static List<User> findAllForRole(String roleName) {
+	public static List<User> findAllForRole(final String roleName) {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 		CriteriaQuery<User> query = cb.createQuery(User.class);
 		Root<User> user = query.from(User.class);
@@ -288,13 +288,13 @@ public class User implements RoleHolder {
 	/**
 	 * Find all users except one user
 	 * 
-	 * @param userId
-	 *            The id of the user that needs to be filtered
+	 * @param user
+	 *            The user that needs to be filtered
 	 * @return A List of user objects
 	 */
-	public static List<User> findAllExcept(Long userId) {
+	public static List<User> findAllExcept(final User user) {
 		List<User> users = findAll();
-		users.remove(findById(userId));
+		users.remove(user);
 		return users;
 	}
 
@@ -331,7 +331,7 @@ public class User implements RoleHolder {
 	 *            The password to be encrypted
 	 * @return The encrypted password
 	 */
-	public static String encryptPassword(String password) {
+	public static String encryptPassword(final String password) {
 		return BCrypt.hashpw(password, BCrypt.gensalt());
 	}
 
@@ -343,7 +343,7 @@ public class User implements RoleHolder {
 	 *            password
 	 * @return True if the passwords are equal, false if not
 	 */
-	public boolean checkPassword(String input) {
+	public boolean checkPassword(final String input) {
 		return BCrypt.checkpw(input, password);
 	}
 
@@ -357,7 +357,7 @@ public class User implements RoleHolder {
 	 * @return If no user is found or the passwords aren't equal, null is
 	 *         returned. Otherwise the user is returned
 	 */
-	public static User authenticate(String username, String password) {
+	public static User authenticate(final String username, final String password) {
 		User user = findByUsername(username);
 		if (user == null || !user.checkPassword(password) || !user.active)
 			return null;
@@ -376,7 +376,7 @@ public class User implements RoleHolder {
 	public boolean hasDuplicateUsername() {
 		List<User> users = Collections.emptyList();
 		if (id != null)
-			users = findAllExcept(id);
+			users = findAllExcept(this);
 		else
 			users = findAll();
 
@@ -390,7 +390,7 @@ public class User implements RoleHolder {
 	public boolean hasDuplicateEmail() {
 		List<User> users = Collections.emptyList();
 		if (id != null)
-			users = findAllExcept(id);
+			users = findAllExcept(this);
 		else
 			users = findAll();
 

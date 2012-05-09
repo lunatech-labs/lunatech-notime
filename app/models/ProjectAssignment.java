@@ -131,7 +131,7 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	 * @return true if the assignment is deletable
 	 */
 	public boolean isDeletable() {
-		return HourEntry.findAllForAssignment(id).isEmpty();
+		return HourEntry.findAllForAssignment(this).isEmpty();
 	}
 
 	/**
@@ -141,29 +141,25 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	 *            The id of the project assignment to be searched for
 	 * @return A project assignment
 	 */
-	public static ProjectAssignment findById(Long assignmentId) {
+	public static ProjectAssignment findById(final Long assignmentId) {
 		return JPA.em().find(ProjectAssignment.class, assignmentId);
 	}
 
 	/**
 	 * Find all active project assignments for a user
 	 * 
-	 * @param userId
-	 *            The id of the user which project assignments are to be
+	 * @param user
+	 *            The user which project assignments are to be
 	 *            searched for
 	 * @return A List of project assignments
 	 */
-	public static List<ProjectAssignment> findAllActiveForUser(Long userId) {
+	public static List<ProjectAssignment> findAllActiveForUser(final User user) {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 		CriteriaQuery<ProjectAssignment> query = cb
 				.createQuery(ProjectAssignment.class);
 		Root<ProjectAssignment> assignment = query
 				.from(ProjectAssignment.class);
-
-		Join<ProjectAssignment, User> user = assignment
-				.join(ProjectAssignment_.user);
-
-		query.where(cb.equal(user.get(User_.id), userId),
+		query.where(cb.equal(assignment.get(ProjectAssignment_.user), user),
 				cb.isTrue(assignment.get(ProjectAssignment_.active)));
 		return JPA.em().createQuery(query).getResultList();
 	}
@@ -176,7 +172,7 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	 *            searched for
 	 * @return A List of project assignments
 	 */
-	public static List<ProjectAssignment> findAllActiveForProject(Long projectId) {
+	public static List<ProjectAssignment> findAllActiveForProject(final Long projectId) {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 		CriteriaQuery<ProjectAssignment> query = cb
 				.createQuery(ProjectAssignment.class);
@@ -194,24 +190,20 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	/**
 	 * Find all starred project assignments for a user
 	 * 
-	 * @param userId
-	 *            The id of the user which starred project assignments are to be
+	 * @param user
+	 *            The user which starred project assignments are to be
 	 *            searched for
 	 * @return A List of project assignments
 	 */
-	public static List<ProjectAssignment> findAllStarredForUser(Long userId) {
+	public static List<ProjectAssignment> findAllStarredForUser(final User user) {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 		CriteriaQuery<ProjectAssignment> query = cb
 				.createQuery(ProjectAssignment.class);
 		Root<ProjectAssignment> assignment = query
 				.from(ProjectAssignment.class);
 
-		Join<ProjectAssignment, User> user = assignment
-				.join(ProjectAssignment_.user);
-
-		query.where(cb.equal(user.get(User_.id), userId),
+		query.where(cb.equal(assignment.get(ProjectAssignment_.user), user),
 				cb.equal(assignment.get(ProjectAssignment_.starred), true));
-		query.orderBy(cb.desc(user.get(User_.id)));
 		return JPA.em().createQuery(query).getResultList();
 	}
 
@@ -224,8 +216,8 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	 *            The project which project assignments are to be searched for
 	 * @return A List of project assignments
 	 */
-	public static List<ProjectAssignment> findByUserAndProject(User user,
-			Project project) {
+	public static List<ProjectAssignment> findByUserAndProject(final User user,
+			final Project project) {
 		CriteriaBuilder cb = JPA.em().getCriteriaBuilder();
 		CriteriaQuery<ProjectAssignment> query = cb
 				.createQuery(ProjectAssignment.class);
@@ -242,11 +234,11 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	 * 
 	 * @return A Map with as key the assignment id and as value the project name
 	 */
-	public static Map<String, String> optionsFor(Long userId) {
-		LinkedHashMap<String, String> assignments = new LinkedHashMap<String, String>();
+	public static Map<String, String> optionsFor(final User user) {
+		final LinkedHashMap<String, String> assignments = new LinkedHashMap<String, String>();
 		assignments.put("", "");
 
-		for (ProjectAssignment assignment : findAllActiveForUser(userId)) {
+		for (ProjectAssignment assignment : findAllActiveForUser(user)) {
 			assignments.put(assignment.id.toString(),
 					assignment.project.name.toString());
 		}
@@ -259,7 +251,7 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	 * @param project
 	 *            The project all users are assigned to
 	 */
-	public static void assignAllUsersTo(Project project) {
+	public static void assignAllUsersTo(final Project project) {
 		List<User> users = User.findAll();
 		for (User user : users) {
 			if (!isExistingAssignment(user, project)) {
@@ -277,7 +269,7 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	 * @param user
 	 *            The user all default projects are assigned to
 	 */
-	public static void assignAllDefaultProjectsTo(User user) {
+	public static void assignAllDefaultProjectsTo(final User user) {
 		List<Project> defaultProjects = Project.findAllDefaultProjects();
 		for (Project defaultProject : defaultProjects) {
 			ProjectAssignment pa = new ProjectAssignment();
@@ -297,12 +289,12 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	 * @return A boolean which is true if there are 1 or more assignments with
 	 *         this user and project
 	 */
-	public static boolean isExistingAssignment(User user, Project project) {
+	public static boolean isExistingAssignment(final User user, final Project project) {
 		return !findByUserAndProject(user, project).isEmpty();
 	}
 
-	public static boolean isDateInAssignmentRange(LocalDate date,
-			Long assignmentId) {
+	public static boolean isDateInAssignmentRange(final LocalDate date,
+			final Long assignmentId) {
 		ProjectAssignment assignment = ProjectAssignment.findById(assignmentId);
 		return DateUtil.between(date, assignment.beginDate,
 				assignment.endDate.plusDays(1));

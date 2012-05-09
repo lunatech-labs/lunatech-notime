@@ -1,4 +1,4 @@
-@(userId: Long, totals: List[datastructures.TotalsDay])
+@(totals: List[datastructures.TotalsDay])
 
 @import utils.DateUtil
 
@@ -19,7 +19,7 @@
 			<tbody>
 				@for(total <- totals) {
 		  		<tr>
-		  			<td class="day" data-daynumber="@total.date.getDayOfWeek"><a href="@routes.HourEntries.addForDay(userId, total.date)">@DateUtil.formatDate(total.date, "E d-M")</a></td><td>@total.hoursMinutes</td>
+		  			<td class="day" data-daynumber="@total.date.getDayOfWeek"><a href="@routes.HourEntries.addForDay(total.date)">@DateUtil.formatDate(total.date, "E d-M")</a></td><td>@total.hoursMinutes</td>
 		  		</tr>
 	  			}
 			</tbody>
@@ -31,5 +31,5 @@
 	 </script>
 	
 } {
-	@sidebar.userMenu(userId)
+	@sidebar.userMenu()
 }

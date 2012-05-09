@@ -1,15 +1,13 @@
-@(userId: Long)
-
 <h4>Menu</h4>
 <div id="date-picker"></div>
 <nav> 
 	<ul>
-		<li><a href="@routes.HourEntries.add(userId)">Day</a></li>
-		<li><a href="@routes.HourEntries.addMultiple(userId)">Multiple Days</a></li>
-		<li><a href="@routes.HourEntries.addForWeek(userId, new org.joda.time.LocalDate().getWeekyear, new org.joda.time.LocalDate().getWeekOfWeekyear)">Week</a></li>
-		<li><a href="@routes.HourEntries.calendarOverview(userId)">Month</a></li>
-		<li><a href="@routes.HourEntries.tableOverview(userId)">Month totals</a></li>
-		<li><a href="@routes.Users.assignmentsOverview(userId)">Projects</a></li>
-		<li><a href="@routes.Users.daysTooFewHours(userId)">Days with too few hours</a></li>
+		<li><a href="@routes.HourEntries.add()">Day</a></li>
+		<li><a href="@routes.HourEntries.addMultiple()">Multiple Days</a></li>
+		<li><a href="@routes.HourEntries.addForWeek(new org.joda.time.LocalDate().getWeekyear, new org.joda.time.LocalDate().getWeekOfWeekyear)">Week</a></li>
+		<li><a href="@routes.HourEntries.calendarOverview()">Month</a></li>
+		<li><a href="@routes.HourEntries.tableOverview()">Month totals</a></li>
+		<li><a href="@routes.Users.assignmentsOverview()">Projects</a></li>
+		<li><a href="@routes.Users.daysTooFewHours()">Days with too few hours</a></li>
 	</ul>
 </nav>

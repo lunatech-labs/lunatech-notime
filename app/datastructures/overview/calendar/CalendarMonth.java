@@ -2,6 +2,8 @@ package datastructures.overview.calendar;
 
 import java.util.List;
 
+import models.User;
+
 import org.joda.time.LocalDate;
 
 import utils.DateUtil;
@@ -20,8 +22,8 @@ public class CalendarMonth {
 	 *            A certain date in the month for which the data structure is
 	 *            created
 	 */
-	public CalendarMonth(LocalDate date, Long userId) {
+	public CalendarMonth(LocalDate date, User user) {
 		weeks = CalendarWeek.createWeeks(DateUtil.firstDateOfMonth(date),
-				userId);
+				user);
 	}
 }
