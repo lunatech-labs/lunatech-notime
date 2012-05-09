@@ -186,10 +186,8 @@ public class Report {
 	}
 
 	/**
-	 * Creates a report for a set of projects, for a user between 2 dates.
+	 * Creates a report for a for a user between 2 dates.
 	 * 
-	 * @param projects
-	 *            The projects for which the report must be created
 	 * @param user
 	 *            The user for which the report must be created
 	 * @param beginDate
