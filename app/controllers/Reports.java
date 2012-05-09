@@ -37,13 +37,11 @@ public class Reports extends Controller {
 			final ReportOptions options = optionsForm.get();
 			final User user = Application.getCurrentUser();
 			if (user.hasOnlyUserRole()) {
-				report = Report.getReportEntriesPerCustomerPerProjectPerWeek(
-						options.getAllProjects(), user, options.beginDate,
+				report = Report.getReportForUser(user, options.beginDate,
 						options.endDate);
 			} else {
-				report = Report.getReportEntriesPerCustomerPerProjectPerWeek(
-						options.getAllProjects(), null, options.beginDate,
-						options.endDate);
+				report = Report.getReportForProjects(options.getAllProjects(),
+						options.beginDate, options.endDate);
 			}
 			return ok(entriesPerCustomerPerProjectPerWeek.render(optionsForm,
 					report));
@@ -67,13 +65,11 @@ public class Reports extends Controller {
 			final ReportOptions options = optionsForm.get();
 			final User user = Application.getCurrentUser();
 			if (user.hasOnlyUserRole()) {
-				report = Report.getReportEntriesPerUserPerWeek(
-						options.getAllProjects(), user, options.beginDate,
+				report = Report.getReportForUser(user, options.beginDate,
 						options.endDate);
 			} else {
-				report = Report.getReportEntriesPerUserPerWeek(
-						options.getAllProjects(), null, options.beginDate,
-						options.endDate);
+				report = Report.getReportForProjects(options.getAllProjects(),
+						options.beginDate, options.endDate);
 			}
 			return ok(entriesPerUserPerWeek.render(optionsForm, report));
 		}
@@ -119,13 +115,11 @@ public class Reports extends Controller {
 			final ReportOptions options = optionsForm.get();
 			final User user = Application.getCurrentUser();
 			if (user.hasOnlyUserRole()) {
-				report = Report.getReportEntriesPerWeek(
-						options.getAllProjects(), user, options.beginDate,
+				report = Report.getReportForUser(user, options.beginDate,
 						options.endDate);
 			} else {
-				report = Report.getReportEntriesPerWeek(
-						options.getAllProjects(), null, options.beginDate,
-						options.endDate);
+				report = Report.getReportForProjects(options.getAllProjects(),
+						options.beginDate, options.endDate);
 			}
 			return ok(entriesPerWeek.render(optionsForm, report));
 		}
@@ -149,13 +143,11 @@ public class Reports extends Controller {
 			final ReportOptions options = optionsForm.get();
 			final User user = Application.getCurrentUser();
 			if (user.hasOnlyUserRole()) {
-				report = Report.getReportEntriesTablePerProjectPerDay(
-						options.getAllProjects(), user, options.beginDate,
+				report = Report.getReportForUser(user, options.beginDate,
 						options.endDate);
 			} else {
-				report = Report.getReportEntriesTablePerProjectPerDay(
-						options.getAllProjects(), null, options.beginDate,
-						options.endDate);
+				report = Report.getReportForProjects(options.getAllProjects(),
+						options.beginDate, options.endDate);
 			}
 			return ok(entriesTablePerProjectPerDay.render(optionsForm, report));
 		}

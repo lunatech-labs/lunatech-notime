@@ -40,38 +40,25 @@ public class Report {
 	}
 
 	/**
-	 * Get a report for the entries per customer, per project, per week
 	 * 
-	 * @param projects
-	 *            The projects for which the report must be created
 	 * @param user
-	 *            The user for which the report must be created. If null the
-	 *            report is created for all users
+	 *            The user for which the report must be created
 	 * @param beginDate
 	 *            The date form which the report is created
 	 * @param endDate
 	 *            The date till which the report is created (the entries on
 	 *            endDate will also be included)
-	 * 
 	 * @return A {@link Report}
 	 */
-	public static Report getReportEntriesPerCustomerPerProjectPerWeek(
-			final Set<Project> projects, final User user,
+	public static Report getReportForUser(final User user,
 			final LocalDate beginDate, final LocalDate endDate) {
-		if (user == null)
-			return createReportForProjectsBetween(projects, beginDate, endDate);
-		else
-			return createReportForUserBetween(user, beginDate, endDate);
+		return createReportForUserBetween(user, beginDate, endDate);
 	}
 
 	/**
-	 * Get a report for the entries per user, per week
 	 * 
 	 * @param projects
 	 *            The projects for which the report must be created
-	 * @param user
-	 *            The user for which the report must be created. If null the
-	 *            report is created for all users
 	 * @param beginDate
 	 *            The date form which the report is created
 	 * @param endDate
@@ -79,60 +66,9 @@ public class Report {
 	 *            endDate will also be included)
 	 * @return A {@link Report}
 	 */
-	public static Report getReportEntriesPerUserPerWeek(
-			final Set<Project> projects, final User user,
+	public static Report getReportForProjects(final Set<Project> projects,
 			final LocalDate beginDate, final LocalDate endDate) {
-		if (user == null)
-			return createReportForProjectsBetween(projects, beginDate, endDate);
-		else
-			return createReportForUserBetween(user, beginDate, endDate);
-	}
-
-	/**
-	 * Get a report for the entries per week
-	 * 
-	 * @param projects
-	 *            The projects for which the report must be created
-	 * @param user
-	 *            The user for which the report must be created. If null the
-	 *            report is created for all users
-	 * @param beginDate
-	 *            The date form which the report is created
-	 * @param endDate
-	 *            The date till which the report is created (the entries on
-	 *            endDate will also be included)
-	 * @return A {@link Report}
-	 */
-	public static Report getReportEntriesPerWeek(final Set<Project> projects,
-			final User user, final LocalDate beginDate, final LocalDate endDate) {
-		if (user == null)
-			return createReportForProjectsBetween(projects, beginDate, endDate);
-		else
-			return createReportForUserBetween(user, beginDate, endDate);
-	}
-
-	/**
-	 * Get a report for a table per project, per day
-	 * 
-	 * @param projects
-	 *            The projects for which the report must be created
-	 * @param user
-	 *            The user for which the report must be created. If null the
-	 *            report is created for all users
-	 * @param beginDate
-	 *            The date form which the report is created
-	 * @param endDate
-	 *            The date till which the report is created (the entries on
-	 *            endDate will also be included)
-	 * @return A {@link Report}
-	 */
-	public static Report getReportEntriesTablePerProjectPerDay(
-			final Set<Project> projects, final User user,
-			final LocalDate beginDate, final LocalDate endDate) {
-		if (user == null)
-			return createReportForProjectsBetween(projects, beginDate, endDate);
-		else
-			return createReportForUserBetween(user, beginDate, endDate);
+		return createReportForProjectsBetween(projects, beginDate, endDate);
 	}
 
 	/**
