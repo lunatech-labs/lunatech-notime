@@ -314,7 +314,7 @@ public class Project {
 	 *         name
 	 */
 	public static Map<String, String> options() {
-		LinkedHashMap<String, String> options = new LinkedHashMap<String, String>();
+		final LinkedHashMap<String, String> options = new LinkedHashMap<String, String>();
 		for (Project p : findAll()) {
 			options.put(p.id.toString(), p.name);
 		}

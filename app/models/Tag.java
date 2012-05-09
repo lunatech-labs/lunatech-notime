@@ -127,7 +127,7 @@ public class Tag {
 	 * @return A Map with as key the tag's id and as value the tag's name
 	 */
 	public static Map<String, String> options() {
-		LinkedHashMap<String, String> options = new LinkedHashMap<String, String>();
+		final LinkedHashMap<String, String> options = new LinkedHashMap<String, String>();
 		for (Tag t : findAll()) {
 			options.put(t.id.toString(), t.tag);
 		}

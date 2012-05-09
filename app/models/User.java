@@ -317,7 +317,7 @@ public class User implements RoleHolder {
 	 * @return A Map with as key the user's id and as value the user's full name
 	 */
 	public static Map<String, String> options() {
-		LinkedHashMap<String, String> options = new LinkedHashMap<String, String>();
+		final LinkedHashMap<String, String> options = new LinkedHashMap<String, String>();
 		for (User u : findAllActive()) {
 			options.put(u.id.toString(), u.fullname);
 		}

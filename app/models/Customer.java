@@ -254,7 +254,7 @@ public class Customer {
 	 *         name
 	 */
 	public static Map<String, String> options() {
-		LinkedHashMap<String, String> options = new LinkedHashMap<String, String>();
+		final LinkedHashMap<String, String> options = new LinkedHashMap<String, String>();
 		for (Customer c : findAllActive()) {
 			options.put(c.id.toString(), c.name);
 		}
