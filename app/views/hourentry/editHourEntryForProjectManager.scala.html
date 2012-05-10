@@ -1,0 +1,45 @@
+@(entryId: Long, entryForm: Form[beans.HourEntryForm])
+
+@import helper._
+@import helper.twitterBootstrap._
+
+@main("Hour entry") {
+	
+	@if(entryForm.hasGlobalErrors()) {
+    	<div class="alert-message error">
+            <strong>Oops!</strong> @entryForm.globalError().message
+        </div>
+    }
+    
+    @form(routes.HourEntries.update(entryId), 'id -> "entryForm") {
+	    <div class="entry">
+	    	@select(entryForm("assignment.id"), options(ProjectAssignments.optionsForCurrentUser()), '_label -> "Project")
+	
+			@inputDate(entryForm("date"), '_label -> "Date")
+			
+			@inputText(entryForm("hours"), '_label -> "Hours")
+			
+			@inputText(entryForm("minutes"), '_label -> "Minutes")
+			
+			<div class="clearfix" id="tags_string_field">
+				<label for="tags_string">Tags</label>
+				<div class="input">
+					<input type="text" class="autocomplete" name="tagsString" value="@HourEntry.findById(entryId).enteredTagsString" data-url="@routes.Tags.find">
+				</div>
+			</div>
+
+			@checkbox(entryForm("billable"), '_label -> "Billable")
+
+			@inputText(entryForm("rate"), '_label -> "Rate")
+
+			<input class="btn btn-primary" type="submit" value="Submit">
+			<a class="btn" href="@routes.Users.home()">Cancel</a>
+		</div>
+	}
+	@form(routes.HourEntries.delete(entryId)) {
+		<input class="btn btn-danger" type="submit" value="Delete">
+	}
+
+} {
+	@sidebar.userMenu()
+}

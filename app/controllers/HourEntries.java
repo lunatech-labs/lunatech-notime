@@ -134,9 +134,19 @@ public class HourEntries extends Controller {
 	@Transactional(readOnly = true)
 	public static Result edit(Long entryId) {
 		final User user = Application.getCurrentUser();
-		Form<HourEntryForm> newForm = form(HourEntryForm.class).fill(
-				new HourEntryForm(HourEntry.findById(entryId)));
-		return ok(editHourEntry.render(entryId, newForm));
+		final HourEntry hourEntry = HourEntry.findById(entryId);
+
+		if (user.hasProjectManagerRole() && hourEntry.assignment.project.projectManager.equals(user)) {
+			Form<HourEntryForm> newForm = form(HourEntryForm.class).fill(new HourEntryForm(HourEntry.findById(entryId)));
+			return ok(editHourEntryForProjectManager.render(entryId, newForm));
+		} else {
+			if (hourEntry.assignment.user.equals(user)) {
+				Form<HourEntryForm> newForm = form(HourEntryForm.class).fill(new HourEntryForm(HourEntry.findById(entryId)));
+				return ok(editHourEntry.render(entryId, newForm));
+			} else {
+				return forbidden(views.html.forbidden.render());
+			}
+		}
 	}
 
 	@Transactional
