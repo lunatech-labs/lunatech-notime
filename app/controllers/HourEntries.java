@@ -13,20 +13,23 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import utils.DateUtil;
-import views.html.user.hourentry.createHourEntries;
-import views.html.user.hourentry.createHourEntriesForWeek;
-import views.html.user.hourentry.createHourEntry;
-import views.html.user.hourentry.createHourEntryForDay;
-import views.html.user.hourentry.editHourEntry;
-import views.html.user.hourentry.hourEntriesCalendar;
-import views.html.user.hourentry.hourEntriesTable;
+import views.html.hourentry.createHourEntries;
+import views.html.hourentry.createHourEntriesForWeek;
+import views.html.hourentry.createHourEntry;
+import views.html.hourentry.createHourEntryForDay;
+import views.html.hourentry.editHourEntry;
+import views.html.hourentry.editHourEntryForProjectManager;
+import views.html.hourentry.hourEntriesCalendar;
+import views.html.hourentry.hourEntriesTable;
 import beans.HourEntryForm;
 import beans.MultipleHourEntries;
 import datastructures.TotalsDay;
 import datastructures.overview.calendar.CalendarMonth;
 import datastructures.overview.week.Week;
+import be.objectify.deadbolt.actions.Restrict;
 
 @Security.Authenticated(Secured.class)
+@Restrict("user")
 public class HourEntries extends Controller {
 
 	@Transactional(readOnly = true)

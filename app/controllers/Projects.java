@@ -2,7 +2,6 @@ package controllers;
 
 import java.util.Collections;
 import java.util.List;
-
 import models.Project;
 import models.User;
 import play.data.Form;
@@ -12,9 +11,10 @@ import play.i18n.Messages;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
-import views.html.admin.project.createProject;
-import views.html.admin.project.editProject;
-import views.html.admin.project.projects;
+import views.html.project.createProject;
+import views.html.project.editProject;
+import views.html.project.project;
+import views.html.project.projects;
 import be.objectify.deadbolt.actions.And;
 import be.objectify.deadbolt.actions.Restrictions;
 

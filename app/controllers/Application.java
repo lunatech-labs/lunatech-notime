@@ -9,7 +9,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import views.html.login;
-import views.html.admin.overview;
+import views.html.admin;
 
 public class Application extends Controller {
 
@@ -42,7 +42,7 @@ public class Application extends Controller {
 
 	@Security.Authenticated(Secured.class)
 	public static Result admin() {
-		return ok(overview.render());
+		return ok(admin.render());
 	}
 
 	/**

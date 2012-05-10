@@ -8,9 +8,9 @@ import play.i18n.Messages;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
-import views.html.admin.customer.createCustomer;
-import views.html.admin.customer.customers;
-import views.html.admin.customer.editCustomer;
+import views.html.customer.createCustomer;
+import views.html.customer.customers;
+import views.html.customer.editCustomer;
 
 @Security.Authenticated(Secured.class)
 @Restrict("admin")

@@ -1,4 +1,4 @@
-@(projectForm: Form[Project])
+@(id: Long, projectForm: Form[Project])
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -19,14 +19,16 @@
 }
 
 @main("Project", script) {
-	
+		
 	@if(projectForm.hasGlobalErrors()) {
     	<div class="alert-message error">
             <strong>Oops!</strong> @projectForm.globalError().message
         </div>
     }
     
-    @form(routes.Projects.create(), 'id -> "project-form") {
+    @form(routes.Projects.update(id), 'id -> "project-form") {
+
+    	<input name="id" type="hidden" value="@id" />
     	
     	@inputText(projectForm("name"), '_label -> "Name")
     	
@@ -38,13 +40,15 @@
 
     	@select(projectForm("customer.id"), options(Customer.options), '_label -> "Customer")
     	
-    	@inputText(projectForm("customerContact"), '_label -> "Customer contact")
+    	@inputText(projectForm("customerContact"), '_label -> "Customer's contact")
     	
     	@select(projectForm("projectManager.id"), options(User.options), '_label -> "Project Manager")
-
+    	
     	@checkbox(projectForm("defaultProject"), '_label -> "Default Project")
     	
-    	<div class="tags">
+    	@checkbox(projectForm("active"), '_label -> "Active")
+
+		<div class="tags">
 
     		@repeat(projectForm("requiredTags"), min = 0) { tag =>
     			@tagField(projectForm(tag("id").name))
@@ -66,7 +70,7 @@
 
     	</div>
 
-    	<input class="btn btn-primary" type="submit" value="Submit">
+		<input class="btn btn-primary" type="submit" value="Submit">
     	<a class="btn btn-danger" href="@routes.Projects.all()">Cancel</a>
     	
     }

@@ -15,12 +15,16 @@ import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
-import views.html.admin.user.createUser;
-import views.html.admin.user.editUser;
-import views.html.admin.user.users;
-import views.html.user.assignments;
-import views.html.user.daysTooFewHours;
+import views.html.daysTooFewHours;
+import views.html.home;
+import views.html.projectassignment.starAssignments;
+import views.html.user.createUser;
+import views.html.user.editUser;
+import views.html.user.users;
+import views.html.user.usersForProject;
+import be.objectify.deadbolt.actions.And;
 import be.objectify.deadbolt.actions.Restrict;
+import be.objectify.deadbolt.actions.Restrictions;
 import be.objectify.deadbolt.actions.Unrestricted;
 import datastructures.TotalsDay;
 
@@ -36,7 +40,7 @@ public class Users extends Controller {
 	@Transactional(readOnly = true)
 	@Unrestricted
 	public static Result home() {
-		return ok(views.html.user.home.render(Application.getCurrentUser()));
+		return ok(home.render(Application.getCurrentUser()));
 	}
 
 	@Transactional(readOnly = true)
@@ -85,7 +89,7 @@ public class Users extends Controller {
 	@Unrestricted
 	public static Result assignmentsOverview() {
 		final User user = Application.getCurrentUser();
-		return ok(assignments.render(user.assignments));
+		return ok(starAssignments.render(user.assignments));
 	}
 
 	@Transactional(readOnly = true)
