@@ -24,8 +24,7 @@ public class Projects extends Controller {
 
 	@Transactional(readOnly = true)
 	@Security.Authenticated(Secured.class)
-	@Restrictions({ @And("admin"), @And("customerManager"),
-			@And("projectManager") })
+	@Restrictions({ @And("admin"), @And("customerManager"), @And("projectManager") })
 	public static Result all() {
 		List<Project> projectsList = Collections.emptyList();
 		final User user = Application.getCurrentUser();
@@ -39,6 +38,13 @@ public class Projects extends Controller {
 				projectsList = Project.findAllForProjectManager(user);
 		}
 		return ok(projects.render(projectsList));
+	}
+
+	@Transactional(readOnly = true)
+	@Security.Authenticated(Secured.class)
+	@Restrictions({ @And("admin"), @And("customerManager"),	@And("projectManager") })
+	public static Result read(Long projectId) {
+		return ok(project.render(Project.findById(projectId)));
 	}
 
 	@Transactional(readOnly = true)

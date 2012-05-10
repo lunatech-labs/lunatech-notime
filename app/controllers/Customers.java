@@ -15,6 +15,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import views.html.customer.createCustomer;
+import views.html.customer.customer;
 import views.html.customer.customers;
 import views.html.customer.editCustomer;
 
@@ -23,6 +24,7 @@ import views.html.customer.editCustomer;
 public class Customers extends Controller {
 
 	@Transactional(readOnly = true)
+	@Security.Authenticated(Secured.class)
 	@Restrictions({ @And("admin"), @And("customerManager") })
 	public static Result all() {
 		List<Customer> customersList = Collections.emptyList();
@@ -34,6 +36,13 @@ public class Customers extends Controller {
 			customersList = Customer.findAllForCustomerManager(user);
 		}
 		return ok(customers.render(customersList));
+	}
+
+	@Transactional(readOnly = true)
+	@Security.Authenticated(Secured.class)
+	@Restrictions({ @And("admin"), @And("customerManager") })
+	public static Result read(Long customerId) {
+		return ok(customer.render(Customer.findById(customerId)));
 	}
 
 	@Transactional(readOnly = true)

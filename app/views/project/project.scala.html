@@ -1,0 +1,12 @@
+@(project: Project)
+
+@main("Project", sidemenu = menus.adminMenu()) {
+	<p>Name: @project.name</p>
+	<p>Code: @project.code</p>
+	<p>Description: @project.description</p>
+	<p>Type: @project.getTypeString</p>
+	<p>Customer's contact: @project.customerContact</p>
+	<p>Project manager: @project.projectManager.fullname</p>
+
+	<a class="btn" href="@routes.Users.allForProject(project.id)">Assigned users</a>
+}

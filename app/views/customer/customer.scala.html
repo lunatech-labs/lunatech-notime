@@ -1,0 +1,7 @@
+@(customer: Customer)
+
+@main("Customer", sidemenu = menus.adminMenu()) {
+	<p>Name: @customer.name</p>
+	<p>Code: @customer.code</p>
+	<p>Description: @customer.description</p>
+}

@@ -1,6 +1,8 @@
 @(customers: List[Customer])
 
 @import helper._
+@import be.objectify.deadbolt.views.html._
+@import be.objectify.deadbolt.utils.TemplateUtils._
 
 @main("Customers", sidemenu = menus.adminMenu()) {
 	
@@ -14,19 +16,28 @@
             No customers!
         </div>
 	} else {
-		<ul>
-			@for(customer <- customers) {
-				<li>
-					<a href="@routes.Customers.edit(customer.id)">@customer.name</a> @if(!customer.active) {<i>Not active</i>}
-				
-					@form(routes.Customers.delete(customer.id)) {
-						<input class="btn btn-danger" type="submit" value="Delete">
-					}	
-				</li>
-			}
-		</ul>
+		<table>
+			<thead>
+				<tr>
+					<th>Customer</th>
+					<th>Edit</th>
+					<th>Delete</th>
+				</tr>
+			</thead>
+			<tbody>
+				@for(customer <- customers) {
+				<tr>
+					<td><a href="@routes.Customers.read(customer.id)">@customer.name</a> @if(!customer.active) { <i>Not active</i> }</td>
+					<td>@restrict(la(as("admin"))) { <a class="btn" href="@routes.Customers.edit(customer.id)">Edit</a> }</td>
+					<td>@restrict(la(as("admin"))) { @form(routes.Customers.delete(customer.id)) { <input class="btn btn-danger" type="submit" value="Delete"> }}</td>
+				</tr>
+				}
+			</tbody>
+		</table>
 	}
 	
+	@restrict(la(as("admin"))) {
 	<a href="@routes.Customers.add()" class="btn btn-primary">Add Customer</a>
+	}
 
 }

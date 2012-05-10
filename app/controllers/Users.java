@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.HourEntry;
+import models.Project;
 import models.User;
 
 import org.joda.time.LocalDate;
@@ -20,6 +21,7 @@ import views.html.userHome;
 import views.html.projectassignment.starAssignments;
 import views.html.user.createUser;
 import views.html.user.editUser;
+import views.html.user.user;
 import views.html.user.users;
 import views.html.user.usersForProject;
 import be.objectify.deadbolt.actions.And;
@@ -37,10 +39,27 @@ public class Users extends Controller {
 		return ok(users.render(User.findAll()));
 	}
 
+	@Transactional
+	@Security.Authenticated(Secured.class)
+	@Restrictions({ @And("admin"), @And("customerManager"),
+			@And("projectManager"), @And("user") })
+	public static Result allForProject(Long projectId) {
+		List<User> users = User.findAllForProject(Project.findById(projectId));
+		return ok(usersForProject.render(users));
+	}
+
 	@Transactional(readOnly = true)
 	@Unrestricted
 	public static Result home() {
 		return ok(userHome.render(Application.getCurrentUser()));
+	}
+
+	@Transactional(readOnly = true)
+	@Security.Authenticated(Secured.class)
+	@Restrictions({ @And("admin"), @And("customerManager"),
+			@And("projectManager"), @And("user") })
+	public static Result read(Long userId) {
+		return ok(user.render(User.findById(userId)));
 	}
 
 	@Transactional(readOnly = true)

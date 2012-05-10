@@ -16,39 +16,34 @@
             No projects!
         </div>
 	} else {
-		<ul>
-			@for(project <- projects) {
-		  		<li>
-		  			<a href="@routes.Projects.edit(project.id)">@project.name</a>
-		  			@if(project.active) {
-		  				<a class="btn" href="@routes.ProjectAssignments.create(project.id)">Add project member</a>
-		  			} else {
-		  				<i>Project is not active</i>
-		  			}
-		  			@form(routes.Projects.delete(project.id)) {
-		  				<input class="btn btn-danger" type="submit" value="Delete project">
-		  			}
-		  			
-		  			@if(project.assignments.isEmpty) {
-		  			    <div class="alert-message warning">
-           	 				No project members!
-        				</div>
-		  			} else {
-		  				<ul class="assignments">
-		  					@for(assignment <- project.assignments) {
-		  						<li>
-		  							<a href="@routes.ProjectAssignments.edit(project.id, assignment.id)">@assignment.user.fullname</a> @if(!assignment.active) {<i>Not active</i>} 
-		  							
-		  							@form(routes.ProjectAssignments.delete(assignment.id)) {
-		  								<input class="btn btn-danger" type="submit" value="Delete">
-		  							}
-		  						</li>
-		  					}
-		  				</ul>
-		  			}
-		  		</li>
-	  		}
-		</ul>
+		<table>
+			<thead>
+				<tr>
+					<th>Project</ths>
+					<th>Project member</th>
+					<th>Edit</th>
+					<th>Delete</th>
+				</tr>
+			</thead>
+			<tbody>
+				@for(project <- projects) {
+				<tr>
+					<td><a href="@routes.Projects.read(project.id)">@project.name</a> @if(!project.active) { <i>(Not active)</i> }</td>
+					<td>@if(project.active) { <a class="btn" href="@routes.ProjectAssignments.create(project.id)">Add project member</a> }</td>
+					<td><a class="btn" href="@routes.Projects.edit(project.id)">Edit</a></td>
+					<td>@form(routes.Projects.delete(project.id)) {	<input class="btn btn-danger" type="submit" value="Delete">	}</td>
+				</tr>
+					@for(assignment <- project.assignments) {
+					<tr>
+						<td></td>
+						<td><a href="@routes.Users.read(assignment.user.id)">@assignment.user.fullname</a> @if(!assignment.active) { <i>(Not active) }</td>
+						<td><a class="btn" href="@routes.ProjectAssignments.edit(project.id, assignment.id)">Edit</a></td>
+						<td>@form(routes.ProjectAssignments.delete(assignment.id)) { <input class="btn btn-danger" type="submit" value="Delete"> }</td>
+					</tr>
+					}
+				}
+			</tbody>
+		</table>
 	}
 	
 	@restrict(la(as("admin"), as("customerManager"))) {

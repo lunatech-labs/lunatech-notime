@@ -1,0 +1,19 @@
+@(users: List[User])
+
+@main("Users", sidemenu = menus.adminMenu()) {
+	
+	@if(users.isEmpty) {
+    	<div class="alert-message warning">
+            No users!
+        </div>
+	} else {
+		<ul>
+			@for(user <- users) {
+				<li>
+					@user.fullname
+				</li>
+			}	
+		</ul>
+	}
+	
+}

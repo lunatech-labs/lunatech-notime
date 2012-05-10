@@ -14,18 +14,26 @@
             No users!
         </div>
 	} else {
-		<ul>
-			@for(user <- users) {
-				<li>
-					<a href="@routes.Users.edit(user.id)">@user.fullname</a> @if(!user.active) {<i>Not active</i>}
-					
-					@form(routes.Users.delete(user.id)) {
-						<input class="btn btn-danger" type="submit" value="Delete">
-					}	
-				</li>
-			}	
-		</ul>
+		<table>
+			<thead>
+				<tr>
+					<th>Customer</th>
+					<th>Edit</th>
+					<th>Delete</th>
+				</tr>
+			</thead>
+			<tbody>
+				@for(user <- users) {
+				<tr>
+					<td><a href="@routes.Users.read(user.id)">@user.fullname</a> @if(!user.active) { <i>Not active</i> }</td>
+					<td><a class="btn" href="@routes.Users.edit(user.id)">Edit</a></td>
+					<td>@form(routes.Users.delete(user.id)) { <input class="btn btn-danger" type="submit" value="Delete"> }</td>
+				</tr>
+				}
+			</tbody>
+		</table>
 	}
+
 	<a href="@routes.Users.add()" class="btn btn-primary">Add User</a>
 	
 }

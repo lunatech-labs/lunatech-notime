@@ -366,4 +366,11 @@ public class Project {
 		return customer.active;
 	}
 
+	/**
+	* Getter for templates, because type is a scala keyword
+	*/
+	public String getTypeString() {
+		return type.toString();
+	}
+
 }
