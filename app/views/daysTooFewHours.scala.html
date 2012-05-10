@@ -2,7 +2,7 @@
 
 @import utils.DateUtil
 
-@main("Days with too few hours entered") {
+@main("Days with too few hours entered", sidemenu = menus.userMenu()) {
 	
 	@if(totals.isEmpty) {
 	    <div class="alert-message warning">
@@ -26,10 +26,4 @@
 		</table>
 	}
 	
-	 <script>
-	 	
-	 </script>
-	
-} {
-	@sidebar.userMenu()
 }

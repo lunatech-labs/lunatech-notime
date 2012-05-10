@@ -3,7 +3,7 @@
 @import helper._
 @import utils.DateUtil
 
-@main("Entered hours") {
+@main("Entered hours", sidemenu = menus.userMenu()) {
 	<table class="calendarOverview">
 		@for(week <- calendar.weeks) {
 			<tr class="week">
@@ -23,6 +23,4 @@
 		}		
 	</table>
 
-} {
-	@sidebar.userMenu()
 }

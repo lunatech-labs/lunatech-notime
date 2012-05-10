@@ -18,7 +18,7 @@
 	<script type="text/javascript" src="@routes.Assets.at("javascripts/multiple-customer-managers.js")"></script>
 }
 
-@main("Edit customer", script) {
+@main("Edit customer", script, menus.adminMenu()) {
 	
 	@if(customerForm.hasGlobalErrors()) {
     	<div class="alert-message error">
@@ -62,6 +62,4 @@
 
 	}
 	
-} {
-	@sidebar.adminMenu()
 }

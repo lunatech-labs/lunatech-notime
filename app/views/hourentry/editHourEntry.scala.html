@@ -3,7 +3,7 @@
 @import helper._
 @import helper.twitterBootstrap._
 
-@main("Hour entry") {
+@main("Hour entry", sidemenu = menus.userMenu()) {
 	
 	@if(entryForm.hasGlobalErrors()) {
     	<div class="alert-message error">
@@ -36,6 +36,4 @@
 		<input class="btn btn-danger" type="submit" value="Delete">
 	}
 
-} {
-	@sidebar.userMenu()
 }

@@ -2,7 +2,7 @@
 
 @import helper._
 
-@main("Customers") {
+@main("Customers", sidemenu = menus.adminMenu()) {
 	
 	@if(flash.containsKey("error")) {
     	<div class="alert-message error">
@@ -29,6 +29,4 @@
 	
 	<a href="@routes.Customers.add()" class="btn btn-primary">Add Customer</a>
 
-} {
-	@sidebar.adminMenu()
 }

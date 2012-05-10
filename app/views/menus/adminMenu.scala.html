@@ -1,0 +1,15 @@
+@import be.objectify.deadbolt.views.html._
+@import be.objectify.deadbolt.utils.TemplateUtils._
+
+<h4>Menu</h4>
+<nav>
+	<ul>
+		@restrict(la(as("admin"))) {
+		<li><a href="@routes.Users.all()">Users</a></li>
+		}
+		@restrict(la(as("admin"), as("customerManager"))) {
+		<li><a href="@routes.Customers.all()">Customers</a></li>
+		}
+		<li><a href="@routes.Projects.all()">Projects</a></li>
+	</ul>
+</nav>

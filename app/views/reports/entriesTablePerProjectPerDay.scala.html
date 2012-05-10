@@ -7,7 +7,7 @@
 	<script type="text/javascript" src="@routes.Assets.at("javascripts/report-options.js")"></script>
 }
 
-@main("Report: Table per project, per day", script) {
+@main("Report: Table per project, per day", script, menus.reportMenu()) {
 
 	@datesCustomerProjectForm(optionsForm, routes.Reports.entriesTablePerProjectPerDay())
 	
@@ -53,6 +53,4 @@
 		}
 	}
 
-} {
-	@sidebar.adminMenu()
 }

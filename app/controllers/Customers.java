@@ -1,7 +1,13 @@
 package controllers;
 
+import java.util.Collections;
+import java.util.List;
+
+import be.objectify.deadbolt.actions.And;
 import be.objectify.deadbolt.actions.Restrict;
+import be.objectify.deadbolt.actions.Restrictions;
 import models.Customer;
+import models.User;
 import play.data.Form;
 import play.db.jpa.Transactional;
 import play.i18n.Messages;
@@ -17,8 +23,17 @@ import views.html.customer.editCustomer;
 public class Customers extends Controller {
 
 	@Transactional(readOnly = true)
+	@Restrictions({ @And("admin"), @And("customerManager") })
 	public static Result all() {
-		return ok(customers.render(Customer.findAll()));
+		List<Customer> customersList = Collections.emptyList();
+		final User user = Application.getCurrentUser();
+
+		if (user.hasAdminRole()) {
+			customersList = Customer.findAll();
+		} else {
+			customersList = Customer.findAllForCustomerManager(user);
+		}
+		return ok(customers.render(customersList));
 	}
 
 	@Transactional(readOnly = true)

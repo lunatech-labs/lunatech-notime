@@ -16,7 +16,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import views.html.daysTooFewHours;
-import views.html.home;
+import views.html.userHome;
 import views.html.projectassignment.starAssignments;
 import views.html.user.createUser;
 import views.html.user.editUser;
@@ -40,7 +40,7 @@ public class Users extends Controller {
 	@Transactional(readOnly = true)
 	@Unrestricted
 	public static Result home() {
-		return ok(home.render(Application.getCurrentUser()));
+		return ok(userHome.render(Application.getCurrentUser()));
 	}
 
 	@Transactional(readOnly = true)

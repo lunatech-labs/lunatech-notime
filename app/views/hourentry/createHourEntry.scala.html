@@ -4,7 +4,7 @@
 @import helper.twitterBootstrap._
 @import utils.CalculationUtil
 
-@main("Enter hours") {
+@main("Enter hours", sidemenu = menus.userMenu()) {
 	
 	@if(entryForm.hasGlobalErrors()) {
     	<div class="alert-message error">
@@ -62,6 +62,4 @@
 	}
 	
 
-} {
-	@sidebar.userMenu()
 }

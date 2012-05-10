@@ -30,7 +30,7 @@
 	<script type="text/javascript" src="@routes.Assets.at("javascripts/multiple-hour-entries.js")"></script>
 }
 
-@main("Enter hours", script) {
+@main("Enter hours", script, menus.userMenu()) {
 	
 	@if(entriesForm.hasGlobalErrors()) {
     	<div class="alert-message error">
@@ -58,6 +58,4 @@
 
 	}
 
-} {
-	@sidebar.userMenu()
 }

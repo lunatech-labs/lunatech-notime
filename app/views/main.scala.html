@@ -1,4 +1,7 @@
-@(title: String, script: Html = Html(""))(content: Html)(sidebar: Html)
+@(title: String, script: Html = Html(""), sidemenu: Html = Html(""))(content: Html)
+
+@import be.objectify.deadbolt.views.html._
+@import be.objectify.deadbolt.utils.TemplateUtils._
 
 <!DOCTYPE html>
 
@@ -20,7 +23,16 @@
         		</hgroup>
         		<nav>
         			<ul>
+                        @restrict(la(as("admin"), as("customerManager"), as("projectManager"), as("user"))) {
+                        <li><a href="@routes.Users.home()">Home</a></li>
+                        <li><a href="@routes.Reports.entriesPerCustomerPerProjectPerWeek()">Reports</a></li>
+                        }
+                        @restrict(la(as("admin"), as("customerManager"), as("projectManager"))) {
+                        <li><a href="@routes.Application.admin()">Admin</a></li>
+                        }
+                        @restrict(la(as("admin"), as("customerManager"), as("projectManager"), as("user"))) {
         				<li><a href="@routes.Application.logout()">Log Out</a></li>
+                        }
         			</ul>
         		</nav>
         	</header>
@@ -28,7 +40,7 @@
             	@content
         	</section>
         	<aside class="sidebar">
-        		@sidebar
+        		@sidemenu
     		</aside>
         	<footer>NoTime is brought to you by <a href="" target="_blank">Leonard Punt</a> & <a href="http://lunatech-research.com" target="_blank">Lunatech</a></footer>
         </div>        

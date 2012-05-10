@@ -1,8 +1,10 @@
 @(projects: List[Project])
 
 @import helper._
+@import be.objectify.deadbolt.views.html._
+@import be.objectify.deadbolt.utils.TemplateUtils._
 
-@main("Projects") {
+@main("Projects", sidemenu = menus.adminMenu()) {
 
 	@if(flash.containsKey("error")) {
     	<div class="alert-message error">
@@ -49,8 +51,8 @@
 		</ul>
 	}
 	
+	@restrict(la(as("admin"), as("customerManager"))) {
 	<a href="@routes.Projects.add()" class="btn btn-primary">Add Project</a>
+	}
 
-} {
-	@sidebar.adminMenu()
 }

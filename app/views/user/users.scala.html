@@ -2,7 +2,7 @@
 
 @import helper._
 
-@main("Users") {
+@main("Users", sidemenu = menus.adminMenu()) {
 	
 	@if(flash.containsKey("error")) {
     	<div class="alert-message error">
@@ -28,6 +28,4 @@
 	}
 	<a href="@routes.Users.add()" class="btn btn-primary">Add User</a>
 	
-} {
-	@sidebar.adminMenu()
 }

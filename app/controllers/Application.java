@@ -9,7 +9,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import views.html.login;
-import views.html.admin;
+import views.html.adminHome;
 
 public class Application extends Controller {
 
@@ -17,6 +17,7 @@ public class Application extends Controller {
 		return redirect(routes.Application.login());
 	}
 
+	@Transactional(readOnly = true)
 	public static Result login() {
 		return ok(login.render(form(LoginForm.class)));
 	}
@@ -41,8 +42,9 @@ public class Application extends Controller {
 	}
 
 	@Security.Authenticated(Secured.class)
+	@Transactional(readOnly = true)
 	public static Result admin() {
-		return ok(admin.render());
+		return ok(adminHome.render());
 	}
 
 	/**

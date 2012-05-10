@@ -2,7 +2,7 @@
 
 @import helper._
 
-@main("Entered hours this month") {
+@main("Entered hours this month", sidemenu = menus.userMenu()) {
 
 	@if(entries.isEmpty) {
 		<div class="alert-message warning">
@@ -35,6 +35,4 @@
 		</table>
 	}
 
-} {
-	@sidebar.userMenu()
 }

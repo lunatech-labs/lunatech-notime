@@ -3,7 +3,7 @@
 @import helper._
 @import helper.twitterBootstrap._
 
-@main("Edit an assignment") {
+@main("Edit an assignment", sidemenu = menus.adminMenu()) {
 	
 	@if(assignmentForm.hasGlobalErrors()) {
     	<div class="alert-message error">
@@ -27,6 +27,5 @@
 		<a class="btn btn-danger" href="@routes.Projects.all()">Cancel</a>
 	  	
 	}
-} {
-	@sidebar.adminMenu()
+
 }

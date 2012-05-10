@@ -1,0 +1,5 @@
+@(user: User)
+
+@main(user.fullname, sidemenu = menus.userMenu()) {
+	<p>Hello @user.fullname!</p>
+}

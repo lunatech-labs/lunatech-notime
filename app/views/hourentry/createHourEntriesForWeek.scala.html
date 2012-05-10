@@ -7,7 +7,7 @@
 	<script type="text/javascript" src="@routes.Assets.at("javascripts/week-hour-entries.js")"></script>
 }
 
-@main("Enter hours per week", script = script) {
+@main("Enter hours per week", script, menus.userMenu()) {
 
 	<a href="@routes.HourEntries.addForWeek(week.getWeekyearPreviousWeek, week.getWeekOfWeekyearPreviousWeek)">Previous week</a>
 	<a class="next-week" href="@routes.HourEntries.addForWeek(week.getWeekyearNextWeek, week.getWeekOfWeekyearNextWeek)">Next week</a>
@@ -78,6 +78,4 @@
     	<input class="btn btn-primary" type="submit" value="Submit">
    	}
 
-} {
-	@sidebar.userMenu()
 }

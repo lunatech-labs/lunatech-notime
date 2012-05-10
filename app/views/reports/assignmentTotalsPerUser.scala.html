@@ -29,7 +29,7 @@
     }
 }
 
-@main("Report: Assignment totals per user", script) {
+@main("Report: Assignment totals per user", script, menus.reportMenu()) {
 
 	@form(routes.Reports.assignmentTotalsPerUser(), 'id -> "options-form") {
 
@@ -130,4 +130,5 @@
 		</div>
 		}
 	}
-} { @sidebar.adminMenu() }
+
+}

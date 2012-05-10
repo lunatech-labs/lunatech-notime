@@ -20,7 +20,7 @@
 	<script type="text/javascript" src="@routes.Assets.at("javascripts/user.js")"></script>
 }
 
-@main("Edit user", script) {
+@main("Edit user", script, menus.adminMenu()) {
 	
 	@if(userForm.hasGlobalErrors()) {
     	<div class="alert-message error">
@@ -68,6 +68,5 @@
 		<a class="btn btn-danger" href="@routes.Users.all()">Cancel</a>
 
 	}
-} {
-	@sidebar.adminMenu()
+
 }

@@ -2,7 +2,7 @@
 
 @import helper._
 
-@main("Projects you're assigned to") {
+@main("Projects you're assigned to", sidemenu = menus.adminMenu()) {
 	
 	@if(assignments.isEmpty) {
 	    <div class="alert-message warning">
@@ -19,6 +19,4 @@
 		</ul>
 	}
 	
-} {
-	@sidebar.userMenu()
 }
