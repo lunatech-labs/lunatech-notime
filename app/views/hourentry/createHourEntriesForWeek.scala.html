@@ -25,6 +25,10 @@
    		</div>
    	}
 
+   	<div id="hours-not-saved-warning" class="alert-message warning">
+		You have edited some fields but your changes aren't saved yet
+   	</div>
+
    	@form(routes.HourEntries.createForWeek(week.getWeekyear, week.getWeekOfWeekyear), 'id -> "entriesForm") {
 		<input name="weekyear" type="hidden" value="@week.getWeekyear">
 		<input name="weekOfWeekyear" type="hidden" value="@week.getWeekOfWeekyear">

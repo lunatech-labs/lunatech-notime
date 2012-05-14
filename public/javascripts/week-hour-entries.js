@@ -16,6 +16,10 @@ require(["jquery-1.7.1.min"], function() {
 		calculateProjectTotals()
 		calculateTotalTotals()
 	})
+
+	$( 'input[name*="hours"], input[name*="minutes"]' ).change(function() {
+		$("#hours-not-saved-warning").show()
+	})
 	
 	var renumberEntries = function(entries) {
 		$( ".entry" , entries).each(function(i) {
