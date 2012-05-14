@@ -1,0 +1,11 @@
+@import be.objectify.deadbolt.views.html._
+@import be.objectify.deadbolt.utils.TemplateUtils._
+
+<h4>Menu</h4>
+<nav>
+	<ul>
+		@restrict(la(as("admin"), as("customerManager"), as("projectManager"), as("user"))) {
+		<li><a href="@routes.Users.editPassword()">Change password</a></li>
+		}
+	</ul>
+</nav>

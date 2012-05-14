@@ -38,7 +38,7 @@ require(["jquery-1.7.1.min"], function() {
 		$( "#date-picker" ).each(function() { 
 			var $elem = $(this)
 			require(["jquery-ui-1.8.18.custom.min"], function() {
-				$elem.datepicker({ firstDay: 1, dateFormat: 'dd-mm-yy', showWeek: true, showButtonPanel: true,
+				$elem.datepicker({ firstDay: 1, dateFormat: 'dd-mm-yy', showWeek: true,
 					onSelect: function(date) {
 			            location.href = jsRoutes.controllers.HourEntries.addForDay(date).url
 			        }

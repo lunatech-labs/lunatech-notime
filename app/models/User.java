@@ -20,6 +20,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
+import beans.UserForm;
+
 import models.security.UserRole;
 import models.security.UserRole_;
 
@@ -68,6 +70,19 @@ public class User implements RoleHolder {
 	@ManyToMany
 	public List<UserRole> userRoles;
 
+	public User() {
+	}
+
+	public User(UserForm form) {
+		id = form.id;
+		username = form.username;
+		password = form.password;
+		fullname = form.fullname;
+		email = form.email;
+		active = form.active;
+		userRoles = form.userRoles;
+	}
+
 	/**
 	 * Encrypts the user's password and inserts this new user. The user will
 	 * also be assigned to all default projects.
@@ -81,15 +96,18 @@ public class User implements RoleHolder {
 	}
 
 	/**
-	 * Encrypts the user's password if updated and updates this user
+	 * Encrypts the user's password (if updated) and updates this user
 	 * 
 	 * @param userId
 	 *            The id of the user that is going to be updated
 	 */
 	public void update(Long userId) {
-		if (!password.equals(findById(userId).password))
-			password = User.encryptPassword(password);
 		this.id = userId;
+
+		if (password != null && !password.isEmpty())
+			password = User.encryptPassword(password);
+		else
+			password = User.findById(userId).password;
 
 		// Make it impossible to delete the last admin role
 		if (isLastAdminUser()) {
@@ -105,10 +123,22 @@ public class User implements RoleHolder {
 			}
 		}
 
+		createdOn = User.findById(userId).createdOn;
 		JPA.em().merge(this);
 
 		if (!active)
 			inactivateAssignments();
+	}
+
+	/**
+	 * Encrypts and updates the user's password
+	 *
+	 * @param password
+	 *				The unencrypted password
+	 */
+	public void updatePassword(String password) {
+		this.password = password;
+		update(id);
 	}
 
 	/**
@@ -363,42 +393,6 @@ public class User implements RoleHolder {
 			return null;
 		else
 			return user;
-	}
-
-	public String validate() {
-		if (hasDuplicateUsername())
-			return "Duplicate username!";
-		if (hasDuplicateEmail())
-			return "Duplicate email!";
-		return null;
-	}
-
-	public boolean hasDuplicateUsername() {
-		List<User> users = Collections.emptyList();
-		if (id != null)
-			users = findAllExcept(this);
-		else
-			users = findAll();
-
-		for (User user : users) {
-			if (user.username.equalsIgnoreCase(username))
-				return true;
-		}
-		return false;
-	}
-
-	public boolean hasDuplicateEmail() {
-		List<User> users = Collections.emptyList();
-		if (id != null)
-			users = findAllExcept(this);
-		else
-			users = findAll();
-
-		for (User user : users) {
-			if (user.email.equalsIgnoreCase(email))
-				return true;
-		}
-		return false;
 	}
 
 	@Override

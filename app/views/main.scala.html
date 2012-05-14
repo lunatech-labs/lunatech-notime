@@ -31,8 +31,9 @@
                         <li><a href="@routes.Application.admin()">Admin</a></li>
                         }
                         @restrict(la(as("admin"), as("customerManager"), as("projectManager"), as("user"))) {
-        				<li><a href="@routes.Application.logout()">Log Out</a></li>
+                        <li><a href="@routes.Application.accountOptions()">Account Options</a></li>
                         }
+                        <li><a href="@routes.Application.logout()">Log Out</a></li>
         			</ul>
         		</nav>
         	</header>

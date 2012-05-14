@@ -6,3 +6,7 @@ project.notCustomerManager=You aren't a customer manager of the customer of this
 project.notProjectManager=You aren't the project manager of this project
 
 assignment.notDeletable=The assignment could not be deleted. Probably there are still hours booked on this assignment.
+
+user.notDeletable=The user could not be deleted. Probably one of its assignments is not deletable. Or the user is project manager.
+user.anEmptyPasswordField=Please fill in both password fields
+user.passwordFieldsNotEqual=Passwords are not equal

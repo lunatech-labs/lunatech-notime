@@ -1,4 +1,4 @@
-@(id: Long, userForm: Form[User])
+@(id: Long, userForm: Form[beans.UserForm])
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -35,6 +35,8 @@
 		@inputText(userForm("username"), '_label -> "Username")
 
 		@inputPassword(userForm("password"), '_label -> "Password")
+
+		@inputPassword(userForm("repeatedPassword"), '_label -> "Repeat password")
 
 		@inputText(userForm("fullname"), '_label -> "Full name")
 

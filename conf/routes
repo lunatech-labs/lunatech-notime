@@ -13,19 +13,27 @@ GET		/logout						controllers.Application.logout()
 # Admin
 GET		/admin						controllers.Application.admin()
 
+# Account options
+GET		/account-options			controllers.Application.accountOptions()
+
 # Users
 GET		/users						controllers.Users.all()
 GET		/user						controllers.Users.add()
 POST	/user 						controllers.Users.create()
 GET		/user/home					controllers.Users.home()
+GET		/user/change-password		controllers.Users.editPassword()
+POST	/user/change-password		controllers.Users.updatePassword()
+
+GET		/user/assignments						controllers.Users.assignmentsOverview()
+GET		/user/assignment/:aId/switch-starred	controllers.ProjectAssignments.toggleStarred(aId: Long)
+GET		/user/days-with-too-few-hours			controllers.Users.daysTooFewHours()
+
 GET		/user/:userId				controllers.Users.read(userId: Long)
 GET		/user/:userId/edit			controllers.Users.edit(userId: Long)
 POST	/user/:userId				controllers.Users.update(userId: Long)
 POST	/user/:userId/delete		controllers.Users.delete(userId: Long)
 
-GET		/user/assignments						controllers.Users.assignmentsOverview()
-GET		/user/assignment/:aId/switch-starred	controllers.ProjectAssignments.toggleStarred(aId: Long)
-GET		/user/days-with-too-few-hours			controllers.Users.daysTooFewHours()
+
 
 
 # Customers
