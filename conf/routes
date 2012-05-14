@@ -49,11 +49,11 @@ POST	/project/:projectId/delete	controllers.Projects.delete(projectId: Long)
 GET		/project/:projectId/users	controllers.Users.allForProject(projectId: Long)
 
 # ProjectAssignments
-GET		/project/:id/assignment			controllers.ProjectAssignments.add(id: Long)
-POST	/project/:id/assignment			controllers.ProjectAssignments.create(id: Long)
-GET		/project/:pId/assignment/:aId	controllers.ProjectAssignments.edit(pId: Long, aId: Long)
-POST	/project/:pId/assignment/:aId	controllers.ProjectAssignments.update(pId: Long, aId: Long)
-POST	/assignment/:id/delete 			controllers.ProjectAssignments.delete(id: Long)
+GET		/project/:projectId/assignment					controllers.ProjectAssignments.add(projectId: Long)
+POST	/project/:projectId/assignment					controllers.ProjectAssignments.create(projectId: Long)
+GET		/project/:projectId/assignment/:assignmentId	controllers.ProjectAssignments.edit(projectId: Long, assignmentId: Long)
+POST	/project/:projectId/assignment/:assignmentId	controllers.ProjectAssignments.update(projectId: Long, assignmentId: Long)
+POST	/assignment/:assignmentId/delete 				controllers.ProjectAssignments.delete(assignmentId: Long)
 
 # HourEntries
 GET		/hourentry							controllers.HourEntries.add()
