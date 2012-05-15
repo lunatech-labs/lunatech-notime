@@ -47,8 +47,8 @@ require(["jquery-1.7.1.min"], function() {
 		})
 		
 		//	jQuery UI autocomplete (with combobox widget) on select fields
-		if ($( "#entriesForm .entry select, #entryForm .entry select" ).length) {
-			$( "#entriesForm .entry select, #entryForm .entry select" ).each(function() {
+		if ($( "#entriesForm .entry select, #entryForm .entry select, #assignments" ).length) {
+			$( "#entriesForm .entry select, #entryForm .entry select, #assignments" ).each(function() {
 				var $elem = $(this)
 				require(["jquery-ui-1.8.18.custom.min", "combobox"], function() {
 					$elem.combobox()

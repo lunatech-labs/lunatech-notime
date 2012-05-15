@@ -10,13 +10,36 @@ require(["jquery-1.7.1.min"], function() {
 	})
 
 	$( 'input[name*="hours"], input[name*="minutes"]' ).change(function() {
-		$("#hours-not-saved-warning").show()
+		$( '#hours-not-saved-warning' ).show()
+	})
+
+	$('#entriesForm').submit(function() {
+	    $('.template').remove()
+	})
+
+	$( '.addAssignment' ).live('click', function(e) {
+		var assignmentId = $( '#assignments' ).val()
+		var projectName = $( '#assignments option:selected' ).text()
+
+		if (assignmentId) {
+		    var assignmentRows = $( '#weekOverview > tbody' )
+		    var template = $( '.template', assignmentRows )
+		    var assignment = template.before(template.clone())
+
+		    assignment.removeClass('template hidden')
+		    $( '.projectName', assignment ).html(projectName)
+		    $( '.assignmentId', assignment ).each(function() {
+		    	$(this).val(assignmentId)
+		    })
+
+		    renumberEntries($( '#weekOverview' ))
+		}
 	})
 	
 	var renumberEntries = function(entries) {
-		$( ".entry" , entries).each(function(i) {
-			$( "input:not(.exclude-from-renumbering), select" , this).each(function() {
-				$(this).attr( "name" , $(this).attr( "name" ).replace(/hourEntries\[.+\]/g, 'hourEntries[' + i + ']'))	
+		$( 'tr:not(.hidden) td .entry' , entries).each(function(i) {
+			$( 'input:not(.exclude-from-renumbering), select' , this).each(function() {
+				$(this).attr( 'name' , $(this).attr( 'name' ).replace(/hourEntries\[.+\]/g, 'hourEntries[' + i + ']'))
 			})
 		})
 	}

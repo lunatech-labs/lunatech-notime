@@ -32,7 +32,7 @@
    	@form(routes.HourEntries.createForWeek(week.getWeekyear, week.getWeekOfWeekyear), 'id -> "entriesForm") {
 		<input name="weekyear" type="hidden" value="@week.getWeekyear">
 		<input name="weekOfWeekyear" type="hidden" value="@week.getWeekOfWeekyear">
-		<table id="weekOverview">
+		<table id="weekOverview" class="clearfix">
 			<thead>
 				<tr>
 					<th></th>
@@ -45,7 +45,7 @@
 			<tbody>
 				@for(assignment <- week.getAssignments().toList) {
 				<tr class="assignment">
-					<td>@assignment.project.code</td>
+					<td>@assignment.project.name</td>
 					@for(day <- week.getDays) {
 					<td class="day">
 						@for(hourEntry <- week.getHourEntries(assignment, day)) {
@@ -68,6 +68,20 @@
 					<td class="total"></td>
 				</tr>
 				}
+				<tr class="assignment template hidden">
+					<td class="projectName"></td>
+					@for(day <- week.getDays) {
+					<td class="day">
+						<span class="entry">
+					    	<input class="assignmentId" name="hourEntries[x].assignment.id" type="hidden" />
+					    	<input name="hourEntries[x].date" type="hidden" value="@DateUtil.formatDate(day)" />
+					    	<input name="hourEntries[x].hours" type="text" />:
+					    	<input name="hourEntries[x].minutes" type="text" />
+					    </span>
+					</td>
+					}
+					<td class="total"></td>
+				</tr>
 			</tbody>
 			<tfoot>
 				<tr>
@@ -79,6 +93,16 @@
 				</tr>
 			</tfoot>
     	</table>
+
+    	<div class="clearfix">
+	    	<select id="assignments" name="assignment.id">
+	    		<option class="blank" value="">Choose a Project</option>
+		        @ProjectAssignments.optionsForCurrentUser().map { v =>
+		            <option value="@v._1">@v._2</option>
+		        }
+	    	</select>
+			<a class="addAssignment btn">Add project</a>
+		</div>
     	<input class="btn btn-primary" type="submit" value="Submit">
    	}
 
