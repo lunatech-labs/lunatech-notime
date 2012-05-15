@@ -60,9 +60,10 @@
 						<span class="entry">
 					    	<input name="hourEntries[x].assignment.id" type="hidden" value="@assignment.id" />
 					    	<input name="hourEntries[x].date" type="hidden" value="@DateUtil.formatDate(day)" />
-					    	<input name="hourEntries[x].hours" type="text" />:
-					    	<input name="hourEntries[x].minutes" type="text" />
+					    	<input class="hours" name="hourEntries[x].hours" type="text" />:
+					    	<input class="minutes" name="hourEntries[x].minutes" type="text" />
 					    </span>
+					    <span class="addEntry ui-icon ui-icon-plus"></span>
 					</td>
 					}
 					<td class="total"></td>
@@ -75,9 +76,10 @@
 						<span class="entry">
 					    	<input class="assignmentId" name="hourEntries[x].assignment.id" type="hidden" />
 					    	<input name="hourEntries[x].date" type="hidden" value="@DateUtil.formatDate(day)" />
-					    	<input name="hourEntries[x].hours" type="text" />:
-					    	<input name="hourEntries[x].minutes" type="text" />
+					    	<input class="hours" name="hourEntries[x].hours" type="text" />:
+					    	<input class="minutes" name="hourEntries[x].minutes" type="text" />
 					    </span>
+					    <span class="addEntry ui-icon ui-icon-plus"></span>
 					</td>
 					}
 					<td class="total"></td>

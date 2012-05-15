@@ -14,17 +14,18 @@ require(["jquery-1.7.1.min"], function() {
 	})
 
 	$('#entriesForm').submit(function() {
-	    $('.template').remove()
+	    $('tr.template').remove()
 	})
 
-	$( '.addAssignment' ).live('click', function(e) {
+	$( '.addAssignment' ).live('click', function() {
 		var assignmentId = $( '#assignments' ).val()
 		var projectName = $( '#assignments option:selected' ).text()
 
 		if (assignmentId) {
 		    var assignmentRows = $( '#weekOverview > tbody' )
 		    var template = $( '.template', assignmentRows )
-		    var assignment = template.before(template.clone())
+		    var assignment = template.clone()
+		    template.before(assignment)
 
 		    assignment.removeClass('template hidden')
 		    $( '.projectName', assignment ).html(projectName)
@@ -34,6 +35,18 @@ require(["jquery-1.7.1.min"], function() {
 
 		    renumberEntries($( '#weekOverview' ))
 		}
+	})
+
+	$( '.addEntry' ).live('click', function() {
+		var day = $(this).parents('.day')
+		var entryTemplate = $( '.entry:last', day )
+		var entry = entryTemplate.clone()
+		entryTemplate.after(entry)
+
+		$( '.hours', entry ).val("")
+		$( '.minutes', entry ).val("")
+
+		renumberEntries($( '#weekOverview' ))
 	})
 	
 	var renumberEntries = function(entries) {
