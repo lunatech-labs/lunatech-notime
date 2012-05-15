@@ -120,8 +120,16 @@ public class HourEntries extends Controller {
 	@Transactional()
 	public static Result createForWeek(int weekyear, int weekOfWeekyear) {
 		Form<Week> filledForm = form(Week.class).bindFromRequest();
+
+		// Binding errors
+		if (filledForm.hasErrors()) {
+			Week week = new Week(Application.getCurrentUser(), weekyear, weekOfWeekyear);
+			return badRequest(createHourEntriesForWeek.render(week));
+		}
+
 		Week week = filledForm.get();
 
+		// Invalid data
 		if (!week.isValid()) {
 			return badRequest(createHourEntriesForWeek.render(week));
 		}
