@@ -113,8 +113,7 @@ public class HourEntries extends Controller {
 
 	@Transactional(readOnly = true)
 	public static Result addForWeek(int weekyear, int weekOfWeekyear) {
-		final User user = Application.getCurrentUser();
-		Week week = new Week(user, weekyear, weekOfWeekyear);
+		Week week = new Week(Application.getCurrentUser(), weekyear, weekOfWeekyear);
 		return ok(createHourEntriesForWeek.render(week));
 	}
 
@@ -127,7 +126,7 @@ public class HourEntries extends Controller {
 			return badRequest(createHourEntriesForWeek.render(week));
 		}
 
-		week.process();
+		week.process(Application.getCurrentUser());
 		return ok(createHourEntriesForWeek.render(week));
 	}
 

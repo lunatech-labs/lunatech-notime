@@ -236,7 +236,8 @@ public class Week {
 	 * delete @{link HourEntry}. 2.2. Hours & minutes have a value -> validate
 	 * input and update.
 	 */
-	public void process() {
+	public void process(final User user) {
+		this.user = user;
 		if (valid) {
 			ListIterator<HourEntryInWeek> iterator = hourEntries
 					.listIterator();
