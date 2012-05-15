@@ -236,7 +236,6 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	 */
 	public static Map<String, String> optionsFor(final User user) {
 		final LinkedHashMap<String, String> assignments = new LinkedHashMap<String, String>();
-		assignments.put("", "");
 
 		for (ProjectAssignment assignment : findAllActiveForUser(user)) {
 			assignments.put(assignment.id.toString(),

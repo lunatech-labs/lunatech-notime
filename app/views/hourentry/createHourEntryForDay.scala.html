@@ -24,7 +24,7 @@
 				</div>
 			</div>
 			
-	    	@select(entryForm("assignment.id"), options(ProjectAssignments.optionsForCurrentUser()), '_label -> "", '_default -> "-- Choose a Project --", '_class -> "assignment")
+	    	@select(entryForm("assignment.id"), options(ProjectAssignments.optionsForCurrentUser()), '_label -> "", '_class -> "assignment", '_default -> "Choose a Project")
 				
 			@inputText(entryForm("hours"), '_label -> "h", '_class -> "hours")
 			

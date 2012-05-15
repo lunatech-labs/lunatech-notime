@@ -93,7 +93,7 @@ public class UserForm {
 	}
 
 	public boolean passwordsAreEmpty() {
-		return password == null || password.isEmpty() || repeatedPassword == null || repeatedPassword.isEmpty();
+		return "".equals(password) || "".equals(repeatedPassword);
 	}
 
 	public User toUser() {

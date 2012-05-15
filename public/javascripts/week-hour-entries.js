@@ -1,20 +1,12 @@
 require(["jquery-1.7.1.min"], function() {
 	
 	$(document).ready(function() {
-		      
-		var entries = $("#weekOverview")
-        renumberEntries(entries)
-        
-        calculateDayTotals()
-		calculateProjectTotals()
-		calculateTotalTotals()
-
+        renumberEntries($( '#weekOverview' ))
+        calculateTotals()
 	})
 
 	$( 'input[name*="hours"], input[name*="minutes"]' ).keyup(function() {
-		calculateDayTotals()
-		calculateProjectTotals()
-		calculateTotalTotals()
+		calculateTotals()
 	})
 
 	$( 'input[name*="hours"], input[name*="minutes"]' ).change(function() {
@@ -27,6 +19,12 @@ require(["jquery-1.7.1.min"], function() {
 				$(this).attr( "name" , $(this).attr( "name" ).replace(/hourEntries\[.+\]/g, 'hourEntries[' + i + ']'))	
 			})
 		})
+	}
+
+	var calculateTotals = function() {
+		calculateDayTotals()
+		calculateProjectTotals()
+		calculateTotalTotals()
 	}
 
 	var calculateDayTotals = function() {

@@ -5,7 +5,7 @@
 
 @entryField(form: Form[beans.MultipleHourEntries], field: Field, className: String = "entry") = {
 	<div class="@className">
-		@select(form(field.name + ".assignment.id"), options(ProjectAssignments.optionsForCurrentUser()), '_label -> "Project")
+		@select(form(field.name + ".assignment.id"), options(ProjectAssignments.optionsForCurrentUser()), '_label -> "Project", '_default -> "Choose a Project")
 
 		@inputDate(form(field("date").name), '_label -> "Date")
 		
