@@ -5,11 +5,26 @@ require(["jquery-1.7.1.min"], function() {
         calculateTotals()
 	})
 
+	$( 'input[name*="hours"], input[name*="minutes"]' ).click(function() {
+		var entryTagsStringField = $( 'input.tagsString', $(this).parents( '.entry' ) )
+		var entryTagsString = entryTagsStringField.val()
+		$( '#tagsString' ).val(entryTagsString)
+		$( '#tagsString' ).data('name', entryTagsStringField.attr('name'))
+	})
+
+	$( '#tagsString' ).focusout(function() {
+		var tagsString = $(this).val()
+		var entryName = $( '#tagsString' ).data('name')
+		var entryTagsStringField = $( 'input[name="' + entryName + '"]' )
+		entryTagsStringField.val(tagsString)
+		$(this).val("")
+	})
+
 	$( 'input[name*="hours"], input[name*="minutes"]' ).keyup(function() {
 		calculateTotals()
 	})
 
-	$( 'input[name*="hours"], input[name*="minutes"]' ).change(function() {
+	$( 'input[name*="hours"], input[name*="minutes"], #tagsString' ).change(function() {
 		$( '#hours-not-saved-warning' ).show()
 	})
 
@@ -38,7 +53,7 @@ require(["jquery-1.7.1.min"], function() {
 	})
 
 	$( '.addEntry' ).live('click', function() {
-		var day = $(this).parents('.day')
+		var day = $(this).parents( '.day' )
 		var entryTemplate = $( '.entry:last', day )
 		var entry = entryTemplate.clone()
 		entryTemplate.after(entry)

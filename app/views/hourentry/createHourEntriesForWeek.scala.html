@@ -55,7 +55,7 @@
 				    		<input name="hourEntries[x].date" type="hidden" value="@DateUtil.formatDate(hourEntry.date)" />
 				    		<input name="hourEntries[x].hours" type="text" value="@hourEntry.hours" />:
 				    		<input name="hourEntries[x].minutes" type="text" value="@hourEntry.minutes"/>
-				    		<input name="hourEntries[x].tagsString" type="hidden" value="@hourEntry.tagsString" />
+				    		<input class="tagsString" name="hourEntries[x].tagsString" type="hidden" value="@hourEntry.tagsString" />
 				    	</span>
 						}
 						<span class="entry">
@@ -63,7 +63,7 @@
 					    	<input name="hourEntries[x].date" type="hidden" value="@DateUtil.formatDate(day)" />
 					    	<input class="hours" name="hourEntries[x].hours" type="text" />:
 					    	<input class="minutes" name="hourEntries[x].minutes" type="text" />
-					    	<input name="hourEntries[x].tagsString" type="hidden" />
+					    	<input class="tagsString" name="hourEntries[x].tagsString" type="hidden" />
 					    </span>
 					    <span class="addEntry ui-icon ui-icon-plus"></span>
 					</td>
@@ -80,6 +80,7 @@
 					    	<input name="hourEntries[x].date" type="hidden" value="@DateUtil.formatDate(day)" />
 					    	<input class="hours" name="hourEntries[x].hours" type="text" />:
 					    	<input class="minutes" name="hourEntries[x].minutes" type="text" />
+					    	<input class="tagsString" name="hourEntries[x].tagsString" type="hidden" />
 					    </span>
 					    <span class="addEntry ui-icon ui-icon-plus"></span>
 					</td>
@@ -99,13 +100,23 @@
     	</table>
 
     	<div class="clearfix">
-	    	<select id="assignments" name="assignment.id">
-	    		<option class="blank" value="">Choose a Project</option>
-		        @ProjectAssignments.optionsForCurrentUser().map { v =>
-		            <option value="@v._1">@v._2</option>
-		        }
-	    	</select>
-			<a class="addAssignment btn">Add project</a>
+			<label for="tags">Tags selected entry</label>
+			<div class="input">
+				<input id="tagsString" type="text" class="autocomplete" name="tagsString" data-url="@routes.Tags.find">
+			</div>
+		</div>
+
+    	<div class="clearfix">
+    		<label for="project">Project</label>
+			<div class="input">
+		    	<select id="assignments" name="assignment.id">
+		    		<option class="blank" value="">Choose a Project</option>
+			        @ProjectAssignments.optionsForCurrentUser().map { v =>
+			            <option value="@v._1">@v._2</option>
+			        }
+		    	</select>
+				<a class="addAssignment btn">Add</a>
+			</div>
 		</div>
     	<input class="btn btn-primary" type="submit" value="Submit">
    	}
