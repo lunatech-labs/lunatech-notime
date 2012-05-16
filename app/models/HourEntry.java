@@ -26,6 +26,7 @@ import play.data.validation.Constraints.Max;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
 import beans.HourEntryForm;
+import beans.HourEntryInWeek;
 import datastructures.TotalsAssignment;
 import datastructures.TotalsDay;
 
@@ -71,8 +72,32 @@ public class HourEntry {
 		hours = form.hours;
 		minutes = form.minutes;
 		tags = form.getTags();
-		billable = form.billable;
-		rate = form.rate;
+
+		// If update and rate equals to null, get saved values for rate and billability
+		if (form.id != null && form.rate == null) {
+			HourEntry entry = findById(form.id);
+			billable = entry.billable;
+			rate = entry.rate;
+		}
+		else {
+			billable = form.billable;
+			rate = form.rate;
+		}
+	}
+
+	public HourEntry(HourEntryInWeek form) {
+		assignment = form.assignment;
+		date = form.date;
+		hours = form.hours;
+		minutes = form.minutes;
+		tags = form.getTags();
+
+		// If update, get saved values for rate and billability
+		if (form.id != null) {
+			HourEntry entry = findById(form.id);
+			billable = entry.billable;
+			rate = entry.rate;
+		}
 	}
 
 	/**
@@ -92,7 +117,7 @@ public class HourEntry {
 	 *            The id of the hour entry that is going to be updated
 	 */
 	public void update(Long entryId) {
-		this.id = entryId;
+		id = entryId;
 		JPA.em().merge(this);
 	}
 

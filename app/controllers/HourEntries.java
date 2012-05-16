@@ -142,7 +142,6 @@ public class HourEntries extends Controller {
 	public static Result edit(Long entryId) {
 		final User user = Application.getCurrentUser();
 		final HourEntry hourEntry = HourEntry.findById(entryId);
-
 		if (user.hasProjectManagerRole() && hourEntry.assignment.project.projectManager.equals(user)) {
 			Form<HourEntryForm> newForm = form(HourEntryForm.class).fill(new HourEntryForm(HourEntry.findById(entryId)));
 			return ok(editHourEntryForProjectManager.render(entryId, newForm));
@@ -159,11 +158,21 @@ public class HourEntries extends Controller {
 	@Transactional
 	public static Result update(Long entryId) {
 		final User user = Application.getCurrentUser();
-		Form<HourEntryForm> filledForm = form(HourEntryForm.class)
-				.bindFromRequest();
+		final HourEntry hourEntry = HourEntry.findById(entryId);
 
-		if (filledForm.hasErrors())
-			return badRequest(editHourEntry.render(entryId, filledForm));
+		Form<HourEntryForm> filledForm = form(HourEntryForm.class).bindFromRequest();
+
+		if (filledForm.hasErrors()) {
+			if (user.hasProjectManagerRole() && hourEntry.assignment.project.projectManager.equals(user)) {
+				return badRequest(editHourEntryForProjectManager.render(entryId, filledForm));
+			} else {
+				if (hourEntry.assignment.user.equals(user)) {
+					return badRequest(editHourEntry.render(entryId, filledForm));
+				} else {
+					return forbidden(views.html.forbidden.render());
+				}
+			}
+		}
 
 		filledForm.get().toHourEntry().update(entryId);
 		return redirect(routes.HourEntries.addForDay(filledForm.get().date));
@@ -171,7 +180,13 @@ public class HourEntries extends Controller {
 
 	@Transactional
 	public static Result delete(Long entryId) {
-		HourEntry entry = HourEntry.findById(entryId);
+		final User user = Application.getCurrentUser();
+		final HourEntry entry = HourEntry.findById(entryId);
+
+		if (!entry.assignment.user.equals(user)) {
+			return forbidden(views.html.forbidden.render());
+		}
+
 		entry.delete();
 		return redirect(routes.HourEntries.addForDay(entry.date));
 	}

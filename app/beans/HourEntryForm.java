@@ -21,8 +21,6 @@ import play.data.validation.Constraints.Required;
 
 public class HourEntryForm {
 
-	@Id
-	@GeneratedValue
 	public Long id;
 
 	@ManyToOne

@@ -33,9 +33,6 @@ GET		/user/:userId/edit			controllers.Users.edit(userId: Long)
 POST	/user/:userId				controllers.Users.update(userId: Long)
 POST	/user/:userId/delete		controllers.Users.delete(userId: Long)
 
-
-
-
 # Customers
 GET		/customers						controllers.Customers.all()
 GET		/customer						controllers.Customers.add()

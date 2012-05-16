@@ -10,7 +10,7 @@ object ApplicationBuild extends Build {
     val appDependencies = Seq(
     		"org.mindrot" % "jbcrypt" % "0.3m",
     		"joda-time" % "joda-time" % "2.0",
-    		"org.hibernate" % "hibernate-entitymanager" % "3.6.9.Final",    		
+    		"org.hibernate" % "hibernate-entitymanager" % "3.6.9.Final",
     		"org.hibernate" % "hibernate-jpamodelgen" % "1.2.0.Final",
     		"postgresql" % "postgresql" % "9.1-901-1.jdbc4",
     		"be.objectify" %% "deadbolt-2" % "1.1.2"

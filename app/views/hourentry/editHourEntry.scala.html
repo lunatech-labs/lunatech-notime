@@ -13,6 +13,8 @@
     
     @form(routes.HourEntries.update(entryId), 'id -> "entryForm") {
 	    <div class="entry">
+	    	<input name="id" type="hidden" value="@entryId" />
+
 	    	@select(entryForm("assignment.id"), options(ProjectAssignments.optionsForCurrentUser()), '_label -> "Project", '_default -> "Choose a Project")
 	
 			@inputDate(entryForm("date"), '_label -> "Date")

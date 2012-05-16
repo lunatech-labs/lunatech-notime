@@ -55,6 +55,7 @@
 				    		<input name="hourEntries[x].date" type="hidden" value="@DateUtil.formatDate(hourEntry.date)" />
 				    		<input name="hourEntries[x].hours" type="text" value="@hourEntry.hours" />:
 				    		<input name="hourEntries[x].minutes" type="text" value="@hourEntry.minutes"/>
+				    		<input name="hourEntries[x].tagsString" type="hidden" value="@hourEntry.tagsString" />
 				    	</span>
 						}
 						<span class="entry">
@@ -62,6 +63,7 @@
 					    	<input name="hourEntries[x].date" type="hidden" value="@DateUtil.formatDate(day)" />
 					    	<input class="hours" name="hourEntries[x].hours" type="text" />:
 					    	<input class="minutes" name="hourEntries[x].minutes" type="text" />
+					    	<input name="hourEntries[x].tagsString" type="hidden" />
 					    </span>
 					    <span class="addEntry ui-icon ui-icon-plus"></span>
 					</td>

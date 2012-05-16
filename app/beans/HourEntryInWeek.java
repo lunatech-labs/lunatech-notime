@@ -1,5 +1,6 @@
 package beans;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class HourEntryInWeek {
 
 	public Integer minutes;
 
-	public List<Tag> tags;
+	public String tagsString;
 
 	private final List<String> errors;
 
@@ -42,8 +43,19 @@ public class HourEntryInWeek {
 		date = entry.date;
 		hours = entry.hours;
 		minutes = entry.minutes;
-		tags = entry.tags;
+		tagsString = entry.enteredTagsString();
 		errors = new LinkedList<String>();
+	}
+
+	public List<Tag> getTags() {
+		if (!tagsString.isEmpty()) {
+			List<Tag> tags = new LinkedList<Tag>();
+			String splittedTags[] = tagsString.split(";");
+			for (int i = 0; i < splittedTags.length; i++)
+				tags.add(Tag.findOrCreate(splittedTags[i]));
+			return tags;
+		}
+		return Collections.emptyList();
 	}
 
 	/**
@@ -173,19 +185,7 @@ public class HourEntryInWeek {
 	}
 
 	public HourEntry toHourEntry() {
-		HourEntry entry;
-		if (id == null) {
-			entry = new HourEntry();
-		} else {
-			entry = HourEntry.findById(id);
-		}
-		entry.id = id;
-		entry.assignment = assignment;
-		entry.date = date;
-		entry.hours = hours;
-		entry.minutes = minutes;
-		entry.tags = tags;
-		return entry;
+		return new HourEntry(this);
 	}
 
 }
