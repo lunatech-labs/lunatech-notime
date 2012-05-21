@@ -7,10 +7,9 @@ A timesheet application written in Java using the Play 2 framework. Currently ru
 ### Local
 
 1. Install Play 2, version 2.0.1 (http://www.playframework.org/documentation/2.0.1/Installing)
-2. Checkout this repository and inside the folder execute the `play` command to launch the development console:
+2. Checkout this repository and launch the Play 2 development console:
 
 ```bash
-$ cd ~/workspace/NoTime
 $ play
 ```
 More information about the Play console: http://www.playframework.org/documentation/2.0.1/PlayConsole
