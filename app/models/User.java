@@ -102,12 +102,15 @@ public class User implements RoleHolder {
 	 *            The id of the user that is going to be updated
 	 */
 	public void update(Long userId) {
-		this.id = userId;
+		id = userId;
 
-		if (password != null && !password.isEmpty())
-			password = User.encryptPassword(password);
-		else
+		if (password != null && !password.isEmpty()) {
+			if (!password.equals(User.findById(id).password))
+				password = User.encryptPassword(password);
+		}
+		else {
 			password = User.findById(userId).password;
+		}
 
 		// Make it impossible to delete the last admin role
 		if (isLastAdminUser()) {
@@ -137,8 +140,7 @@ public class User implements RoleHolder {
 	 *				The unencrypted password
 	 */
 	public void updatePassword(String password) {
-		this.password = password;
-		update(id);
+		this.password = User.encryptPassword(password);
 	}
 
 	/**
@@ -153,14 +155,6 @@ public class User implements RoleHolder {
 			JPA.em().remove(this);
 		}
 		return deletable;
-	}
-
-	/**
-	 * Inactivates this user.
-	 */
-	public void inactivate() {
-		active = false;
-		JPA.em().merge(this);
 	}
 
 	/**
@@ -389,10 +383,10 @@ public class User implements RoleHolder {
 	 */
 	public static User authenticate(final String username, final String password) {
 		User user = findByUsername(username);
-		if (user == null || !user.checkPassword(password) || !user.active)
-			return null;
-		else
+		if (user != null && user.checkPassword(password) && user.active)
 			return user;
+		else
+			return null;
 	}
 
 	@Override

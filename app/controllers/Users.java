@@ -54,7 +54,8 @@ public class Users extends Controller {
 	}
 
 	@Transactional(readOnly = true)
-	@Unrestricted
+	@Restrictions({ @And("admin"), @And("customerManager"),
+			@And("projectManager"), @And("user") })
 	public static Result home() {
 		return ok(userHome.render(Application.getCurrentUser()));
 	}
