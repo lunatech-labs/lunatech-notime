@@ -63,7 +63,7 @@ require(["jquery-1.7.1.min"], function() {
 
 		renumberEntries($( '#weekOverview' ))
 	})
-	
+
 	var renumberEntries = function(entries) {
 		$( 'tr:not(.hidden) td .entry' , entries).each(function(i) {
 			$( 'input:not(.exclude-from-renumbering), select' , this).each(function() {
