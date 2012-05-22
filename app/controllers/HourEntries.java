@@ -135,7 +135,7 @@ public class HourEntries extends Controller {
 		}
 
 		week.process(Application.getCurrentUser());
-		return ok(createHourEntriesForWeek.render(week));
+		return redirect(routes.HourEntries.createForWeek(weekyear, weekOfWeekyear));
 	}
 
 	@Transactional(readOnly = true)
