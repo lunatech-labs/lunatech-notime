@@ -28,8 +28,8 @@ require(["jquery-1.7.1.min"], function() {
 		$( '#hours-not-saved-warning' ).show()
 	})
 
-	$('#entriesForm').submit(function() {
-	    $('tr.template').remove()
+	$( '#entriesForm' ).submit(function() {
+	    $( 'tr.template', $(this) ).remove()
 	})
 
 	$( '.addAssignment' ).live('click', function() {

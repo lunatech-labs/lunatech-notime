@@ -1,5 +1,5 @@
 customer.notCustomerManager=You aren't a customer manager of this customer
-customer..notDeletable=The customer could not be deleted. Probably one of its projects is not deletable.
+customer.notDeletable=The customer could not be deleted. Probably one of its projects is not deletable.
 
 project.notDeletable=The project could not be deleted. Probably one of its assignments is not deletable.
 project.notCustomerManager=You aren't a customer manager of the customer of this project
