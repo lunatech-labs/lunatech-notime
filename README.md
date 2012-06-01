@@ -2,7 +2,7 @@
 
 A timesheet application written in Java using the Play 2 framework. Currently running on version 2.0.1.
 
-## Installion
+## Installation
 
 ### Local
 
