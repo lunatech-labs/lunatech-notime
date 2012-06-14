@@ -35,11 +35,9 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 	@ManyToOne
 	public User user;
 
-	@Required
 	@Type(type = "org.joda.time.contrib.hibernate.PersistentLocalDate")
 	public LocalDate beginDate;
 
-	@Required
 	@Type(type = "org.joda.time.contrib.hibernate.PersistentLocalDate")
 	public LocalDate endDate;
 
@@ -292,18 +290,43 @@ public class ProjectAssignment implements Comparable<ProjectAssignment> {
 		return !findByUserAndProject(user, project).isEmpty();
 	}
 
-	public static boolean isDateInAssignmentRange(final LocalDate date,
-			final Long assignmentId) {
+	/**
+	 * Checks if a date is between, or equal to the begin and/or end date of an assignment.
+	 * If there is only a begin date, the date to check must be after the begin date.
+	 * If there is only an end date, the date to check must be before the end date.
+	 * If an assignment has no dates, true is returned.
+	 *
+	 * @param date
+	 *            The date which must be in the assignment rate
+	 * @param assignmentId
+	 *            The id of the assingment to be validated
+	 * @return A boolean which is true if the date is in the assignment range
+	 */
+	public static boolean isDateInAssignmentRange(final LocalDate date,	final Long assignmentId) {
 		ProjectAssignment assignment = ProjectAssignment.findById(assignmentId);
-		return DateUtil.between(date, assignment.beginDate,
-				assignment.endDate.plusDays(1));
+
+		if (assignment.beginDate != null && assignment.endDate != null)
+			return DateUtil.between(date, assignment.beginDate,	assignment.endDate) || date.isEqual(assignment.beginDate) || date.isEqual(assignment.endDate);
+
+		if (assignment.beginDate != null)
+			return date.isAfter(assignment.beginDate) || date.isEqual(assignment.beginDate);
+
+		if (assignment.endDate != null)
+			return date.isBefore(assignment.endDate) || date.isEqual(assignment.endDate);
+
+		return true;
 	}
 
 	public String validate() {
-		if (!isStartDateNotAfterEndDate())
-			return "Start date is after the End date";
+		if (beginDate != null && endDate != null) {
+			if (!isStartDateNotAfterEndDate()) {
+				return "Start date is after the End date";
+			}
+		}
+
 		if (!hasActiveUser())
 			return "User is not active!";
+
 		return null;
 	}
 
