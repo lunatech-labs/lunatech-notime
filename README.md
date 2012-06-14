@@ -14,7 +14,7 @@ $ play
 ```
 More information about the Play console: http://www.playframework.org/documentation/2.0.1/PlayConsole
 
-By default you can login with username admin and password admin.
+(Note: the password for the dummy accounts is 'secret')
 
 ### Heroku
 
@@ -44,7 +44,7 @@ $ git push heroku master
 $ heroku open
 ```
 
-By default you can login with username admin and password admin.
+(Note: By default you can login with username admin and password admin)
 
 ## Issues tracker
 
